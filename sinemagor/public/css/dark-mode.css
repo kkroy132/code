@@ -1,0 +1,33 @@
+/* Sinemagor dark mode overrides */
+[data-sg-theme="dark"] {
+    --sg-bg:      #0f0f17;
+    --sg-surface: #1a1a28;
+    --sg-border:  #2e2e45;
+    --sg-text:    #e0e0f0;
+    --sg-muted:   #7a7a9a;
+}
+
+[data-sg-theme="light"] {
+    --sg-bg:      #f9f9fb;
+    --sg-surface: #ffffff;
+    --sg-border:  #e0e0ea;
+    --sg-text:    #1a1a28;
+    --sg-muted:   #666680;
+}
+
+[data-sg-theme="dark"] body  { background: var(--sg-bg); color: var(--sg-text); }
+[data-sg-theme="dark"] .sg-post-content { background: var(--sg-bg); }
+[data-sg-theme="dark"] .sg-info-box, [data-sg-theme="dark"] .sg-verdict-box { background: var(--sg-surface); }
+
+/* Toggle button */
+.sg-theme-toggle {
+    background: none;
+    border: 1px solid var(--sg-border);
+    color: var(--sg-muted);
+    border-radius: 20px;
+    padding: 4px 14px;
+    cursor: pointer;
+    font-size: .85rem;
+    transition: border-color .2s, color .2s;
+}
+.sg-theme-toggle:hover { border-color: var(--sg-accent); color: var(--sg-accent); }
