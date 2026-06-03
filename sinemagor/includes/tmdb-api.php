@@ -113,53 +113,47 @@ class Sinemagor_TMDB {
 
     /**
      * Top Rated + genre/language filter.
-     * Fetches up to 50 TMDB pages (1000 raw results) to support deep pagination.
+     * Full filtered list is cached in a transient (1 hour) so deep pagination works
+     * without re-fetching hundreds of TMDB pages on every request.
      */
     private function fetch_top_rated_filtered(int $page, string $genre_id, string $language): array {
-        $collected      = [];
-        $per_page       = 20;
-        $target         = $per_page * $page;
-        $max_fetch      = 50;
-        $tmdb_max_pages = 1;
+        $cache_key = 'sg_top_rated_' . md5($genre_id . '|' . $language);
+        $all       = get_transient($cache_key);
 
-        for ($p = 1; $p <= $max_fetch; $p++) {
-            $resp = $this->request('/movie/top_rated', ['page' => $p, 'language' => 'en-US']);
-            if (is_wp_error($resp) || empty($resp['results'])) break;
+        if ($all === false) {
+            $all            = [];
+            $max_raw_pages  = 150; // 3000 raw results; ~1500 English, ~300 per genre
+            $tmdb_max_pages = 1;
 
-            $tmdb_max_pages = $resp['total_pages'] ?? 1;
+            for ($p = 1; $p <= $max_raw_pages; $p++) {
+                $resp = $this->request('/movie/top_rated', ['page' => $p, 'language' => 'en-US']);
+                if (is_wp_error($resp) || empty($resp['results'])) break;
 
-            foreach ($resp['results'] as $m) {
-                // Language filter
-                if ($language && ($m['original_language'] ?? '') !== $language) continue;
+                $tmdb_max_pages = $resp['total_pages'] ?? 1;
 
-                // Genre filter — check genre_ids array
-                if ($genre_id) {
-                    $movie_genres = array_map('strval', $m['genre_ids'] ?? []);
-                    if (!in_array($genre_id, $movie_genres, true)) continue;
+                foreach ($resp['results'] as $m) {
+                    if ($language && ($m['original_language'] ?? '') !== $language) continue;
+                    if ($genre_id) {
+                        $movie_genres = array_map('strval', $m['genre_ids'] ?? []);
+                        if (!in_array($genre_id, $movie_genres, true)) continue;
+                    }
+                    $all[] = $m;
                 }
 
-                $collected[] = $m;
+                if ($p >= $tmdb_max_pages) break;
             }
 
-            if (count($collected) >= $target) break;
-            if ($p >= $tmdb_max_pages) break;
+            set_transient($cache_key, $all, HOUR_IN_SECONDS);
         }
 
-        $total  = count($collected);
-        $offset = ($page - 1) * $per_page;
-        $slice  = array_slice($collected, $offset, $per_page);
-
-        // Proportionally estimate total when TMDB has more pages than we fetched
-        $fetched_pages   = min($max_fetch, $tmdb_max_pages);
-        $ratio           = $fetched_pages > 0 ? ($total / ($fetched_pages * $per_page)) : 0;
-        $estimated_total = ($fetched_pages < $tmdb_max_pages)
-            ? (int) round($ratio * $tmdb_max_pages * $per_page)
-            : $total;
-        $estimated_pages = max((int) ceil($estimated_total / $per_page), (int) ceil($total / $per_page));
+        $per_page = 20;
+        $total    = count($all);
+        $offset   = ($page - 1) * $per_page;
+        $slice    = array_slice($all, $offset, $per_page);
 
         return [
-            'total'   => $estimated_total,
-            'pages'   => $estimated_pages,
+            'total'   => $total,
+            'pages'   => (int) ceil($total / $per_page),
             'results' => $this->format_list($slice),
         ];
     }
