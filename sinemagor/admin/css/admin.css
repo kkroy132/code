@@ -47,6 +47,7 @@
 .sg-btn--success  { background: var(--sg-green);   color: #fff; }
 .sg-btn--danger   { background: var(--sg-red);     color: #fff; }
 .sg-btn--secondary{ background: var(--sg-blue);    color: #fff; }
+.sg-btn--warning  { background: #e57c22;     color: #fff; }
 .sg-btn--ghost    { background: transparent; border: 1px solid var(--sg-border); color: var(--sg-muted); }
 .sg-btn--sm       { padding: 5px 12px; font-size: .82rem; }
 .sg-btn:disabled  { opacity: .45; cursor: not-allowed; }

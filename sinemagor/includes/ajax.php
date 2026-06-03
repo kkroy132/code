@@ -15,6 +15,7 @@ class Sinemagor_Ajax {
             'sg_delete_movies',
             'sg_get_library',
             'sg_rebuild_links',
+            'sg_toggle_publish',
         ];
         foreach ($actions as $action) {
             add_action('wp_ajax_' . $action, [self::class, $action]);
@@ -189,6 +190,46 @@ class Sinemagor_Ajax {
         wp_send_json_success('Internal links rebuilt for post #' . $post_id);
     }
 
+    // ── Toggle publish / unpublish a movie's WP post ─────────────────────────
+
+    public static function sg_toggle_publish(): void {
+        self::verify();
+
+        $movie_id = (int) ($_POST['movie_id'] ?? 0);
+        if (!$movie_id) wp_send_json_error('Invalid movie ID.');
+
+        $movie = Sinemagor_DB::get_movie($movie_id);
+        if (!$movie) wp_send_json_error('Movie not found.');
+
+        // If no WP post yet, generate it first
+        if (empty($movie->wp_post_id)) {
+            $post_id = Sinemagor_Post_Publisher::publish($movie_id);
+            if (is_wp_error($post_id)) wp_send_json_error($post_id->get_error_message());
+            wp_send_json_success([
+                'new_status' => get_post_status($post_id),
+                'post_url'   => get_permalink($post_id),
+                'edit_url'   => get_edit_post_link($post_id, 'raw'),
+            ]);
+        }
+
+        $post    = get_post($movie->wp_post_id);
+        $current = $post ? $post->post_status : 'draft';
+
+        if ($current === 'publish') {
+            wp_update_post(['ID' => $movie->wp_post_id, 'post_status' => 'draft']);
+            Sinemagor_DB::update_status($movie_id, 'draft');
+            wp_send_json_success(['new_status' => 'draft', 'post_url' => '', 'edit_url' => get_edit_post_link($movie->wp_post_id, 'raw')]);
+        } else {
+            wp_update_post(['ID' => $movie->wp_post_id, 'post_status' => 'publish']);
+            Sinemagor_DB::update_status($movie_id, 'published');
+            wp_send_json_success([
+                'new_status' => 'published',
+                'post_url'   => get_permalink($movie->wp_post_id),
+                'edit_url'   => get_edit_post_link($movie->wp_post_id, 'raw'),
+            ]);
+        }
+    }
+
     // ── Get library (for Review tab) ──────────────────────────────────────────
 
     public static function sg_get_library(): void {
@@ -209,6 +250,11 @@ class Sinemagor_Ajax {
                 ? Sinemagor_TMDB::image_url($row->poster_path, 'w92')
                 : '';
         }
+
+        // Global published / pending counts (ignoring current page filter)
+        $counts = Sinemagor_DB::get_status_counts();
+        $data['total_published'] = (int) ($counts['published'] ?? 0);
+        $data['total_pending']   = (int) ($counts['pending'] ?? 0) + (int) ($counts['draft'] ?? 0);
 
         wp_send_json_success($data);
     }

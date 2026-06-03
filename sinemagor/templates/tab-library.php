@@ -52,13 +52,29 @@
     <button id="sg-clear-selection-btn" class="sg-btn sg-btn--ghost">Clear</button>
   </div>
 
+  <!-- ── Add progress bar (shown while adding) ── -->
+  <div id="sg-add-progress-bar" style="display:none;background:#1a1a28;border:1px solid #2e2e45;border-radius:10px;padding:14px 18px;margin-bottom:16px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+      <strong style="color:#e0e0f0">➕ Adding to Library...</strong>
+      <span id="sg-add-progress-text" style="color:#aaa;font-size:.85rem">0 / 0</span>
+    </div>
+    <div style="height:6px;background:#2e2e45;border-radius:3px;">
+      <div id="sg-add-progress-fill" style="height:100%;background:#4caf50;border-radius:3px;width:0%;transition:width .3s;"></div>
+    </div>
+    <div id="sg-add-progress-detail" style="margin-top:6px;font-size:.8rem;color:#aaa;"></div>
+  </div>
+
   <!-- ── TMDB Results Grid ── -->
   <div id="sg-discover-results" class="sg-movie-grid"></div>
   <div id="sg-discover-pagination" class="sg-pagination"></div>
 
   <!-- ── Library Table ── -->
   <div class="sg-library-section">
-    <h3 class="sg-section-title">📚 Your Library</h3>
+    <h3 class="sg-section-title" style="cursor:pointer;user-select:none;" id="sg-lib-toggle">
+      📚 Your Library <span id="sg-lib-count-badge" style="font-size:.8rem;color:#aaa;font-weight:normal;margin-left:8px;"></span>
+      <span id="sg-lib-chevron" style="font-size:.85rem;color:#666;margin-left:6px;">▼</span>
+    </h3>
+    <div id="sg-lib-body">
 
     <div class="sg-filter-bar">
       <input type="text" id="sg-lib-search" placeholder="Search library..." class="sg-input" />
@@ -97,6 +113,7 @@
       </table>
     </div>
     <div id="sg-lib-pagination" class="sg-pagination"></div>
+    </div><!-- /#sg-lib-body -->
   </div>
 
 </div>

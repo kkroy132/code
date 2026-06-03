@@ -143,17 +143,46 @@
         const ids = Array.from(state.selectedDiscover);
         if (!ids.length) return;
 
-        const btn = $('#sg-add-selected-btn').text('Adding...').prop('disabled', true);
+        const total = ids.length;
+        const btn   = $('#sg-add-selected-btn').text('Adding...').prop('disabled', true);
+
+        // Show progress bar
+        $('#sg-add-progress-bar').show();
+        $('#sg-add-progress-fill').css('width', '0%');
+        $('#sg-add-progress-text').text('0 / ' + total);
+        $('#sg-add-progress-detail').text('Sending request...');
+
+        // Simulate per-item progress while the single AJAX call runs
+        let fakeCount = 0;
+        const fakeTimer = setInterval(function () {
+            if (fakeCount < total - 1) {
+                fakeCount++;
+                const pct = Math.round((fakeCount / total) * 90);
+                $('#sg-add-progress-fill').css('width', pct + '%');
+                $('#sg-add-progress-text').text(fakeCount + ' / ' + total);
+                $('#sg-add-progress-detail').text('Processing...');
+            }
+        }, 300);
 
         ajax('sg_bulk_add', { tmdb_ids: ids }, function (data) {
+            clearInterval(fakeTimer);
+            $('#sg-add-progress-fill').css('width', '100%');
+            $('#sg-add-progress-text').text(total + ' / ' + total);
+            $('#sg-add-progress-detail').text(
+                '✅ Added: ' + data.added + '  |  ⏭ Already in library: ' + data.skipped +
+                (data.errors.length ? '  |  ❌ Errors: ' + data.errors.length : '')
+            );
             btn.text('+ Add to Library').prop('disabled', false);
             showNotice(`✅ Added: ${data.added}, Skipped (already in library): ${data.skipped}` +
                 (data.errors.length ? `. Errors: ${data.errors.join(', ')}` : ''), 'success');
             state.selectedDiscover.clear();
             updateDiscoverCount();
             loadLibraryTable();
-            discoverMovies(state.discover.page); // refresh "in library" badges
+            discoverMovies(state.discover.page);
+            setTimeout(() => $('#sg-add-progress-bar').fadeOut(), 3000);
         }, function (err) {
+            clearInterval(fakeTimer);
+            $('#sg-add-progress-bar').hide();
             btn.text('+ Add to Library').prop('disabled', false);
             showNotice('Error: ' + err, 'error');
         });
@@ -173,6 +202,7 @@
         }, function (data) {
             state.library.total = data.total;
             state.library.pages = data.pages;
+            $('#sg-lib-count-badge').text('(' + data.total + ' movies)');
             renderLibraryTable(data.rows);
             renderPagination('#sg-lib-pagination', page, data.pages, loadLibraryTable);
         });
@@ -219,9 +249,19 @@
         }, function (data) {
             state.review.total = data.total;
             state.review.pages = data.pages;
+            updateReviewStats(data);
             renderReviewTable(data.rows);
             renderPagination('#sg-rev-pagination', page, data.pages, loadReviewTable);
         });
+    }
+
+    function updateReviewStats(data) {
+        $('#sg-rev-total').text(data.total);
+        const published = (data.rows || []).filter(r => r.status === 'published').length;
+        const pending   = (data.rows || []).filter(r => r.status !== 'published').length;
+        // Use server-side counts if available, else use page counts
+        $('#sg-rev-count-published').text(data.total_published != null ? data.total_published : published + ' (this page)');
+        $('#sg-rev-count-pending').text(data.total_pending != null ? data.total_pending : pending + ' (this page)');
     }
 
     function renderReviewTable(rows) {
@@ -229,23 +269,34 @@
             $('#sg-review-tbody').html('<tr><td colspan="8" class="sg-empty">No movies found.</td></tr>');
             return;
         }
-        const html = rows.map(r => `
+        const html = rows.map(r => {
+            const isPublished = r.status === 'published';
+            const hasPost     = !!r.wp_post_id;
+            let actionBtns    = '';
+            if (!hasPost) {
+                actionBtns = `<button class="sg-btn sg-btn--primary sg-btn--sm sg-gen-single" data-id="${r.id}">⚡ Generate</button>`;
+            } else if (isPublished) {
+                actionBtns = `
+                    <a href="/wp-admin/post.php?post=${r.wp_post_id}&action=edit" class="sg-link sg-btn sg-btn--ghost sg-btn--sm" target="_blank" style="margin-right:4px">✏️ Edit</a>
+                    <button class="sg-btn sg-btn--warning sg-btn--sm sg-toggle-publish" data-id="${r.id}" data-status="published">📤 Unpublish</button>`;
+            } else {
+                actionBtns = `
+                    <button class="sg-btn sg-btn--primary sg-btn--sm sg-gen-single" data-id="${r.id}" style="margin-right:4px">⚡ Generate</button>
+                    <button class="sg-btn sg-btn--success sg-btn--sm sg-toggle-publish" data-id="${r.id}" data-status="${r.status}">🌐 Publish</button>`;
+            }
+            return `
             <tr data-id="${r.id}">
                 <td><input type="checkbox" class="sg-rev-check" value="${r.id}"
-                    ${r.status === 'published' ? 'disabled' : ''} /></td>
+                    ${isPublished ? 'disabled' : ''} /></td>
                 <td>${r.poster_thumb ? `<img src="${r.poster_thumb}" class="sg-thumb" loading="lazy" />` : '—'}</td>
                 <td class="sg-td-title">${esc(r.title)}</td>
                 <td>${r.year || '—'}</td>
                 <td>${esc(r.genre || '—')}</td>
                 <td>⭐${r.tmdb_rating || '—'}</td>
                 <td><span class="sg-badge sg-badge--${statusColor(r.status)}">${r.status}</span></td>
-                <td>
-                    ${r.status !== 'published'
-                        ? `<button class="sg-btn sg-btn--primary sg-btn--sm sg-gen-single" data-id="${r.id}">⚡ Generate</button>`
-                        : `<a href="/wp-admin/post.php?post=${r.wp_post_id}&action=edit" class="sg-link" target="_blank">Edit Post</a>`
-                    }
-                </td>
-            </tr>`).join('');
+                <td style="white-space:nowrap">${actionBtns}</td>
+            </tr>`;
+        }).join('');
         $('#sg-review-tbody').html(html);
         syncRevChecks();
     }
@@ -500,6 +551,33 @@
 
         $(document).on('click', '.sg-gen-single', function () {
             generateSingle($(this).data('id'));
+        });
+
+        $(document).on('click', '.sg-toggle-publish', function () {
+            const btn     = $(this);
+            const movieId = btn.data('id');
+            const status  = btn.data('status');
+            const label   = status === 'published' ? 'Unpublishing...' : 'Publishing...';
+            btn.text(label).prop('disabled', true);
+            ajax('sg_toggle_publish', { movie_id: movieId }, function (data) {
+                loadReviewTable(state.review.page);
+                if (data.new_status === 'published') {
+                    showNotice('✅ Published!', 'success');
+                } else {
+                    showNotice('📤 Unpublished (saved as Draft).', 'success');
+                }
+            }, function (err) {
+                btn.prop('disabled', false);
+                showNotice('Error: ' + err, 'error');
+            });
+        });
+
+        // ── Library section collapse toggle ──────────────────────────────────
+        let libCollapsed = false;
+        $('#sg-lib-toggle').on('click', function () {
+            libCollapsed = !libCollapsed;
+            $('#sg-lib-body').toggle(!libCollapsed);
+            $('#sg-lib-chevron').text(libCollapsed ? '▶' : '▼');
         });
 
         $('#sg-bulk-generate-btn').on('click', bulkQueue);

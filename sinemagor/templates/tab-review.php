@@ -50,6 +50,13 @@
     <button id="sg-rev-filter-btn" class="sg-btn sg-btn--secondary">Filter</button>
   </div>
 
+  <!-- ── Stats bar ── -->
+  <div id="sg-rev-stats" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:12px;font-size:.85rem;color:#aaa;">
+    <span>📦 Total loaded: <strong id="sg-rev-total">—</strong></span>
+    <span>✅ Published: <strong id="sg-rev-count-published">—</strong></span>
+    <span>📝 Pending/Draft: <strong id="sg-rev-count-pending">—</strong></span>
+  </div>
+
   <!-- ── Bulk Actions ── -->
   <div class="sg-bulk-bar">
     <label><input type="checkbox" id="sg-rev-check-all" /> Select All</label>

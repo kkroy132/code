@@ -182,6 +182,20 @@ class Sinemagor_DB {
     }
 
     /**
+     * Count movies grouped by status
+     */
+    public static function get_status_counts(): array {
+        global $wpdb;
+        $table = $wpdb->prefix . SINEMAGOR_TABLE;
+        $rows  = $wpdb->get_results("SELECT status, COUNT(*) AS cnt FROM {$table} GROUP BY status");
+        $counts = [];
+        foreach ($rows as $row) {
+            $counts[$row->status] = (int) $row->cnt;
+        }
+        return $counts;
+    }
+
+    /**
      * Get distinct genres for filter dropdown
      */
     public static function get_genres(): array {
