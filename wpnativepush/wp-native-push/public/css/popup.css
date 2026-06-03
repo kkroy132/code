@@ -1,0 +1,144 @@
+/* ── WP Native Push — Subscription Popup ───────────────────────────────────── */
+
+.wnp-popup {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 2147483647;
+    width: 360px;
+    max-width: calc(100vw - 40px);
+    background: #fff;
+    border-radius: 14px;
+    box-shadow:
+        0 4px 6px -1px rgba(0, 0, 0, .07),
+        0 10px 30px -5px rgba(0, 0, 0, .12);
+    display: none;
+    flex-direction: column;
+    opacity: 0;
+    transform: translateY(16px) scale(.97);
+    transition: opacity .28s ease, transform .28s ease;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #111827;
+    border: 1px solid rgba(0,0,0,.07);
+}
+
+.wnp-popup--in {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.wnp-popup__inner {
+    padding: 18px 20px 16px;
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    grid-template-rows: auto auto;
+    gap: 4px 14px;
+}
+
+.wnp-popup__icon {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #4f46e5;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    align-self: center;
+}
+
+.wnp-popup__content {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.wnp-popup__title {
+    margin: 0 0 2px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.wnp-popup__body {
+    margin: 0;
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.wnp-popup__actions {
+    grid-column: 2;
+    grid-row: 2;
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+/* Buttons */
+.wnp-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+    transition: background .18s, color .18s;
+    font-family: inherit;
+    white-space: nowrap;
+}
+
+.wnp-btn--primary {
+    background: #4f46e5;
+    color: #fff;
+    flex: 1;
+}
+.wnp-btn--primary:hover { background: #4338ca; }
+.wnp-btn--primary:focus { outline: 2px solid #4f46e5; outline-offset: 2px; }
+
+.wnp-btn--ghost {
+    background: transparent;
+    color: #6b7280;
+    border: 1px solid #d1d5db;
+}
+.wnp-btn--ghost:hover { background: #f9fafb; color: #374151; }
+.wnp-btn--ghost:focus { outline: 2px solid #6b7280; outline-offset: 2px; }
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+    .wnp-popup {
+        background: #1f2937;
+        border-color: rgba(255,255,255,.08);
+        box-shadow: 0 10px 40px rgba(0,0,0,.5);
+        color: #f3f4f6;
+    }
+    .wnp-popup__title { color: #f9fafb; }
+    .wnp-popup__body  { color: #9ca3af; }
+    .wnp-btn--ghost {
+        color: #9ca3af;
+        border-color: #374151;
+    }
+    .wnp-btn--ghost:hover { background: #374151; color: #e5e7eb; }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .wnp-popup {
+        bottom: 0;
+        right: 0;
+        left: 0;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 14px 14px 0 0;
+    }
+    .wnp-popup__actions { flex-direction: column; }
+    .wnp-btn--primary   { flex: unset; }
+}
