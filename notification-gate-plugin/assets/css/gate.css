@@ -1,0 +1,111 @@
+/* Notification Gate - Frontend Styles */
+
+.ngp-gate-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 99999;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.ngp-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 24px;
+    max-width: 480px;
+    width: 100%;
+    animation: ngpFadeIn 0.4s ease;
+}
+
+@keyframes ngpFadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.ngp-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+    animation: ngpPulse 2s infinite;
+}
+
+@keyframes ngpPulse {
+    0%, 100% { transform: scale(1); }
+    50%       { transform: scale(1.12); }
+}
+
+.ngp-screen h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0 0 14px;
+    line-height: 1.3;
+}
+
+.ngp-screen p {
+    font-size: 1rem;
+    line-height: 1.6;
+    opacity: 0.85;
+    margin: 0 0 28px;
+}
+
+.ngp-btn {
+    display: inline-block;
+    padding: 14px 32px;
+    border: none;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ffffff;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: transform 0.15s ease, filter 0.15s ease;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+}
+
+.ngp-btn:hover {
+    transform: translateY(-2px);
+}
+
+.ngp-btn:active {
+    transform: translateY(0);
+}
+
+/* Denied screen button */
+.ngp-denied-screen .ngp-btn {
+    background-color: #555;
+}
+
+/* Spinner */
+.ngp-spinner {
+    width: 52px;
+    height: 52px;
+    border: 5px solid rgba(255,255,255,0.2);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: ngpSpin 0.8s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes ngpSpin {
+    to { transform: rotate(360deg); }
+}
+
+/* Hide WordPress theme header/footer when gate is active */
+body:has(.ngp-gate-wrapper) header,
+body:has(.ngp-gate-wrapper) footer,
+body:has(.ngp-gate-wrapper) .site-header,
+body:has(.ngp-gate-wrapper) .site-footer,
+body:has(.ngp-gate-wrapper) #wpadminbar {
+    display: none !important;
+}
+
+body:has(.ngp-gate-wrapper) {
+    overflow: hidden;
+}
