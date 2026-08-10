@@ -133,7 +133,8 @@ class Sinemagor_Admin_Menu {
         foreach ($tabs as $key => $tab) {
             $class = $active === $key ? 'sg-tab sg-tab--active' : 'sg-tab';
             $data  = $tab['ajax'] ? ' data-tab="' . esc_attr($key) . '"' : '';
-            echo '<a href="' . esc_url($tab['url']) . '" class="' . $class . '"' . $data . '>' . esc_html($tab['label']) . '</a>';
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $class is a hardcoded string, $data is pre-escaped above.
+            echo '<a href="' . esc_url($tab['url']) . '" class="' . esc_attr($class) . '"' . $data . '>' . esc_html($tab['label']) . '</a>';
         }
         echo '</nav>';
     }
