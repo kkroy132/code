@@ -332,7 +332,7 @@ Return ONLY valid JSON (no markdown):
         return $post_id;
     }
 
-    // ── Ajax handlers ─────────────────────────────────────────────────────────
+    // ── Ajax handlers ───────────────────────────────────────────────────────
 
     /** Get movies available for a list (filtered) */
     public static function ajax_get_movies(): void {
@@ -442,12 +442,12 @@ Return ONLY valid JSON (no markdown):
         ]);
     }
 
-    // ── Title builder ─────────────────────────────────────────────────────────
+    // ── Title builder ─────────────────────────────────────────────────────
 
     public static function build_title(string $template, array $p): string {
         $count    = (int) ($p['count']    ?? 10);
         $genre    = $p['genre']    ?? '';
-        $year     = $p['year']     ?? date('Y');
+        $year     = $p['year']     ?? gmdate('Y');
         $director = $p['director'] ?? '';
         $platform = $p['platform'] ?? 'Netflix';
         $movie    = $p['movie']    ?? '';

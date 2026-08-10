@@ -20,7 +20,7 @@ class Sinemagor_Meta_Boxes {
         if ($poster) echo '<img src="' . esc_url(Sinemagor_TMDB::image_url($poster, 'w185')) . '" style="width:100%;border-radius:6px;margin-bottom:10px" />';
         echo '<table style="width:100%;font-size:.85rem">';
         foreach (['Genre' => $genre, 'Year' => $year, 'TMDB Rating' => $tmdb_r, 'Editor Rating' => $rating, 'TMDB ID' => $tmdb_id] as $k => $v) {
-            echo "<tr><td><strong>{$k}</strong></td><td>" . esc_html($v ?: '—') . "</td></tr>";
+            echo '<tr><td><strong>' . esc_html($k) . '</strong></td><td>' . esc_html($v ?: '—') . '</td></tr>';
         }
         echo '</table>';
         echo '<a href="https://www.themoviedb.org/movie/' . esc_attr($tmdb_id) . '" target="_blank" style="font-size:.8rem;color:#e8b84b;display:block;margin-top:8px">View on TMDB →</a>';

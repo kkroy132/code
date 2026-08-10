@@ -114,11 +114,11 @@ class Sinemagor_Post_Health {
 
             <!-- Score -->
             <div class="sg-health-score">
-                <div class="sg-health-circle" style="--pct:<?php echo $pct; ?>;--color:<?php echo $color; ?>">
-                    <span><?php echo $pct; ?>%</span>
+                <div class="sg-health-circle" style="--pct:<?php echo esc_attr($pct); ?>;--color:<?php echo esc_attr($color); ?>">
+                    <span><?php echo esc_html($pct); ?>%</span>
                 </div>
                 <div class="sg-health-meta">
-                    <div><strong style="color:#e0e0f0"><?php echo $report['healthy']; ?> / <?php echo $report['total']; ?></strong> posts fully healthy</div>
+                    <div><strong style="color:#e0e0f0"><?php echo esc_html($report['healthy']); ?> / <?php echo esc_html($report['total']); ?></strong> posts fully healthy</div>
                     <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
                         <?php foreach ([
                             'no_faq'           => '❓ No FAQ',
@@ -128,7 +128,7 @@ class Sinemagor_Post_Health {
                             'no_verdict'       => '🏆 No Verdict',
                         ] as $key => $label): ?>
                             <span class="sg-health-badge" style="background:rgba(255,255,255,.06);border:1px solid #2e2e45;padding:4px 10px;border-radius:6px;font-size:.82rem;color:#aaa">
-                                <?php echo esc_html($label); ?>: <strong style="color:#e8b84b"><?php echo $report['summary'][$key]; ?></strong>
+                                <?php echo esc_html($label); ?>: <strong style="color:#e8b84b"><?php echo esc_html($report['summary'][$key]); ?></strong>
                             </span>
                         <?php endforeach; ?>
                     </div>
@@ -164,7 +164,7 @@ class Sinemagor_Post_Health {
                             <?php foreach ($row['issues'] as $iss):
                                 if (!in_array($iss, ['no_faq','no_internal_links','no_wtw'], true)) continue; ?>
                                 <button class="sg-btn sg-btn--ghost sg-btn--sm sg-fix-btn"
-                                    data-post="<?php echo $row['post_id']; ?>"
+                                    data-post="<?php echo esc_attr($row['post_id']); ?>"
                                     data-issue="<?php echo esc_attr($iss); ?>">
                                     Fix <?php echo esc_html(str_replace('no_', '', $iss)); ?>
                                 </button>
