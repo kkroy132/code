@@ -41,7 +41,7 @@ $years  = Sinemagor_DB::get_years();
     <!-- Page Header -->
     <div class="sg-archive-header">
         <h1 class="sg-archive-title">🎬 Movie Reviews</h1>
-        <p class="sg-archive-subtitle"><?php echo $q->found_posts; ?> reviews and counting</p>
+        <p class="sg-archive-subtitle"><?php echo esc_html($q->found_posts); ?> reviews and counting</p>
     </div>
 
     <!-- Filter Bar -->
@@ -105,13 +105,13 @@ $years  = Sinemagor_DB::get_years();
     <!-- Pagination -->
     <div class="sg-archive-pagination">
         <?php
-        echo paginate_links([
+        echo wp_kses_post(paginate_links([
             'total'   => $q->max_num_pages,
             'current' => $paged,
             'format'  => '?paged=%#%',
             'prev_text' => '‹ Prev',
             'next_text' => 'Next ›',
-        ]);
+        ]));
         ?>
     </div>
 

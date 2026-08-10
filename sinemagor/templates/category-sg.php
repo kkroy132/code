@@ -52,13 +52,13 @@ get_header();
     <!-- Category Hero -->
     <div class="sg-cat-hero">
         <div class="sg-cat-hero-inner">
-            <div class="sg-cat-icon"><?php echo $info['icon']; ?></div>
+            <div class="sg-cat-icon"><?php echo esc_html($info['icon']); ?></div>
             <div class="sg-cat-hero-text">
                 <div class="sg-cat-type-badge"><?php echo esc_html($info['label']); ?></div>
                 <h1 class="sg-cat-title"><?php echo esc_html($cat_name); ?></h1>
                 <p class="sg-cat-desc"><?php echo esc_html($cat_desc ?: $info['desc']); ?></p>
                 <div class="sg-cat-stats">
-                    <span>📽 <?php echo $post_count; ?> Review<?php echo $post_count !== 1 ? 's' : ''; ?></span>
+                    <span>💽 <?php echo esc_html($post_count); ?> Review<?php echo esc_html($post_count !== 1 ? 's' : ''); ?></span>
                 </div>
             </div>
         </div>
@@ -117,13 +117,13 @@ get_header();
 
         <!-- Pagination -->
         <div class="sg-archive-pagination" style="padding:0 20px 40px">
-            <?php echo paginate_links([
+            <?php echo wp_kses_post(paginate_links([
                 'total'     => $q->max_num_pages,
                 'current'   => $paged,
                 'prev_text' => '‹ Prev',
                 'next_text' => 'Next ›',
                 'add_args'  => $sort !== 'date' ? ['sort' => $sort] : [],
-            ]); ?>
+            ])); ?>
         </div>
 
         <?php else: ?>
