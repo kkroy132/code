@@ -158,20 +158,20 @@ PROMPT;
         string $verdict,
         string $keywords
     ): string {
-        return <<<PROMPT
+        $template = <<<'PROMPT'
 Generate 6 FAQ questions and answers for this film. Cover 6 different search intent categories.
 
 ══ FILM DATA ══
-Title:    {$title}
-Year:     {$year}
-Genre:    {$genre}
-Director: {$director}
-Runtime:  {$runtime}
-Review verdict: {$verdict}
-SEO keywords: {$keywords}
+Title:    {{TITLE}}
+Year:     {{YEAR}}
+Genre:    {{GENRE}}
+Director: {{DIRECTOR}}
+Runtime:  {{RUNTIME}}
+Review verdict: {{VERDICT}}
+SEO keywords: {{KEYWORDS}}
 
 ══ REQUIRED COVERAGE (one question per category) ══
-1. Verdict intent — specific, not "Is it worth watching?" 
+1. Verdict intent — specific, not "Is it worth watching?"
    E.g. "Does [Film] hold up today?" / "Is [Film] overrated?"
 2. Meaning/subtext — "What is [Film] really about?" / "What does [Film] say about [theme]?"
 3. Ending intent — "Why does [Film] end the way it does?" / "What does [Film]'s ending mean?"
@@ -182,6 +182,12 @@ SEO keywords: {$keywords}
 Return exactly 6 JSON objects:
 [{"question":"...","answer":"..."}]
 PROMPT;
+
+        return str_replace(
+            ['{{TITLE}}', '{{YEAR}}', '{{GENRE}}', '{{DIRECTOR}}', '{{RUNTIME}}', '{{VERDICT}}', '{{KEYWORDS}}'],
+            [$title, $year, $genre, $director, $runtime, $verdict, $keywords],
+            $template
+        );
     }
 
     // =========================================================================

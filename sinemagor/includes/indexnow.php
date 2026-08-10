@@ -23,7 +23,7 @@ class Sinemagor_IndexNow {
     public static function maybe_serve_key_file(): void {
         $key = self::get_key();
         if (!$key) return;
-        $uri = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
+        $uri = wp_parse_url(sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'] ?? '')), PHP_URL_PATH);
         if ($uri === '/' . $key . '.txt') {
             header('Content-Type: text/plain; charset=utf-8');
             echo esc_html($key);
@@ -55,7 +55,7 @@ class Sinemagor_IndexNow {
         $key = self::get_key();
         if (!$key) return ['error' => 'IndexNow key not set.'];
 
-        $host    = parse_url(home_url(), PHP_URL_HOST);
+        $host    = wp_parse_url(home_url(), PHP_URL_HOST);
         $body    = wp_json_encode([
             'host'        => $host,
             'key'         => $key,
@@ -99,7 +99,7 @@ class Sinemagor_IndexNow {
 
         $urls = array_values(array_filter(array_map('get_permalink', $posts)));
 
-        $host    = parse_url(home_url(), PHP_URL_HOST);
+        $host    = wp_parse_url(home_url(), PHP_URL_HOST);
         $body    = wp_json_encode([
             'host'        => $host,
             'key'         => $key,
@@ -225,7 +225,7 @@ class Sinemagor_IndexNow {
         return array_reverse(get_option(self::LOG_KEY, []));
     }
 
-    // ── AJAX handlers ─────────────────────────────────────────────────────────
+    // ── AJAX handlers ───────────────────────────────────────────────────────────
 
     public static function ajax_submit_single(): void {
         check_ajax_referer('sinemagor_nonce', 'nonce');

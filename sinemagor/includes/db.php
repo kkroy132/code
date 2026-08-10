@@ -97,8 +97,8 @@ class Sinemagor_DB {
         ];
         $args = wp_parse_args($args, $defaults);
 
-        $where  = ['1=1'];
-        $params = [];
+        $where  = ['%d=1'];
+        $params = [1];
 
         if (!empty($args['status'])) {
             $where[]  = 'status = %s';
@@ -127,13 +127,8 @@ class Sinemagor_DB {
         $params_count = $params;
         $params_data  = array_merge($params, [(int) $args['per_page'], $offset]);
 
-        if (!empty($params_count)) {
-            $total = (int) $wpdb->get_var($wpdb->prepare($count_sql, $params_count));
-            $rows  = $wpdb->get_results($wpdb->prepare($data_sql, $params_data));
-        } else {
-            $total = (int) $wpdb->get_var($count_sql);
-            $rows  = $wpdb->get_results("SELECT * FROM {$table} ORDER BY {$order_sql} LIMIT {$args['per_page']} OFFSET {$offset}");
-        }
+        $total = (int) $wpdb->get_var($wpdb->prepare($count_sql, $params_count));
+        $rows  = $wpdb->get_results($wpdb->prepare($data_sql, $params_data));
 
         return [
             'total' => $total,
