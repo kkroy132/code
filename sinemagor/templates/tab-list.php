@@ -45,7 +45,7 @@ $years   = Sinemagor_DB::get_years();
           <label class="sg-form-label">Count</label>
           <select id="sg-list-count" class="sg-select">
             <?php foreach ([5,10,15,20] as $n): ?>
-              <option value="<?php echo $n; ?>" <?php selected($n, 10); ?>><?php echo $n; ?> Movies</option>
+              <option value="<?php echo esc_attr($n); ?>" <?php selected($n, 10); ?>><?php echo esc_html($n); ?> Movies</option>
             <?php endforeach; ?>
           </select>
         </div>

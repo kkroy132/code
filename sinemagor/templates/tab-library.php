@@ -16,8 +16,8 @@
     </select>
     <select id="sg-year-filter" class="sg-select">
       <option value="">All Years</option>
-      <?php for ($y = date('Y'); $y >= 1990; $y--): ?>
-        <option value="<?php echo $y; ?>"><?php echo $y; ?></option>
+      <?php for ($y = (int) gmdate('Y'); $y >= 1990; $y--): ?>
+        <option value="<?php echo esc_attr($y); ?>"><?php echo esc_html($y); ?></option>
       <?php endfor; ?>
     </select>
     <select id="sg-lang-filter" class="sg-select">

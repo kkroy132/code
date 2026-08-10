@@ -18,8 +18,8 @@ $log   = Sinemagor_IndexNow::get_log();
       ['❌', 'Failed',          $stats['failed']],
     ] as [$icon, $label, $val]): ?>
     <div style="background:#1a1a28;border:1px solid #2e2e45;border-radius:8px;padding:12px 20px;min-width:110px;text-align:center">
-      <div style="font-size:1.3rem"><?php echo $icon; ?></div>
-      <div style="font-size:1.3rem;font-weight:700;color:#e8b84b"><?php echo (int) $val; ?></div>
+      <div style="font-size:1.3rem"><?php echo esc_html($icon); ?></div>
+      <div style="font-size:1.3rem;font-weight:700;color:#e8b84b"><?php echo esc_html((int) $val); ?></div>
       <div style="font-size:.75rem;color:#7a7a9a"><?php echo esc_html($label); ?></div>
     </div>
     <?php endforeach; ?>
