@@ -13,7 +13,7 @@ class Sinemagor_Widgets {
     }
 }
 
-// ── Trending Reviews Widget ────────────────────────────────────────────────────
+// ── Trending Reviews Widget ──────────────────────────────────────────────
 
 class Sinemagor_Widget_Trending extends WP_Widget {
 
@@ -37,8 +37,8 @@ class Sinemagor_Widget_Trending extends WP_Widget {
             'meta_query'     => [['key' => '_sinemagor_tmdb_id', 'compare' => 'EXISTS']],
         ]);
 
-        echo $args['before_widget'];
-        if ($title) echo $args['before_title'] . esc_html($title) . $args['after_title'];
+        echo wp_kses_post($args['before_widget']);
+        if ($title) echo wp_kses_post($args['before_title']) . esc_html($title) . wp_kses_post($args['after_title']);
         echo '<ul class="sg-widget-list">';
         foreach ($posts as $p) {
             $poster  = get_post_meta($p->ID, '_sinemagor_poster', true);
@@ -52,7 +52,7 @@ class Sinemagor_Widget_Trending extends WP_Widget {
             echo '</div></li>';
         }
         echo '</ul>';
-        echo $args['after_widget'];
+        echo wp_kses_post($args['after_widget']);
     }
 
     public function form($instance) {
@@ -60,10 +60,10 @@ class Sinemagor_Widget_Trending extends WP_Widget {
         $count = $instance['count'] ?? 5;
         ?>
         <p>
-            <label>Title:<input class="widefat" name="<?php echo $this->get_field_name('title'); ?>" value="<?php echo esc_attr($title); ?>" /></label>
+            <label>Title:<input class="widefat" name="<?php echo esc_attr($this->get_field_name('title')); ?>" value="<?php echo esc_attr($title); ?>" /></label>
         </p>
         <p>
-            <label>Count:<input type="number" class="tiny-text" name="<?php echo $this->get_field_name('count'); ?>" value="<?php echo esc_attr($count); ?>" min="1" max="10" /></label>
+            <label>Count:<input type="number" class="tiny-text" name="<?php echo esc_attr($this->get_field_name('count')); ?>" value="<?php echo esc_attr($count); ?>" min="1" max="10" /></label>
         </p>
         <?php
     }
@@ -76,7 +76,7 @@ class Sinemagor_Widget_Trending extends WP_Widget {
     }
 }
 
-// ── Latest Reviews Widget ─────────────────────────────────────────────────────
+// ── Latest Reviews Widget ──────────────────────────────────────────────
 
 class Sinemagor_Widget_Latest extends WP_Widget {
 
@@ -105,8 +105,8 @@ class Sinemagor_Widget_Latest extends WP_Widget {
             'meta_query'     => $meta_query,
         ]);
 
-        echo $args['before_widget'];
-        if ($title) echo $args['before_title'] . esc_html($title) . $args['after_title'];
+        echo wp_kses_post($args['before_widget']);
+        if ($title) echo wp_kses_post($args['before_title']) . esc_html($title) . wp_kses_post($args['after_title']);
         echo '<ul class="sg-widget-list">';
         foreach ($posts as $p) {
             $poster = get_post_meta($p->ID, '_sinemagor_poster', true);
@@ -121,7 +121,7 @@ class Sinemagor_Widget_Latest extends WP_Widget {
             echo '</div></li>';
         }
         echo '</ul>';
-        echo $args['after_widget'];
+        echo wp_kses_post($args['after_widget']);
     }
 
     public function form($instance) {
@@ -129,9 +129,9 @@ class Sinemagor_Widget_Latest extends WP_Widget {
         $count = $instance['count'] ?? 5;
         $genre = $instance['genre'] ?? '';
         ?>
-        <p><label>Title:<input class="widefat" name="<?php echo $this->get_field_name('title'); ?>" value="<?php echo esc_attr($title); ?>" /></label></p>
-        <p><label>Count:<input type="number" class="tiny-text" name="<?php echo $this->get_field_name('count'); ?>" value="<?php echo esc_attr($count); ?>" min="1" max="10" /></label></p>
-        <p><label>Filter by Genre (optional):<input class="widefat" name="<?php echo $this->get_field_name('genre'); ?>" value="<?php echo esc_attr($genre); ?>" placeholder="e.g. Action" /></label></p>
+        <p><label>Title:<input class="widefat" name="<?php echo esc_attr($this->get_field_name('title')); ?>" value="<?php echo esc_attr($title); ?>" /></label></p>
+        <p><label>Count:<input type="number" class="tiny-text" name="<?php echo esc_attr($this->get_field_name('count')); ?>" value="<?php echo esc_attr($count); ?>" min="1" max="10" /></label></p>
+        <p><label>Filter by Genre (optional):<input class="widefat" name="<?php echo esc_attr($this->get_field_name('genre')); ?>" value="<?php echo esc_attr($genre); ?>" placeholder="e.g. Action" /></label></p>
         <?php
     }
 

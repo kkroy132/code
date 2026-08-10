@@ -149,7 +149,7 @@ class Sinemagor_Settings {
                             <?php endforeach; ?>
                         </select>
                         <p class="description" style="margin-top:6px">
-                            DeepSeek V3 — সবচেয়ে কম cost, ভালো quality। Claude Haiku — fastest।
+                            DeepSeek V3 — সবচেয়ে কম cost, ভালো quality। Claude Haiku — fastest।
                         </p>
 
                         <!-- Test button -->
@@ -229,7 +229,7 @@ class Sinemagor_Settings {
                             <?php echo $retro_progress['running'] ? '⚡ Running...' : '✅ Ready'; ?>
                         </strong>
                         <span style="color:#7a7a9a;font-size:.85rem;margin-left:10px" id="sg-retro-text">
-                            <?php echo $retro_progress['done']; ?> / <?php echo $retro_progress['total']; ?> posts updated
+                            <?php echo esc_html($retro_progress['done']); ?> / <?php echo esc_html($retro_progress['total']); ?> posts updated
                         </span>
                     </div>
                     <div style="margin-left:auto;display:flex;gap:8px">
@@ -239,7 +239,7 @@ class Sinemagor_Settings {
                     </div>
                 </div>
                 <div style="height:6px;background:#2e2e45;border-radius:3px">
-                    <div id="sg-retro-fill" style="height:100%;background:linear-gradient(90deg,#e8b84b,#4caf50);border-radius:3px;width:<?php echo $retro_progress['percent']; ?>%;transition:width .4s"></div>
+                    <div id="sg-retro-fill" style="height:100%;background:linear-gradient(90deg,#e8b84b,#4caf50);border-radius:3px;width:<?php echo esc_attr($retro_progress['percent']); ?>%;transition:width .4s"></div>
                 </div>
                 <?php if ($retro_progress['done_at']): ?>
                 <div style="font-size:.78rem;color:#606080;margin-top:6px">
@@ -323,9 +323,9 @@ class Sinemagor_Settings {
                     'language' => ['🌍', 'Language'],
                 ] as $type => [$icon, $label]): ?>
                 <div style="background:#1a1a28;border:1px solid #2e2e45;border-radius:8px;padding:10px 16px;min-width:100px;text-align:center">
-                    <div style="font-size:1.2rem"><?php echo $icon; ?></div>
-                    <div style="font-size:1.1rem;font-weight:700;color:#e8b84b"><?php echo $stats[$type] ?? 0; ?></div>
-                    <div style="font-size:.75rem;color:#7a7a9a"><?php echo $label; ?> cats</div>
+                    <div style="font-size:1.2rem"><?php echo esc_html($icon); ?></div>
+                    <div style="font-size:1.1rem;font-weight:700;color:#e8b84b"><?php echo esc_html($stats[$type] ?? 0); ?></div>
+                    <div style="font-size:.75rem;color:#7a7a9a"><?php echo esc_html($label); ?> cats</div>
                 </div>
                 <?php endforeach; ?>
                 <div style="margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
@@ -349,7 +349,7 @@ class Sinemagor_Settings {
                     <td>
                         <select name="autocat_cast_limit">
                             <?php foreach ([1,2,3,4,5] as $n): ?>
-                                <option value="<?php echo $n; ?>" <?php selected($ac_limit, $n); ?>>Top <?php echo $n; ?> cast member<?php echo $n > 1 ? 's' : ''; ?></option>
+                                <option value="<?php echo esc_attr($n); ?>" <?php selected($ac_limit, $n); ?>>Top <?php echo esc_html($n); ?> cast member<?php echo esc_html($n > 1 ? 's' : ''); ?></option>
                             <?php endforeach; ?>
                         </select>
                         <p class="description">How many cast members get their own category.</p>
