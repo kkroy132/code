@@ -61,22 +61,32 @@ class Sinemagor_Cost_Tracker {
     /** Stats: total cost, calls, tokens — optionally filtered by date range. */
     public static function get_stats(string $from = '', string $to = ''): array {
         global $wpdb;
-        $table  = $wpdb->prefix . self::TABLE;
-        $where  = '1=1';
-        $params = [];
+        $table = $wpdb->prefix . self::TABLE;
 
-        if ($from) { $where .= ' AND created_at >= %s'; $params[] = $from; }
-        if ($to)   { $where .= ' AND created_at <= %s'; $params[] = $to . ' 23:59:59'; }
-
-        $sql  = "SELECT COUNT(*) AS calls,
-                        SUM(input_tokens)  AS total_input,
-                        SUM(output_tokens) AS total_output,
-                        SUM(cost_usd)      AS total_cost
-                 FROM {$table} WHERE {$where}";
-
-        $row = $params
-            ? $wpdb->get_row($wpdb->prepare($sql, $params))
-            : $wpdb->get_row($sql);
+        if ($from && $to) {
+            $row = $wpdb->get_row($wpdb->prepare(
+                "SELECT COUNT(*) AS calls, SUM(input_tokens) AS total_input, SUM(output_tokens) AS total_output, SUM(cost_usd) AS total_cost
+                 FROM {$table} WHERE created_at >= %s AND created_at <= %s",
+                $from, $to . ' 23:59:59'
+            ));
+        } elseif ($from) {
+            $row = $wpdb->get_row($wpdb->prepare(
+                "SELECT COUNT(*) AS calls, SUM(input_tokens) AS total_input, SUM(output_tokens) AS total_output, SUM(cost_usd) AS total_cost
+                 FROM {$table} WHERE created_at >= %s",
+                $from
+            ));
+        } elseif ($to) {
+            $row = $wpdb->get_row($wpdb->prepare(
+                "SELECT COUNT(*) AS calls, SUM(input_tokens) AS total_input, SUM(output_tokens) AS total_output, SUM(cost_usd) AS total_cost
+                 FROM {$table} WHERE created_at <= %s",
+                $to . ' 23:59:59'
+            ));
+        } else {
+            $row = $wpdb->get_row(
+                "SELECT COUNT(*) AS calls, SUM(input_tokens) AS total_input, SUM(output_tokens) AS total_output, SUM(cost_usd) AS total_cost
+                 FROM {$table}"
+            );
+        }
 
         return [
             'calls'        => (int)   ($row->calls        ?? 0),
@@ -90,7 +100,7 @@ class Sinemagor_Cost_Tracker {
     public static function get_daily(int $days = 30): array {
         global $wpdb;
         $table = $wpdb->prefix . self::TABLE;
-        $since = date('Y-m-d', strtotime("-{$days} days"));
+        $since = gmdate('Y-m-d', strtotime("-{$days} days"));
 
         $rows = $wpdb->get_results($wpdb->prepare(
             "SELECT DATE(created_at) AS day,
@@ -109,7 +119,7 @@ class Sinemagor_Cost_Tracker {
 
         $result = [];
         for ($i = $days - 1; $i >= 0; $i--) {
-            $d = date('Y-m-d', strtotime("-{$i} days"));
+            $d = gmdate('Y-m-d', strtotime("-{$i} days"));
             $result[] = ['day' => $d, 'calls' => $map[$d]['calls'] ?? 0, 'cost' => $map[$d]['cost'] ?? 0];
         }
         return $result;

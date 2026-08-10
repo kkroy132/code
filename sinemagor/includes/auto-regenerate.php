@@ -40,7 +40,7 @@ class Sinemagor_Auto_Regenerate {
         $limit = (int) Sinemagor_Settings::get('regen_per_run', 3);
         if (!$days) return;
 
-        $cutoff = date('Y-m-d H:i:s', strtotime("-{$days} days"));
+        $cutoff = gmdate('Y-m-d H:i:s', strtotime("-{$days} days"));
 
         $posts = get_posts([
             'post_type'      => 'post',
