@@ -16,7 +16,7 @@ class Sinemagor_Post_Health {
             'post_type'      => 'post',
             'post_status'    => 'publish',
             'posts_per_page' => -1,
-            'meta_query'     => [['key' => '_sinemagor_tmdb_id', 'compare' => 'EXISTS']],
+            'meta_query'     => [['key' => '_sinemagor_tmdb_id', 'compare' => 'EXISTS']], // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- selecting only plugin-generated movie posts is this function's core purpose.
         ]);
 
         $report = [
@@ -216,7 +216,7 @@ class Sinemagor_Post_Health {
     public static function ajax_fix_one(): void {
         check_ajax_referer('sinemagor_nonce', 'nonce');
         if (!current_user_can('edit_posts')) wp_send_json_error('Permission denied.');
-        $post_id = (int) ($_POST['post_id'] ?? 0);
+        $post_id = isset($_POST['post_id']) ? absint(wp_unslash($_POST['post_id'])) : 0;
         $issue   = sanitize_key($_POST['issue'] ?? '');
         if (!$post_id || !$issue) wp_send_json_error('Invalid params.');
         $ok = self::fix($post_id, $issue);

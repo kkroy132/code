@@ -175,7 +175,7 @@ class Sinemagor_Where_To_Watch {
     public static function ajax_fetch(): void {
         check_ajax_referer('sinemagor_nonce', 'nonce');
         if (!current_user_can('edit_posts')) wp_send_json_error('Permission denied.');
-        $pid = (int)($_POST['post_id'] ?? 0);
+        $pid = isset($_POST['post_id']) ? absint(wp_unslash($_POST['post_id'])) : 0;
         if (!$pid) wp_send_json_error('Invalid ID.');
         delete_post_meta($pid, '_sinemagor_wtw');
         self::fetch_and_save($pid);

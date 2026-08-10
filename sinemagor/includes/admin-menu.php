@@ -16,9 +16,10 @@ class Sinemagor_Admin_Menu {
             'sinemagor-comparison' => 'comparison',
             'sinemagor-health'     => 'health',
         ];
-        $page = $_GET['page'] ?? '';
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only navigational redirect based on the requested admin page slug, not a form submission.
+        $page = isset($_GET['page']) ? sanitize_key(wp_unslash($_GET['page'])) : '';
         if (isset($map[$page])) {
-            wp_redirect(admin_url('admin.php?page=sinemagor&tab=' . $map[$page]));
+            wp_safe_redirect(admin_url('admin.php?page=sinemagor&tab=' . $map[$page]));
             exit;
         }
     }
@@ -38,7 +39,8 @@ class Sinemagor_Admin_Menu {
     }
 
     public static function render_page(): void {
-        $active = sanitize_key($_GET['tab'] ?? 'library');
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only tab switcher, not a form submission.
+        $active = isset($_GET['tab']) ? sanitize_key(wp_unslash($_GET['tab'])) : 'library';
         $allowed = ['library', 'review', 'list', 'comparison', 'indexnow', 'health'];
         if (!in_array($active, $allowed, true)) $active = 'library';
 
@@ -49,7 +51,7 @@ class Sinemagor_Admin_Menu {
             'posts_per_page' => 50,
             'orderby'        => 'date',
             'order'          => 'DESC',
-            'meta_query'     => [['key' => '_sinemagor_list_post', 'value' => 1]],
+            'meta_query'     => [['key' => '_sinemagor_list_post', 'value' => 1]], // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- filtering by a plugin-defined meta key on a small admin-only listing; no user-facing pagination.
         ]);
         $posts_data = array_map(fn($p) => [
             'title'       => $p->post_title,

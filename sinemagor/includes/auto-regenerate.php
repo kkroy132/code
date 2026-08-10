@@ -47,7 +47,7 @@ class Sinemagor_Auto_Regenerate {
             'post_status'    => 'publish',
             'posts_per_page' => $limit,
             'date_query'     => [['before' => $cutoff, 'column' => 'post_modified']],
-            'meta_query'     => [
+            'meta_query'     => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- selecting stale plugin-generated movie posts due for regeneration is this function's core purpose.
                 ['key' => '_sinemagor_tmdb_id', 'compare' => 'EXISTS'],
                 // Skip posts regenerated recently
                 ['key' => '_sinemagor_regen_at', 'compare' => 'NOT EXISTS'],

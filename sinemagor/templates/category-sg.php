@@ -23,7 +23,8 @@ $type_info = [
 $info = $type_info[$cat_type] ?? ['icon' => '🎬', 'label' => 'Category', 'desc' => "Movies in {$cat_name}"];
 
 $paged = max(1, get_query_var('paged'));
-$sort  = sanitize_key($_GET['sort'] ?? 'date');
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only public archive sort query arg, not a form submission.
+$sort  = isset($_GET['sort']) ? sanitize_key(wp_unslash($_GET['sort'])) : 'date';
 
 $query_args = [
     'post_type'      => 'post',
@@ -34,7 +35,7 @@ $query_args = [
 ];
 
 if ($sort === 'rating') {
-    $query_args['meta_key'] = '_sinemagor_editor_rating';
+    $query_args['meta_key'] = '_sinemagor_editor_rating'; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- sorting by plugin-defined editor rating meta is an explicit user-facing option.
     $query_args['orderby']  = 'meta_value_num';
     $query_args['order']    = 'DESC';
 } else {

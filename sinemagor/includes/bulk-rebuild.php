@@ -32,7 +32,7 @@ class Sinemagor_Bulk_Rebuild {
             'post_status'    => 'publish',
             'posts_per_page' => -1,
             'fields'         => 'ids',
-            'meta_query'     => [['key' => '_sinemagor_tmdb_id', 'compare' => 'EXISTS']],
+            'meta_query'     => [['key' => '_sinemagor_tmdb_id', 'compare' => 'EXISTS']], // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- selecting only plugin-generated movie posts is this function's core purpose.
         ]);
 
         if (empty($posts)) return ['queued' => 0];

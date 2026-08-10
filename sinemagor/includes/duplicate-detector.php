@@ -56,7 +56,7 @@ class Sinemagor_Duplicate_Detector {
             'post_type'      => 'post',
             'post_status'    => ['publish', 'draft'],
             'posts_per_page' => 1,
-            'meta_query'     => [['key' => '_sinemagor_tmdb_id', 'value' => $tmdb_id]],
+            'meta_query'     => [['key' => '_sinemagor_tmdb_id', 'value' => $tmdb_id]], // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- looking up a movie post by its TMDB id meta is this function's core purpose.
         ];
         if ($exclude) $args['post__not_in'] = [$exclude];
         $q = new WP_Query($args);
@@ -66,6 +66,7 @@ class Sinemagor_Duplicate_Detector {
     /** Scan all posts for duplicates — used in Admin dashboard. */
     public static function scan_all(): array {
         global $wpdb;
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- aggregate GROUP BY/HAVING duplicate scan across all postmeta, not expressible via get_posts()/WP_Query; admin-only, run on demand.
         $rows = $wpdb->get_results(
             "SELECT meta_value AS tmdb_id, COUNT(*) AS cnt
              FROM {$wpdb->postmeta}
@@ -77,8 +78,8 @@ class Sinemagor_Duplicate_Detector {
             $posts = get_posts([
                 'post_type'   => 'post',
                 'post_status' => 'any',
-                'meta_key'    => '_sinemagor_tmdb_id',
-                'meta_value'  => $row->tmdb_id,
+                'meta_key'    => '_sinemagor_tmdb_id', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- looking up posts by TMDB id meta is this function's core purpose.
+                'meta_value'  => $row->tmdb_id, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
                 'numberposts' => -1,
             ]);
             $out[] = [

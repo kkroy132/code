@@ -31,10 +31,10 @@ class Sinemagor_Widget_Trending extends WP_Widget {
             'post_type'      => 'post',
             'post_status'    => 'publish',
             'posts_per_page' => $count,
-            'meta_key'       => '_sinemagor_editor_rating',
+            'meta_key'       => '_sinemagor_editor_rating', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- sorting by plugin-defined editor rating is this widget's core purpose.
             'orderby'        => 'meta_value_num',
             'order'          => 'DESC',
-            'meta_query'     => [['key' => '_sinemagor_tmdb_id', 'compare' => 'EXISTS']],
+            'meta_query'     => [['key' => '_sinemagor_tmdb_id', 'compare' => 'EXISTS']], // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- selecting only plugin-generated movie posts is this widget's core purpose.
         ]);
 
         echo wp_kses_post($args['before_widget']);
@@ -102,7 +102,7 @@ class Sinemagor_Widget_Latest extends WP_Widget {
             'posts_per_page' => $count,
             'orderby'        => 'date',
             'order'          => 'DESC',
-            'meta_query'     => $meta_query,
+            'meta_query'     => $meta_query, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- filtering by plugin-defined movie meta is this widget's core purpose.
         ]);
 
         echo wp_kses_post($args['before_widget']);

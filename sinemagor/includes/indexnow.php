@@ -93,7 +93,7 @@ class Sinemagor_IndexNow {
             'post_status'    => 'publish',
             'posts_per_page' => -1,
             'fields'         => 'ids',
-            'meta_query'     => [['key' => '_sinemagor_tmdb_id', 'compare' => 'EXISTS']],
+            'meta_query'     => [['key' => '_sinemagor_tmdb_id', 'compare' => 'EXISTS']], // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- selecting only plugin-generated movie posts is this function's core purpose.
         ]);
         if (empty($posts)) return ['submitted' => 0, 'indexnow' => 0, 'bing' => 0];
 
@@ -146,7 +146,7 @@ class Sinemagor_IndexNow {
             'post_status'    => 'publish',
             'posts_per_page' => -1,
             'fields'         => 'ids',
-            'meta_query'     => $meta_query,
+            'meta_query'     => $meta_query, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- filtering plugin-generated movie posts by submission status is this function's core purpose.
         ]))->found_posts;
 
         $posts = get_posts([
@@ -156,7 +156,7 @@ class Sinemagor_IndexNow {
             'offset'         => ($page - 1) * $per_page,
             'orderby'        => 'date',
             'order'          => 'DESC',
-            'meta_query'     => $meta_query,
+            'meta_query'     => $meta_query, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- see justification above.
         ]);
 
         $rows = [];
@@ -187,13 +187,13 @@ class Sinemagor_IndexNow {
         $all = (int) (new WP_Query([
             'post_type' => 'post', 'post_status' => 'publish',
             'posts_per_page' => -1, 'fields' => 'ids',
-            'meta_query' => [['key' => '_sinemagor_tmdb_id', 'compare' => 'EXISTS']],
+            'meta_query' => [['key' => '_sinemagor_tmdb_id', 'compare' => 'EXISTS']], // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- selecting only plugin-generated movie posts is this function's core purpose.
         ]))->found_posts;
 
         $submitted = (int) (new WP_Query([
             'post_type' => 'post', 'post_status' => 'publish',
             'posts_per_page' => -1, 'fields' => 'ids',
-            'meta_query' => [
+            'meta_query' => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- see justification above.
                 ['key' => '_sinemagor_tmdb_id', 'compare' => 'EXISTS'],
                 ['key' => self::META_SUBMITTED,  'compare' => 'EXISTS'],
             ],
@@ -202,7 +202,7 @@ class Sinemagor_IndexNow {
         $success = (int) (new WP_Query([
             'post_type' => 'post', 'post_status' => 'publish',
             'posts_per_page' => -1, 'fields' => 'ids',
-            'meta_query' => [
+            'meta_query' => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- see justification above.
                 ['key' => '_sinemagor_tmdb_id', 'compare' => 'EXISTS'],
                 ['key' => self::META_STATUS, 'value' => 'success'],
             ],
@@ -230,7 +230,7 @@ class Sinemagor_IndexNow {
     public static function ajax_submit_single(): void {
         check_ajax_referer('sinemagor_nonce', 'nonce');
         if (!current_user_can('manage_options')) wp_send_json_error('Permission denied.');
-        $post_id = (int) ($_POST['post_id'] ?? 0);
+        $post_id = isset($_POST['post_id']) ? absint(wp_unslash($_POST['post_id'])) : 0;
         if (!$post_id) wp_send_json_error('Invalid post ID.');
         wp_send_json_success(self::submit_by_post_id($post_id));
     }
@@ -243,7 +243,7 @@ class Sinemagor_IndexNow {
 
     public static function ajax_get_posts(): void {
         check_ajax_referer('sinemagor_nonce', 'nonce');
-        $page   = (int) ($_POST['page']   ?? 1);
+        $page   = isset($_POST['page']) ? absint(wp_unslash($_POST['page'])) : 1;
         $filter = sanitize_key($_POST['filter'] ?? 'all');
         wp_send_json_success(self::get_posts_status($page, 30, $filter));
     }

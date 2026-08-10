@@ -340,11 +340,11 @@ Return ONLY valid JSON (no markdown):
         if (!current_user_can('edit_posts')) wp_send_json_error('Permission denied.');
 
         $movies = self::get_movies_for_list([
-            'genre'      => sanitize_text_field($_POST['genre']      ?? ''),
-            'year'       => sanitize_text_field($_POST['year']       ?? ''),
-            'director'   => sanitize_text_field($_POST['director']   ?? ''),
-            'min_rating' => sanitize_text_field($_POST['min_rating'] ?? ''),
-            'count'      => (int) ($_POST['count'] ?? 10),
+            'genre'      => isset($_POST['genre'])      ? sanitize_text_field(wp_unslash($_POST['genre']))      : '',
+            'year'       => isset($_POST['year'])       ? sanitize_text_field(wp_unslash($_POST['year']))       : '',
+            'director'   => isset($_POST['director'])   ? sanitize_text_field(wp_unslash($_POST['director']))   : '',
+            'min_rating' => isset($_POST['min_rating']) ? sanitize_text_field(wp_unslash($_POST['min_rating'])) : '',
+            'count'      => isset($_POST['count']) ? absint(wp_unslash($_POST['count'])) : 10,
         ]);
 
         // Add poster thumb + wp post url
@@ -361,13 +361,13 @@ Return ONLY valid JSON (no markdown):
     /** Preview title based on template + params */
     public static function ajax_preview(): void {
         check_ajax_referer('sinemagor_nonce', 'nonce');
-        $template = sanitize_text_field($_POST['template'] ?? 'custom');
-        $genre    = sanitize_text_field($_POST['genre']    ?? '');
-        $year     = sanitize_text_field($_POST['year']     ?? '');
-        $director = sanitize_text_field($_POST['director'] ?? '');
-        $platform = sanitize_text_field($_POST['platform'] ?? '');
-        $movie    = sanitize_text_field($_POST['movie']    ?? '');
-        $count    = (int) ($_POST['count'] ?? 10);
+        $template = isset($_POST['template']) ? sanitize_text_field(wp_unslash($_POST['template'])) : 'custom';
+        $genre    = isset($_POST['genre'])    ? sanitize_text_field(wp_unslash($_POST['genre']))    : '';
+        $year     = isset($_POST['year'])     ? sanitize_text_field(wp_unslash($_POST['year']))     : '';
+        $director = isset($_POST['director']) ? sanitize_text_field(wp_unslash($_POST['director'])) : '';
+        $platform = isset($_POST['platform']) ? sanitize_text_field(wp_unslash($_POST['platform'])) : '';
+        $movie    = isset($_POST['movie'])    ? sanitize_text_field(wp_unslash($_POST['movie']))    : '';
+        $count    = isset($_POST['count']) ? absint(wp_unslash($_POST['count'])) : 10;
 
         $title = self::build_title($template, compact('genre','year','director','platform','movie','count'));
         wp_send_json_success(['title' => $title]);
@@ -378,15 +378,15 @@ Return ONLY valid JSON (no markdown):
         check_ajax_referer('sinemagor_nonce', 'nonce');
         if (!current_user_can('edit_posts')) wp_send_json_error('Permission denied.');
 
-        $template   = sanitize_text_field($_POST['template']   ?? 'custom');
-        $genre      = sanitize_text_field($_POST['genre']      ?? '');
-        $year       = sanitize_text_field($_POST['year']       ?? '');
-        $director   = sanitize_text_field($_POST['director']   ?? '');
-        $platform   = sanitize_text_field($_POST['platform']   ?? '');
-        $movie_ref  = sanitize_text_field($_POST['movie_ref']  ?? '');
-        $custom_title = sanitize_text_field($_POST['custom_title'] ?? '');
-        $count      = max(3, min(20, (int) ($_POST['count'] ?? 10)));
-        $min_rating = (float) ($_POST['min_rating'] ?? 0);
+        $template   = isset($_POST['template'])   ? sanitize_text_field(wp_unslash($_POST['template']))   : 'custom';
+        $genre      = isset($_POST['genre'])      ? sanitize_text_field(wp_unslash($_POST['genre']))      : '';
+        $year       = isset($_POST['year'])       ? sanitize_text_field(wp_unslash($_POST['year']))       : '';
+        $director   = isset($_POST['director'])   ? sanitize_text_field(wp_unslash($_POST['director']))   : '';
+        $platform   = isset($_POST['platform'])   ? sanitize_text_field(wp_unslash($_POST['platform']))   : '';
+        $movie_ref  = isset($_POST['movie_ref'])  ? sanitize_text_field(wp_unslash($_POST['movie_ref']))  : '';
+        $custom_title = isset($_POST['custom_title']) ? sanitize_text_field(wp_unslash($_POST['custom_title'])) : '';
+        $count      = isset($_POST['count'])      ? max(3, min(20, absint(wp_unslash($_POST['count'])))) : 10;
+        $min_rating = isset($_POST['min_rating']) ? (float) sanitize_text_field(wp_unslash($_POST['min_rating'])) : 0;
 
         // Selected movie IDs (manual override) or auto-pick
         $selected_ids = array_map('intval', (array) ($_POST['movie_ids'] ?? []));

@@ -43,9 +43,8 @@ class Sinemagor_Star_Rating {
     public static function get_stats(int $post_id): array {
         global $wpdb;
         $table = $wpdb->prefix . self::TABLE;
-        $row   = $wpdb->get_row($wpdb->prepare(
-            "SELECT COUNT(*) AS total, AVG(rating) AS avg FROM {$table} WHERE post_id = %d", $post_id
-        ));
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $table is a hardcoded internal constant, never user input.
+        $row = $wpdb->get_row($wpdb->prepare("SELECT COUNT(*) AS total, AVG(rating) AS avg FROM {$table} WHERE post_id = %d", $post_id));
         return [
             'total' => (int)   ($row->total ?? 0),
             'avg'   => round((float) ($row->avg ?? 0), 1),
@@ -56,15 +55,14 @@ class Sinemagor_Star_Rating {
         global $wpdb;
         $table = $wpdb->prefix . self::TABLE;
         $ip    = self::get_ip();
-        return (int) $wpdb->get_var($wpdb->prepare(
-            "SELECT rating FROM {$table} WHERE post_id=%d AND user_ip=%s", $post_id, $ip
-        ));
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $table is a hardcoded internal constant, never user input.
+        return (int) $wpdb->get_var($wpdb->prepare("SELECT rating FROM {$table} WHERE post_id=%d AND user_ip=%s", $post_id, $ip));
     }
 
     public static function ajax_submit(): void {
         check_ajax_referer('sg_rating_nonce', 'nonce');
-        $post_id = (int) ($_POST['post_id'] ?? 0);
-        $rating  = (int) ($_POST['rating']  ?? 0);
+        $post_id = isset($_POST['post_id']) ? absint(wp_unslash($_POST['post_id'])) : 0;
+        $rating  = isset($_POST['rating'])  ? absint(wp_unslash($_POST['rating']))  : 0;
 
         if (!$post_id || $rating < 1 || $rating > 10) wp_send_json_error('Invalid data.');
         if (!get_post_meta($post_id, '_sinemagor_tmdb_id', true)) wp_send_json_error('Not a movie post.');
@@ -74,11 +72,8 @@ class Sinemagor_Star_Rating {
         $ip    = self::get_ip();
 
         // Upsert
-        $wpdb->query($wpdb->prepare(
-            "INSERT INTO {$table} (post_id, user_ip, rating) VALUES (%d, %s, %d)
-             ON DUPLICATE KEY UPDATE rating = %d, created_at = NOW()",
-            $post_id, $ip, $rating, $rating
-        ));
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $table is a hardcoded internal constant, never user input.
+        $wpdb->query($wpdb->prepare("INSERT INTO {$table} (post_id, user_ip, rating) VALUES (%d, %s, %d) ON DUPLICATE KEY UPDATE rating = %d, created_at = NOW()", $post_id, $ip, $rating, $rating));
 
         $stats = self::get_stats($post_id);
 
@@ -121,10 +116,10 @@ class Sinemagor_Star_Rating {
     }
 
     private static function get_ip(): string {
-        $ip = $_SERVER['HTTP_CF_CONNECTING_IP']
-           ?? $_SERVER['HTTP_X_FORWARDED_FOR']
-           ?? $_SERVER['REMOTE_ADDR']
-           ?? '0.0.0.0';
-        return sanitize_text_field(explode(',', $ip)[0]);
+        $ip = isset($_SERVER['HTTP_CF_CONNECTING_IP'])   ? sanitize_text_field(wp_unslash($_SERVER['HTTP_CF_CONNECTING_IP']))
+            : (isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_X_FORWARDED_FOR']))
+            : (isset($_SERVER['REMOTE_ADDR'])          ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR']))
+            : '0.0.0.0'));
+        return explode(',', $ip)[0];
     }
 }

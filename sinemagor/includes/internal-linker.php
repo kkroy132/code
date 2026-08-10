@@ -111,7 +111,7 @@ class Sinemagor_Internal_Linker {
                 'post_status'    => 'publish',
                 'posts_per_page' => 3,
                 'post__not_in'   => [$exclude_id],
-                'meta_query'     => [[
+                'meta_query'     => [[ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- finding related posts by plugin-defined cast meta is this function's core purpose.
                     'key'     => '_sinemagor_cast',
                     'value'   => $name,
                     'compare' => 'LIKE',
@@ -133,7 +133,7 @@ class Sinemagor_Internal_Linker {
                 'post_status'    => 'publish',
                 'posts_per_page' => 3,
                 'post__not_in'   => array_merge([$exclude_id], array_keys($found)),
-                'meta_query'     => [[
+                'meta_query'     => [[ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- finding related posts by plugin-defined director meta is this function's core purpose.
                     'key'     => '_sinemagor_director',
                     'value'   => $director,
                     'compare' => 'LIKE',
@@ -177,7 +177,7 @@ class Sinemagor_Internal_Linker {
             'post__not_in'   => [$exclude_id],
             'orderby'        => 'date',
             'order'          => 'DESC',
-            'meta_query'     => [[
+            'meta_query'     => [[ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- finding related posts by plugin-defined genre meta is this function's core purpose.
                 'key'     => '_sinemagor_genre',
                 'value'   => $primary,
                 'compare' => 'LIKE',

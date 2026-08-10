@@ -258,7 +258,7 @@ Return ONLY valid JSON (no markdown):
             'page'     => 1,
             'orderby'  => 'title',
             'order'    => 'ASC',
-            'search'   => sanitize_text_field($_POST['search'] ?? ''),
+            'search'   => isset($_POST['search']) ? sanitize_text_field(wp_unslash($_POST['search'])) : '',
         ]);
 
         $rows = array_map(fn($m) => [
@@ -277,8 +277,8 @@ Return ONLY valid JSON (no markdown):
         check_ajax_referer('sinemagor_nonce', 'nonce');
         if (!current_user_can('edit_posts')) wp_send_json_error('Permission denied.');
 
-        $id_a = (int) ($_POST['movie_a'] ?? 0);
-        $id_b = (int) ($_POST['movie_b'] ?? 0);
+        $id_a = isset($_POST['movie_a']) ? absint(wp_unslash($_POST['movie_a'])) : 0;
+        $id_b = isset($_POST['movie_b']) ? absint(wp_unslash($_POST['movie_b'])) : 0;
         if (!$id_a || !$id_b || $id_a === $id_b) wp_send_json_error('Select two different movies.');
 
         $result = self::generate($id_a, $id_b);

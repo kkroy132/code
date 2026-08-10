@@ -212,7 +212,7 @@
 
   function loadVsPosts(){
     var posts = <?php
-      $vp = get_posts(['post_type'=>'post','post_status'=>'any','posts_per_page'=>30,'meta_query'=>[['key'=>'_sinemagor_comparison','value'=>1]]]);
+      $vp = get_posts(['post_type'=>'post','post_status'=>'any','posts_per_page'=>30,'meta_query'=>[['key'=>'_sinemagor_comparison','value'=>1]]]); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- filtering by a plugin-defined meta key on a small admin-only listing.
       echo wp_json_encode(array_map(fn($p)=>['title'=>$p->post_title,'status'=>$p->post_status,'date'=>get_the_date('Y-m-d',$p),'edit_url'=>get_edit_post_link($p->ID,'raw'),'view_url'=>get_permalink($p->ID)], $vp));
     ?>;
     if(!posts.length){ $('#sg-vs-posts-tbody').html('<tr><td colspan="4" class="sg-empty">No comparison posts yet.</td></tr>'); return; }

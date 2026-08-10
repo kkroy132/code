@@ -20,7 +20,7 @@ class Sinemagor_Shortcode {
             'posts_per_page' => (int) $atts['count'],
             'orderby'        => sanitize_key($atts['orderby']),
             'order'          => 'DESC',
-            'meta_query'     => [['key' => '_sinemagor_tmdb_id', 'compare' => 'EXISTS']],
+            'meta_query'     => [['key' => '_sinemagor_tmdb_id', 'compare' => 'EXISTS']], // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- filtering by plugin-defined movie meta is this shortcode's core purpose.
         ];
 
         if ($atts['genre']) {

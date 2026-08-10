@@ -11,8 +11,8 @@ class Sinemagor_Model_Tester {
         check_ajax_referer('sinemagor_nonce', 'nonce');
         if (!current_user_can('manage_options')) wp_send_json_error('Permission denied.');
 
-        $model   = sanitize_text_field($_POST['model']   ?? '');
-        $api_key = sanitize_text_field($_POST['api_key'] ?? '');
+        $model   = isset($_POST['model'])   ? sanitize_text_field(wp_unslash($_POST['model']))   : '';
+        $api_key = isset($_POST['api_key']) ? sanitize_text_field(wp_unslash($_POST['api_key'])) : '';
 
         if (!$model || !$api_key) {
             wp_send_json_error('Model and API key are required.');

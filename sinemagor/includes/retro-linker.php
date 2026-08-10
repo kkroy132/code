@@ -109,7 +109,7 @@ class Sinemagor_Retro_Linker {
             'posts_per_page' => 50,
             'post__not_in'   => [$exclude],
             'fields'         => 'ids',
-            'meta_query'     => [[
+            'meta_query'     => [[ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- finding related posts by plugin-defined meta is this function's core purpose.
                 'key'     => $key,
                 'value'   => $value,
                 'compare' => 'LIKE',
@@ -209,7 +209,7 @@ class Sinemagor_Retro_Linker {
             'post_status'    => 'publish',
             'posts_per_page' => -1,
             'fields'         => 'ids',
-            'meta_query'     => [['key' => '_sinemagor_tmdb_id', 'compare' => 'EXISTS']],
+            'meta_query'     => [['key' => '_sinemagor_tmdb_id', 'compare' => 'EXISTS']], // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- selecting only plugin-generated movie posts is this function's core purpose.
         ]);
 
         if (empty($posts)) {

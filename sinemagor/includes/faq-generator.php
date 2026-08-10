@@ -312,7 +312,7 @@ PROMPT;
         check_ajax_referer('sinemagor_nonce', 'nonce');
         if (!current_user_can('edit_posts')) wp_send_json_error('Permission denied.');
 
-        $pid = (int) ($_POST['post_id'] ?? 0);
+        $pid = isset($_POST['post_id']) ? absint(wp_unslash($_POST['post_id'])) : 0;
         if (!$pid) wp_send_json_error('Invalid post ID.');
 
         // Allow regeneration: clear old FAQs first

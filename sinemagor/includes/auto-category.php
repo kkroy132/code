@@ -171,7 +171,7 @@ class Sinemagor_Auto_Category {
             'post_status'    => 'publish',
             'posts_per_page' => -1,
             'fields'         => 'ids',
-            'meta_query'     => [['key' => '_sinemagor_tmdb_id', 'compare' => 'EXISTS']],
+            'meta_query'     => [['key' => '_sinemagor_tmdb_id', 'compare' => 'EXISTS']], // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- selecting only plugin-generated movie posts is this function's core purpose.
         ]);
 
         $done = 0;
@@ -193,7 +193,7 @@ class Sinemagor_Auto_Category {
             $terms = get_terms([
                 'taxonomy'   => 'category',
                 'hide_empty' => false,
-                'meta_query' => [['key' => 'sg_cat_type', 'value' => $type]],
+                'meta_query' => [['key' => 'sg_cat_type', 'value' => $type]], // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- filtering terms by the plugin-defined category-type meta is this function's core purpose.
                 'fields'     => 'ids',
             ]);
             $stats[$type] = is_array($terms) ? count($terms) : 0;

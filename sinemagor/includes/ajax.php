@@ -37,7 +37,8 @@ class Sinemagor_Ajax {
 
     public static function sg_tmdb_search(): void {
         self::verify();
-        $query = sanitize_text_field($_POST['query'] ?? '');
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce already verified above via self::verify() -> check_ajax_referer().
+        $query = isset($_POST['query']) ? sanitize_text_field(wp_unslash($_POST['query'])) : '';
         if (strlen($query) < 2) wp_send_json_success([]);
 
         $tmdb    = new Sinemagor_TMDB();
@@ -59,17 +60,19 @@ class Sinemagor_Ajax {
             'release_date.desc', 'primary_release_date.desc',
             'revenue.desc', 'top_rated',
         ];
-        $sort_raw = sanitize_text_field($_POST['sort_by'] ?? 'popularity.desc');
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce already verified above via self::verify() -> check_ajax_referer().
+        $sort_raw = isset($_POST['sort_by']) ? sanitize_text_field(wp_unslash($_POST['sort_by'])) : 'popularity.desc';
         $sort_by  = in_array($sort_raw, $allowed_sorts, true) ? $sort_raw : 'popularity.desc';
 
+        // Nonce already verified above via self::verify() -> check_ajax_referer().
         $data = $tmdb->discover([
-            'genre_id'   => sanitize_text_field($_POST['genre_id']   ?? ''),
-            'year'       => sanitize_text_field($_POST['year']       ?? ''),
-            'language'   => sanitize_text_field($_POST['language']   ?? ''),
+            'genre_id'   => isset($_POST['genre_id'])   ? sanitize_text_field(wp_unslash($_POST['genre_id']))   : '', // phpcs:ignore WordPress.Security.NonceVerification.Missing
+            'year'       => isset($_POST['year'])       ? sanitize_text_field(wp_unslash($_POST['year']))       : '', // phpcs:ignore WordPress.Security.NonceVerification.Missing
+            'language'   => isset($_POST['language'])   ? sanitize_text_field(wp_unslash($_POST['language']))   : '', // phpcs:ignore WordPress.Security.NonceVerification.Missing
             'sort_by'    => $sort_by,
-            'min_rating' => sanitize_text_field($_POST['min_rating'] ?? ''),
-            'page'       => max(1, (int) ($_POST['page'] ?? 1)),
-            'count'      => max(20, min(100, (int) ($_POST['count']  ?? 20))),
+            'min_rating' => isset($_POST['min_rating']) ? sanitize_text_field(wp_unslash($_POST['min_rating'])) : '', // phpcs:ignore WordPress.Security.NonceVerification.Missing
+            'page'       => isset($_POST['page'])  ? max(1, absint(wp_unslash($_POST['page'])))                 : 1, // phpcs:ignore WordPress.Security.NonceVerification.Missing
+            'count'      => isset($_POST['count']) ? max(20, min(100, absint(wp_unslash($_POST['count']))))     : 20, // phpcs:ignore WordPress.Security.NonceVerification.Missing
         ]);
         wp_send_json_success($data);
     }
@@ -79,6 +82,7 @@ class Sinemagor_Ajax {
     public static function sg_bulk_add(): void {
         self::verify();
 
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce already verified above via self::verify() -> check_ajax_referer().
         $tmdb_ids = array_map('intval', (array) ($_POST['tmdb_ids'] ?? []));
         if (empty($tmdb_ids)) wp_send_json_error('No movies selected.');
 
@@ -120,7 +124,8 @@ class Sinemagor_Ajax {
     public static function sg_single_generate(): void {
         self::verify();
 
-        $movie_id = (int) ($_POST['movie_id'] ?? 0);
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce already verified above via self::verify() -> check_ajax_referer().
+        $movie_id = isset($_POST['movie_id']) ? absint(wp_unslash($_POST['movie_id'])) : 0;
         if (!$movie_id) wp_send_json_error('Invalid movie ID.');
 
         $post_id = Sinemagor_Post_Publisher::publish($movie_id);
@@ -142,6 +147,7 @@ class Sinemagor_Ajax {
     public static function sg_bulk_queue(): void {
         self::verify();
 
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce already verified above via self::verify() -> check_ajax_referer().
         $movie_ids = array_map('intval', (array) ($_POST['movie_ids'] ?? []));
         if (empty($movie_ids)) wp_send_json_error('No movies selected.');
 
@@ -173,6 +179,7 @@ class Sinemagor_Ajax {
     public static function sg_delete_movies(): void {
         self::verify();
 
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce already verified above via self::verify() -> check_ajax_referer().
         $ids = array_map('intval', (array) ($_POST['ids'] ?? []));
         if (empty($ids)) wp_send_json_error('No IDs provided.');
 
@@ -184,7 +191,8 @@ class Sinemagor_Ajax {
 
     public static function sg_rebuild_links(): void {
         self::verify();
-        $post_id = (int) ($_POST['post_id'] ?? 0);
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce already verified above via self::verify() -> check_ajax_referer().
+        $post_id = isset($_POST['post_id']) ? absint(wp_unslash($_POST['post_id'])) : 0;
         if (!$post_id) wp_send_json_error('Invalid post ID.');
         Sinemagor_Internal_Linker::rebuild($post_id);
         wp_send_json_success('Internal links rebuilt for post #' . $post_id);
@@ -195,7 +203,8 @@ class Sinemagor_Ajax {
     public static function sg_toggle_publish(): void {
         self::verify();
 
-        $movie_id = (int) ($_POST['movie_id'] ?? 0);
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- nonce already verified above via self::verify() -> check_ajax_referer().
+        $movie_id = isset($_POST['movie_id']) ? absint(wp_unslash($_POST['movie_id'])) : 0;
         if (!$movie_id) wp_send_json_error('Invalid movie ID.');
 
         $movie = Sinemagor_DB::get_movie($movie_id);
@@ -235,13 +244,14 @@ class Sinemagor_Ajax {
     public static function sg_get_library(): void {
         self::verify();
 
+        // Nonce already verified above via self::verify() -> check_ajax_referer().
         $data = Sinemagor_DB::get_movies([
-            'status'   => sanitize_text_field($_POST['status']   ?? ''),
-            'genre'    => sanitize_text_field($_POST['genre']    ?? ''),
-            'year'     => sanitize_text_field($_POST['year']     ?? ''),
-            'search'   => sanitize_text_field($_POST['search']   ?? ''),
-            'per_page' => max(1, min(50, (int) ($_POST['per_page'] ?? 20))),
-            'page'     => max(1, (int) ($_POST['page'] ?? 1)),
+            'status'   => isset($_POST['status']) ? sanitize_text_field(wp_unslash($_POST['status'])) : '', // phpcs:ignore WordPress.Security.NonceVerification.Missing
+            'genre'    => isset($_POST['genre'])  ? sanitize_text_field(wp_unslash($_POST['genre']))  : '', // phpcs:ignore WordPress.Security.NonceVerification.Missing
+            'year'     => isset($_POST['year'])   ? sanitize_text_field(wp_unslash($_POST['year']))   : '', // phpcs:ignore WordPress.Security.NonceVerification.Missing
+            'search'   => isset($_POST['search']) ? sanitize_text_field(wp_unslash($_POST['search'])) : '', // phpcs:ignore WordPress.Security.NonceVerification.Missing
+            'per_page' => isset($_POST['per_page']) ? max(1, min(50, absint(wp_unslash($_POST['per_page'])))) : 20, // phpcs:ignore WordPress.Security.NonceVerification.Missing
+            'page'     => isset($_POST['page'])     ? max(1, absint(wp_unslash($_POST['page'])))              : 1, // phpcs:ignore WordPress.Security.NonceVerification.Missing
         ]);
 
         // Append poster thumb URLs

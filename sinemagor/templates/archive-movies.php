@@ -9,10 +9,14 @@ defined('ABSPATH') || exit;
 get_header();
 
 $paged  = max(1, get_query_var('paged'));
-$genre  = sanitize_text_field($_GET['genre'] ?? '');
-$year   = sanitize_text_field($_GET['year']  ?? '');
-$sort   = sanitize_key($_GET['sort'] ?? 'date');
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only public archive filter (genre/year/sort query args), not a form submission.
+$genre  = isset($_GET['genre']) ? sanitize_text_field(wp_unslash($_GET['genre'])) : '';
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- see justification above.
+$year   = isset($_GET['year'])  ? sanitize_text_field(wp_unslash($_GET['year']))  : '';
+// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- see justification above.
+$sort   = isset($_GET['sort'])  ? sanitize_key(wp_unslash($_GET['sort']))         : 'date';
 
+// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- filtering the archive by plugin-defined movie meta is the page's core purpose.
 $meta_query = [['key' => '_sinemagor_tmdb_id', 'compare' => 'EXISTS']];
 if ($genre) $meta_query[] = ['key' => '_sinemagor_genre', 'value' => $genre, 'compare' => 'LIKE'];
 if ($year)  $meta_query[] = ['key' => '_sinemagor_year',  'value' => $year];
@@ -25,10 +29,11 @@ $query_args = [
     'post_status'    => 'publish',
     'posts_per_page' => 18,
     'paged'          => $paged,
-    'meta_query'     => $meta_query,
+    'meta_query'     => $meta_query, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- filtering the archive by plugin-defined movie meta is the page's core purpose.
     'orderby'        => $orderby,
     'order'          => 'DESC',
 ];
+// phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- sorting by plugin-defined editor rating meta is an explicit user-facing option.
 if ($meta_key_sort) $query_args['meta_key'] = $meta_key_sort;
 
 $q      = new WP_Query($query_args);

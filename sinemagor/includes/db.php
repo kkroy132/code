@@ -52,11 +52,11 @@ class Sinemagor_DB {
         $table = $wpdb->prefix . SINEMAGOR_TABLE;
 
         // Check duplicate
-        $exists = $wpdb->get_var($wpdb->prepare(
-            "SELECT id FROM {$table} WHERE tmdb_id = %d", $data['tmdb_id']
-        ));
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $table is built from $wpdb->prefix + a hardcoded internal constant, never user input; plugin's own dedicated table.
+        $exists = $wpdb->get_var($wpdb->prepare("SELECT id FROM {$table} WHERE tmdb_id = %d", $data['tmdb_id']));
         if ($exists) return (int) $exists;
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- plugin's own dedicated table, not a WP core table; caching not warranted here.
         $wpdb->insert($table, [
             'tmdb_id'       => $data['tmdb_id'],
             'title'         => $data['title'],
@@ -121,14 +121,13 @@ class Sinemagor_DB {
         $order_sql = sanitize_sql_orderby("{$args['orderby']} {$args['order']}") ?: 'created_at DESC';
         $offset    = ((int) $args['page'] - 1) * (int) $args['per_page'];
 
-        $count_sql = "SELECT COUNT(*) FROM {$table} WHERE {$where_sql}";
-        $data_sql  = "SELECT * FROM {$table} WHERE {$where_sql} ORDER BY {$order_sql} LIMIT %d OFFSET %d";
-
         $params_count = $params;
         $params_data  = array_merge($params, [(int) $args['per_page'], $offset]);
 
-        $total = (int) $wpdb->get_var($wpdb->prepare($count_sql, $params_count));
-        $rows  = $wpdb->get_results($wpdb->prepare($data_sql, $params_data));
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $table is a hardcoded internal constant; $where_sql is built only from %s/%d placeholder fragments above and bound via $params_count; $order_sql is passed through sanitize_sql_orderby().
+        $total = (int) $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$table} WHERE {$where_sql}", $params_count));
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- see justification above; placeholder count is correct at runtime ($where_sql's %s/%d tokens plus the two literal %d tokens here, all bound via $params_data).
+        $rows  = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$table} WHERE {$where_sql} ORDER BY {$order_sql} LIMIT %d OFFSET %d", $params_data));
 
         return [
             'total' => $total,
@@ -143,6 +142,7 @@ class Sinemagor_DB {
     public static function get_movie(int $id): ?object {
         global $wpdb;
         $table = $wpdb->prefix . SINEMAGOR_TABLE;
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $table is a hardcoded internal constant; plugin's own dedicated table.
         return $wpdb->get_row($wpdb->prepare("SELECT * FROM {$table} WHERE id = %d", $id)) ?: null;
     }
 
@@ -152,6 +152,7 @@ class Sinemagor_DB {
     public static function get_movie_by_tmdb(int $tmdb_id): ?object {
         global $wpdb;
         $table = $wpdb->prefix . SINEMAGOR_TABLE;
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- see justification above.
         return $wpdb->get_row($wpdb->prepare("SELECT * FROM {$table} WHERE tmdb_id = %d", $tmdb_id)) ?: null;
     }
 
@@ -163,6 +164,7 @@ class Sinemagor_DB {
         $table = $wpdb->prefix . SINEMAGOR_TABLE;
         $data  = ['status' => $status];
         if ($wp_post_id) $data['wp_post_id'] = $wp_post_id;
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- plugin's own dedicated table.
         $wpdb->update($table, $data, ['id' => $id]);
     }
 
@@ -171,8 +173,9 @@ class Sinemagor_DB {
      */
     public static function delete_movies(array $ids): void {
         global $wpdb;
-        $table       = $wpdb->prefix . SINEMAGOR_TABLE;
+        $table        = $wpdb->prefix . SINEMAGOR_TABLE;
         $placeholders = implode(',', array_fill(0, count($ids), '%d'));
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $table is a hardcoded internal constant; $placeholders is a generated string of literal %d tokens (one per $ids entry), all bound via $wpdb->prepare() below.
         $wpdb->query($wpdb->prepare("DELETE FROM {$table} WHERE id IN ({$placeholders})", $ids));
     }
 
@@ -182,6 +185,7 @@ class Sinemagor_DB {
     public static function get_status_counts(): array {
         global $wpdb;
         $table = $wpdb->prefix . SINEMAGOR_TABLE;
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $table is a hardcoded internal constant; no user input in this query.
         $rows  = $wpdb->get_results("SELECT status, COUNT(*) AS cnt FROM {$table} GROUP BY status");
         $counts = [];
         foreach ($rows as $row) {
@@ -196,6 +200,7 @@ class Sinemagor_DB {
     public static function get_genres(): array {
         global $wpdb;
         $table = $wpdb->prefix . SINEMAGOR_TABLE;
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $table is a hardcoded internal constant; no user input in this query.
         $rows  = $wpdb->get_col("SELECT DISTINCT genre FROM {$table} WHERE genre != '' ORDER BY genre");
         $genres = [];
         foreach ($rows as $row) {
@@ -214,6 +219,7 @@ class Sinemagor_DB {
     public static function get_years(): array {
         global $wpdb;
         $table = $wpdb->prefix . SINEMAGOR_TABLE;
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $table is a hardcoded internal constant; no user input in this query.
         return $wpdb->get_col("SELECT DISTINCT year FROM {$table} WHERE year IS NOT NULL ORDER BY year DESC") ?: [];
     }
 }

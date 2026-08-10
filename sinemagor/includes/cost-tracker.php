@@ -47,6 +47,7 @@ class Sinemagor_Cost_Tracker {
         $costs  = self::MODEL_COSTS[$model] ?? ['in' => 0.14, 'out' => 0.28];
         $cost   = ($in / 1_000_000 * $costs['in']) + ($out / 1_000_000 * $costs['out']);
 
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- plugin's own dedicated table, not a WP core table; caching not warranted here.
         $wpdb->insert($wpdb->prefix . self::TABLE, [
             'wp_post_id'   => $data['wp_post_id']   ?? null,
             'movie_title'  => $data['movie_title']  ?? '',
@@ -62,30 +63,20 @@ class Sinemagor_Cost_Tracker {
     public static function get_stats(string $from = '', string $to = ''): array {
         global $wpdb;
         $table = $wpdb->prefix . self::TABLE;
+        $select = 'SELECT COUNT(*) AS calls, SUM(input_tokens) AS total_input, SUM(output_tokens) AS total_output, SUM(cost_usd) AS total_cost';
 
         if ($from && $to) {
-            $row = $wpdb->get_row($wpdb->prepare(
-                "SELECT COUNT(*) AS calls, SUM(input_tokens) AS total_input, SUM(output_tokens) AS total_output, SUM(cost_usd) AS total_cost
-                 FROM {$table} WHERE created_at >= %s AND created_at <= %s",
-                $from, $to . ' 23:59:59'
-            ));
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $table/$select are hardcoded internal values, never user input.
+            $row = $wpdb->get_row($wpdb->prepare("{$select} FROM {$table} WHERE created_at >= %s AND created_at <= %s", $from, $to . ' 23:59:59'));
         } elseif ($from) {
-            $row = $wpdb->get_row($wpdb->prepare(
-                "SELECT COUNT(*) AS calls, SUM(input_tokens) AS total_input, SUM(output_tokens) AS total_output, SUM(cost_usd) AS total_cost
-                 FROM {$table} WHERE created_at >= %s",
-                $from
-            ));
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- see justification above.
+            $row = $wpdb->get_row($wpdb->prepare("{$select} FROM {$table} WHERE created_at >= %s", $from));
         } elseif ($to) {
-            $row = $wpdb->get_row($wpdb->prepare(
-                "SELECT COUNT(*) AS calls, SUM(input_tokens) AS total_input, SUM(output_tokens) AS total_output, SUM(cost_usd) AS total_cost
-                 FROM {$table} WHERE created_at <= %s",
-                $to . ' 23:59:59'
-            ));
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- see justification above.
+            $row = $wpdb->get_row($wpdb->prepare("{$select} FROM {$table} WHERE created_at <= %s", $to . ' 23:59:59'));
         } else {
-            $row = $wpdb->get_row(
-                "SELECT COUNT(*) AS calls, SUM(input_tokens) AS total_input, SUM(output_tokens) AS total_output, SUM(cost_usd) AS total_cost
-                 FROM {$table}"
-            );
+            // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- see justification above; no user input in this query.
+            $row = $wpdb->get_row("{$select} FROM {$table}");
         }
 
         return [
@@ -102,16 +93,8 @@ class Sinemagor_Cost_Tracker {
         $table = $wpdb->prefix . self::TABLE;
         $since = gmdate('Y-m-d', strtotime("-{$days} days"));
 
-        $rows = $wpdb->get_results($wpdb->prepare(
-            "SELECT DATE(created_at) AS day,
-                    COUNT(*)         AS calls,
-                    SUM(cost_usd)    AS cost
-             FROM {$table}
-             WHERE created_at >= %s
-             GROUP BY DATE(created_at)
-             ORDER BY day ASC",
-            $since
-        ));
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $table is a hardcoded internal constant, never user input.
+        $rows = $wpdb->get_results($wpdb->prepare("SELECT DATE(created_at) AS day, COUNT(*) AS calls, SUM(cost_usd) AS cost FROM {$table} WHERE created_at >= %s GROUP BY DATE(created_at) ORDER BY day ASC", $since));
 
         // Fill missing days with 0
         $map = [];
@@ -129,19 +112,15 @@ class Sinemagor_Cost_Tracker {
     public static function get_by_model(): array {
         global $wpdb;
         $table = $wpdb->prefix . self::TABLE;
-        return $wpdb->get_results(
-            "SELECT model, COUNT(*) AS calls, SUM(cost_usd) AS cost
-             FROM {$table} GROUP BY model ORDER BY cost DESC"
-        ) ?: [];
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $table is a hardcoded internal constant, never user input.
+        return $wpdb->get_results("SELECT model, COUNT(*) AS calls, SUM(cost_usd) AS cost FROM {$table} GROUP BY model ORDER BY cost DESC") ?: [];
     }
 
     /** Cost breakdown by source. */
     public static function get_by_source(): array {
         global $wpdb;
         $table = $wpdb->prefix . self::TABLE;
-        return $wpdb->get_results(
-            "SELECT source, COUNT(*) AS calls, SUM(cost_usd) AS cost
-             FROM {$table} GROUP BY source ORDER BY cost DESC"
-        ) ?: [];
+        // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- $table is a hardcoded internal constant, never user input.
+        return $wpdb->get_results("SELECT source, COUNT(*) AS calls, SUM(cost_usd) AS cost FROM {$table} GROUP BY source ORDER BY cost DESC") ?: [];
     }
 }

@@ -62,7 +62,7 @@ class Sinemagor_Bulk_Status {
         check_ajax_referer('sinemagor_nonce', 'nonce');
         if (!current_user_can('edit_posts')) wp_send_json_error('Permission denied.');
 
-        $post_id = (int) ($_POST['post_id'] ?? 0);
+        $post_id = isset($_POST['post_id']) ? absint(wp_unslash($_POST['post_id'])) : 0;
         if (!$post_id) wp_send_json_error('Invalid post ID.');
 
         $result = Sinemagor_Auto_Regenerate::trigger_single($post_id);
