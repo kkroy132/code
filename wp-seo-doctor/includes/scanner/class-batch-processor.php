@@ -11,6 +11,7 @@ namespace SEODoc\Scanner;
 use SEODoc\Checks\Check_Registry;
 use SEODoc\Checks\Scan_Context;
 use SEODoc\Issues\Issue_Engine;
+use SEODoc\Module_Registry;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -64,7 +65,12 @@ class Batch_Processor {
 		foreach ( $rows as $row ) {
 			try {
 				$context = Scan_Context::for_object( $row->object_type, (int) $row->object_id );
-				$issues  = $context && $registry ? $registry->run_all( $context ) : array();
+
+				if ( $context ) {
+					self::run_scanner_stages( $context );
+				}
+
+				$issues = $context && $registry ? $registry->run_all( $context ) : array();
 
 				Issue_Engine::record( $scan_id, $row->object_type, (int) $row->object_id, $issues );
 
@@ -78,5 +84,26 @@ class Batch_Processor {
 		}
 
 		self::schedule_next( $scan_id );
+	}
+
+	/**
+	 * Runs every seodoc_register_scanner_stage()-registered handler
+	 * against this row — e.g. the internal Link_Graph stage that records
+	 * a page's outgoing links (Step 9). Stage failures are isolated the
+	 * same way check failures are: one bad handler can't take the batch
+	 * down or block Issue recording for this row.
+	 */
+	private static function run_scanner_stages( Scan_Context $context ) {
+		foreach ( Module_Registry::get_scanner_stages() as $handler ) {
+			if ( ! is_callable( $handler ) ) {
+				continue;
+			}
+
+			try {
+				call_user_func( $handler, $context );
+			} catch ( \Throwable $e ) {
+				continue;
+			}
+		}
 	}
 }

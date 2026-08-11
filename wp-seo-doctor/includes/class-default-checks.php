@@ -76,6 +76,10 @@ class Default_Checks {
 			'site-not-https'            => Checks\Technical\Https_Site_Check::class,
 			'robots-txt-issue'          => Checks\Technical\Robots_Txt_Check::class,
 			'sitemap-unavailable'       => Checks\Technical\Sitemap_Availability_Check::class,
+
+			// Reads Link_Graph's edges, built by the internal-link-graph
+			// scanner stage (Links_Bootstrap) during the same scan.
+			'orphan-page'               => Checks\Links\Orphan_Page_Check::class,
 		);
 	}
 }

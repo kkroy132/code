@@ -66,6 +66,7 @@ class Plugin {
 				Checks\Scan_Level_Check_Runner::class,
 				Default_Checks::class,
 				Issues\Health_Score_Recorder::class,
+				Links\Links_Bootstrap::class,
 				Rest_Api\Rest_Api::class,
 				Admin\Admin_Menu::class,
 				Admin\Assets::class,

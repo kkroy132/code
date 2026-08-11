@@ -43,7 +43,7 @@ function seodoc_register_scan_level_check( $id, $class ) {
  * Register an extra stage in the batch scanner pipeline.
  *
  * @param string   $id      Unique stage id.
- * @param callable $handler Receives the current SEODoc\Scanner\Scan_Context.
+ * @param callable $handler Receives the current SEODoc\Checks\Scan_Context.
  */
 function seodoc_register_scanner_stage( $id, $handler ) {
 	\SEODoc\Module_Registry::add_scanner_stage( $id, $handler );
