@@ -65,6 +65,7 @@ class Plugin {
 				Checks\Check_Registry::class,
 				Checks\Scan_Level_Check_Runner::class,
 				Default_Checks::class,
+				Issues\Health_Score_Recorder::class,
 			)
 		);
 
