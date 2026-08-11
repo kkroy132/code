@@ -28,6 +28,18 @@ function seodoc_register_check( $id, $class ) {
 }
 
 /**
+ * Register a Scan_Level_Check: a site-wide or cross-object check (HTTPS,
+ * robots.txt, sitemap, duplicate title/meta-description) that runs once
+ * per completed scan rather than once per object.
+ *
+ * @param string $id    Unique check id, e.g. 'site-not-https'.
+ * @param string $class Fully-qualified class name extending SEODoc\Checks\Scan_Level_Check.
+ */
+function seodoc_register_scan_level_check( $id, $class ) {
+	\SEODoc\Module_Registry::add_scan_level_check( $id, $class );
+}
+
+/**
  * Register an extra stage in the batch scanner pipeline.
  *
  * @param string   $id      Unique stage id.

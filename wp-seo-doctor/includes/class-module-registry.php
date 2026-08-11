@@ -17,6 +17,8 @@ class Module_Registry {
 
 	private static $scanner_stages = array();
 
+	private static $scan_level_checks = array();
+
 	private static $admin_pages = array();
 
 	public static function add_check( $id, $class ) {
@@ -28,6 +30,20 @@ class Module_Registry {
 	 */
 	public static function get_checks() {
 		return self::$checks;
+	}
+
+	/**
+	 * Site-wide/cross-object checks — see SEODoc\Checks\Scan_Level_Check.
+	 */
+	public static function add_scan_level_check( $id, $class ) {
+		self::$scan_level_checks[ $id ] = $class;
+	}
+
+	/**
+	 * @return array<string, string> check id => class name.
+	 */
+	public static function get_scan_level_checks() {
+		return self::$scan_level_checks;
 	}
 
 	public static function add_scanner_stage( $id, $handler ) {

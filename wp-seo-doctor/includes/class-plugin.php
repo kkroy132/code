@@ -63,6 +63,8 @@ class Plugin {
 				Scanner\Action_Scheduler_Init::class,
 				Scanner\Batch_Processor::class,
 				Checks\Check_Registry::class,
+				Checks\Scan_Level_Check_Runner::class,
+				Default_Checks::class,
 			)
 		);
 
