@@ -1,0 +1,14 @@
+{
+	"name": "wp-seo-doctor-admin",
+	"version": "0.1.0",
+	"private": true,
+	"description": "Admin dashboard for the WP SEO Doctor WordPress plugin.",
+	"scripts": {
+		"build": "wp-scripts build",
+		"start": "wp-scripts start",
+		"lint:js": "wp-scripts lint-js"
+	},
+	"devDependencies": {
+		"@wordpress/scripts": "^27.0.0"
+	}
+}

@@ -1,0 +1,68 @@
+.seodoc-health-score {
+	display: flex;
+	align-items: baseline;
+	gap: 8px;
+	margin-bottom: 16px;
+}
+
+.seodoc-health-score__value {
+	font-size: 48px;
+	font-weight: 600;
+	line-height: 1;
+}
+
+.seodoc-health-score__max {
+	font-size: 20px;
+	color: #757575;
+}
+
+.seodoc-health-score__delta {
+	margin-left: 12px;
+	font-size: 14px;
+	color: #007017;
+}
+
+.seodoc-severity-counts {
+	display: flex;
+	gap: 16px;
+	margin-bottom: 16px;
+}
+
+.seodoc-count {
+	display: flex;
+	flex-direction: column;
+	padding: 12px 16px;
+	border-radius: 4px;
+	background: #f6f7f7;
+	min-width: 90px;
+}
+
+.seodoc-count__value {
+	font-size: 24px;
+	font-weight: 600;
+}
+
+.seodoc-count--critical .seodoc-count__value {
+	color: #d63638;
+}
+
+.seodoc-count--high .seodoc-count__value {
+	color: #d98800;
+}
+
+.seodoc-count--medium .seodoc-count__value {
+	color: #2271b1;
+}
+
+.seodoc-count--low .seodoc-count__value {
+	color: #646970;
+}
+
+.seodoc-fix-first {
+	margin-top: 8px;
+	padding-left: 20px;
+}
+
+.seodoc-fix-first li {
+	margin-bottom: 8px;
+}

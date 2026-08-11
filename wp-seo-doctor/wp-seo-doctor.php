@@ -4,7 +4,7 @@
  * Plugin URI:        https://wpseodoctor.com
  * Description:       Find. Understand. Fix. Grow. Audits your WordPress site for technical SEO issues, broken links, orphan pages, indexing problems and internal-link opportunities — then helps you fix them from one dashboard. Works alongside Yoast SEO, Rank Math and AIOSEO.
  * Version:           0.1.0
- * Requires at least: 6.0
+ * Requires at least: 6.5
  * Requires PHP:      7.4
  * Author:            WP SEO Doctor
  * License:           GPL v2 or later
@@ -24,7 +24,7 @@ define( 'SEODOC_PLUGIN_FILE', __FILE__ );
 define( 'SEODOC_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SEODOC_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'SEODOC_MIN_PHP', '7.4' );
-define( 'SEODOC_MIN_WP', '6.0' );
+define( 'SEODOC_MIN_WP', '6.5' );
 
 /**
  * Version guards run before anything else loads. A failed guard shows an
