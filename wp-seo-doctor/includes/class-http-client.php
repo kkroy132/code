@@ -39,34 +39,39 @@ class Http_Client {
 	}
 
 	/**
-	 * Follows redirects manually (redirection => 0 on the underlying
-	 * request) so every hop is re-validated before it's fetched, not just
-	 * the original URL — a redirect chain that lands on a private IP is
-	 * blocked at the hop that reaches it, not just at the start.
+	 * Single-hop, non-following variants — for callers that need to see
+	 * an intermediate redirect itself (its status code, its Location
+	 * header) rather than have it silently resolved: Step 10's broken-
+	 * link checker records "this URL redirects to X" as data, and
+	 * Step 11's redirect-chain detector has to walk hop-by-hop to find
+	 * chains at all. Still goes through the same validate_url() SSRF
+	 * gate as every other request this class makes.
+	 *
+	 * @return array|\WP_Error
+	 */
+	public static function get_no_redirect( $url, $args = array() ) {
+		return self::single_request( 'GET', $url, $args );
+	}
+
+	/**
+	 * @return array|\WP_Error
+	 */
+	public static function head_no_redirect( $url, $args = array() ) {
+		return self::single_request( 'HEAD', $url, $args );
+	}
+
+	/**
+	 * Follows redirects automatically (each hop re-validated before it's
+	 * fetched, so a chain landing on a private IP is blocked at the hop
+	 * that reaches it) and returns only the final response — callers that
+	 * need to inspect an intermediate hop themselves should use
+	 * get_no_redirect()/head_no_redirect() instead.
 	 */
 	private static function request( $method, $url, $args = array() ) {
 		$hops = 0;
 
 		while ( $hops <= self::MAX_REDIRECTS ) {
-			$check = self::validate_url( $url );
-			if ( is_wp_error( $check ) ) {
-				return $check;
-			}
-
-			$response = wp_remote_request(
-				$url,
-				array_merge(
-					array(
-						'method'              => $method,
-						'timeout'             => self::TIMEOUT,
-						'redirection'         => 0,
-						'reject_unsafe_urls'  => true,
-						'sslverify'           => true,
-						'user-agent'          => 'WP SEO Doctor/' . SEODOC_VERSION . '; ' . home_url( '/' ),
-					),
-					$args
-				)
-			);
+			$response = self::single_request( $method, $url, $args );
 
 			if ( is_wp_error( $response ) ) {
 				return $response;
@@ -90,6 +95,33 @@ class Http_Client {
 		return new \WP_Error(
 			'seodoc_too_many_redirects',
 			__( 'Too many redirects while fetching this URL.', 'wp-seo-doctor' )
+		);
+	}
+
+	/**
+	 * One validated, non-redirect-following request.
+	 *
+	 * @return array|\WP_Error
+	 */
+	private static function single_request( $method, $url, $args = array() ) {
+		$check = self::validate_url( $url );
+		if ( is_wp_error( $check ) ) {
+			return $check;
+		}
+
+		return wp_remote_request(
+			$url,
+			array_merge(
+				array(
+					'method'             => $method,
+					'timeout'            => self::TIMEOUT,
+					'redirection'        => 0,
+					'reject_unsafe_urls' => true,
+					'sslverify'          => true,
+					'user-agent'         => 'WP SEO Doctor/' . SEODOC_VERSION . '; ' . home_url( '/' ),
+				),
+				$args
+			)
 		);
 	}
 

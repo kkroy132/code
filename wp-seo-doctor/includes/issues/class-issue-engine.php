@@ -82,6 +82,43 @@ class Issue_Engine {
 	}
 
 	/**
+	 * For incremental/async checkers that don't evaluate their whole
+	 * domain in one pass — Step 10's Broken_Link_Checker verifies one
+	 * batch of URLs per Action Scheduler tick, potentially over many
+	 * ticks. record_for_check()'s "resolve everything not in this call's
+	 * set" semantics would be wrong here: a small batch would incorrectly
+	 * resolve hundreds of still-broken links this tick simply didn't
+	 * touch. upsert_single()/resolve_single() operate on exactly one
+	 * check_id+url at a time instead, with no bulk resolve side effect.
+	 *
+	 * @param int|null $scan_id Nullable — this isn't tied to any one scan.
+	 */
+	public static function upsert_single( $scan_id, Issue $issue ) {
+		global $wpdb;
+		$table = Schema::table_names( $wpdb )['issues'];
+
+		self::upsert_all( $table, $scan_id, array( $issue ) );
+	}
+
+	public static function resolve_single( $check_id, $url ) {
+		global $wpdb;
+		$table = Schema::table_names( $wpdb )['issues'];
+
+		$wpdb->update(
+			$table,
+			array(
+				'status'      => 'resolved',
+				'resolved_at' => current_time( 'mysql' ),
+			),
+			array(
+				'check_id' => $check_id,
+				'url_hash' => md5( $url ),
+				'status'   => 'open',
+			)
+		);
+	}
+
+	/**
 	 * @return string[] check_ids present in $issues, for the per-object
 	 *                   resolve step.
 	 */

@@ -67,6 +67,8 @@ class Plugin {
 				Default_Checks::class,
 				Issues\Health_Score_Recorder::class,
 				Links\Links_Bootstrap::class,
+				Links\Broken_Link_Checker::class,
+				Monitor_404\Monitor::class,
 				Rest_Api\Rest_Api::class,
 				Admin\Admin_Menu::class,
 				Admin\Assets::class,

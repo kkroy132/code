@@ -28,5 +28,6 @@ class Links_Bootstrap {
 
 	public function register_scanner_stage() {
 		seodoc_register_scanner_stage( 'internal-link-graph', array( Link_Graph::class, 'record_from_context' ) );
+		seodoc_register_scanner_stage( 'external-link-catalog', array( External_Link_Collector::class, 'record_from_context' ) );
 	}
 }
