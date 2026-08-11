@@ -17,17 +17,29 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Check_Registry {
 
-	/** @var Check[] */
-	private $checks = array();
+	/** @var Check[]|null Null until first use — see ensure_loaded(). */
+	private $checks = null;
 
-	public function __construct() {
-		// Runs after seodoc_register_modules has fired (see Plugin::boot()),
-		// so every seodoc_register_check() call has already landed in
-		// Module_Registry by the time this reads it.
-		add_action( 'seodoc_loaded', array( $this, 'load_registered_checks' ) );
-	}
+	/**
+	 * Loads lazily on first actual use rather than eagerly on a fixed
+	 * hook. This was originally hooked to seodoc_loaded, fired once and
+	 * assumed every registrant had already called seodoc_register_check()
+	 * by then — true for Free's own checks, but wrong the moment a
+	 * second plugin registers later in the same request. Pro boots at
+	 * plugins_loaded priority 20, strictly after Free's priority-10
+	 * seodoc_loaded already fired (Step 14), so an eager one-time load
+	 * here would have silently dropped every Pro check. Lazy loading
+	 * decouples "when checks are registered" from "when they're consumed"
+	 * entirely, which is correct regardless of load order — including for
+	 * any future third-party integration that registers later still.
+	 */
+	private function ensure_loaded() {
+		if ( null !== $this->checks ) {
+			return;
+		}
 
-	public function load_registered_checks() {
+		$this->checks = array();
+
 		foreach ( Module_Registry::get_checks() as $id => $class ) {
 			if ( ! class_exists( $class ) ) {
 				continue;
@@ -45,6 +57,8 @@ class Check_Registry {
 	 * @return Check[]
 	 */
 	public function get_checks() {
+		$this->ensure_loaded();
+
 		return $this->checks;
 	}
 
@@ -53,6 +67,8 @@ class Check_Registry {
 	 * @return Issue[]
 	 */
 	public function run_all( Scan_Context $context ) {
+		$this->ensure_loaded();
+
 		$issues = array();
 
 		foreach ( $this->checks as $check ) {
