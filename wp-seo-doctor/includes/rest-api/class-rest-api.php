@@ -27,6 +27,7 @@ class Rest_Api {
 				Issues_Controller::class,
 				Suggestions_Controller::class,
 				Monitor_404_Controller::class,
+				Redirects_Controller::class,
 			)
 		);
 

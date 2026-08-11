@@ -69,6 +69,7 @@ class Plugin {
 				Links\Links_Bootstrap::class,
 				Links\Broken_Link_Checker::class,
 				Monitor_404\Monitor::class,
+				Redirects\Redirect_Matcher::class,
 				Rest_Api\Rest_Api::class,
 				Admin\Admin_Menu::class,
 				Admin\Assets::class,
