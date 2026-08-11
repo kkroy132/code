@@ -61,6 +61,8 @@ class Plugin {
 			array(
 				Compat\Plugin_Detector::class,
 				Scanner\Action_Scheduler_Init::class,
+				Scanner\Batch_Processor::class,
+				Checks\Check_Registry::class,
 			)
 		);
 
