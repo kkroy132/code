@@ -12,6 +12,7 @@ namespace SEODocPro;
 
 use SEODocPro\Checks\Content_Decay_Check;
 use SEODocPro\Checks\Seo_Opportunity_Check;
+use SEODocPro\Rest_Api\Ai_Controller;
 use SEODocPro\Rest_Api\Gsc_Controller;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -31,6 +32,7 @@ class Pro_Registrar {
 	 */
 	public function add_rest_controllers( array $controllers ) {
 		$controllers[] = Gsc_Controller::class;
+		$controllers[] = Ai_Controller::class;
 
 		return $controllers;
 	}
