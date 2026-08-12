@@ -37,12 +37,7 @@ class Issue_Engine {
 
 		$seen_check_ids = self::upsert_all( $table, $scan_id, $issues );
 
-		self::resolve_missing(
-			$table,
-			$seen_check_ids,
-			'object_id = %d AND object_type = %s',
-			array( $object_id, $object_type )
-		);
+		self::resolve_missing_for_object( $table, $object_id, $object_type, $seen_check_ids );
 	}
 
 	/**
@@ -67,18 +62,7 @@ class Issue_Engine {
 
 		self::upsert_all( $table, $scan_id, $issues );
 
-		if ( empty( $seen_url_hashes ) ) {
-			self::resolve_missing( $table, array(), 'check_id = %s', array( $check_id ) );
-			return;
-		}
-
-		$placeholders = implode( ',', array_fill( 0, count( $seen_url_hashes ), '%s' ) );
-		self::resolve_missing(
-			$table,
-			array(),
-			"check_id = %s AND url_hash NOT IN ({$placeholders})",
-			array_merge( array( $check_id ), $seen_url_hashes )
-		);
+		self::resolve_missing_for_check( $table, $check_id, $seen_url_hashes );
 	}
 
 	/**
@@ -167,28 +151,73 @@ class Issue_Engine {
 	}
 
 	/**
-	 * Marks 'open' issues 'resolved' when they match $where but their
-	 * check_id isn't in $exclude_check_ids (used by the per-object path;
-	 * the per-check path instead encodes its own exclusion directly into
-	 * $where/$where_params, since it excludes by url_hash, not check_id).
+	 * Marks this object's 'open' issues 'resolved' when their check_id
+	 * isn't in $exclude_check_ids. Previously a generic method taking a
+	 * raw WHERE-fragment string parameter shared with
+	 * resolve_missing_for_check() — split into two self-contained
+	 * methods (each with its own literal query text) after WordPress.org's
+	 * Plugin Check flagged the shared version as an unprepared-query risk:
+	 * a SQL fragment being passed as a function parameter is harder for
+	 * static analysis to trace as safe than a literal written at the call
+	 * site, even though both were always fully parameterized before
+	 * execution.
 	 *
 	 * @param string   $table
+	 * @param int      $object_id
+	 * @param string   $object_type
 	 * @param string[] $exclude_check_ids
-	 * @param string   $where
-	 * @param array    $where_params
 	 */
-	private static function resolve_missing( $table, array $exclude_check_ids, $where, array $where_params ) {
+	private static function resolve_missing_for_object( $table, $object_id, $object_type, array $exclude_check_ids ) {
 		global $wpdb;
+		$now = current_time( 'mysql' );
 
-		$query  = "UPDATE {$table} SET status = 'resolved', resolved_at = %s WHERE {$where} AND status = 'open'";
-		$params = array_merge( array( current_time( 'mysql' ) ), $where_params );
-
-		if ( ! empty( $exclude_check_ids ) ) {
-			$placeholders = implode( ',', array_fill( 0, count( $exclude_check_ids ), '%s' ) );
-			$query       .= " AND check_id NOT IN ({$placeholders})";
-			$params       = array_merge( $params, $exclude_check_ids );
+		if ( empty( $exclude_check_ids ) ) {
+			$wpdb->query(
+				$wpdb->prepare(
+					"UPDATE {$table} SET status = 'resolved', resolved_at = %s WHERE object_id = %d AND object_type = %s AND status = 'open'", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is our own internally computed name (Schema::table_names()), never user input; every value is still parameterized below.
+					$now,
+					$object_id,
+					$object_type
+				)
+			);
+			return;
 		}
 
-		$wpdb->query( $wpdb->prepare( $query, $params ) );
+		$placeholders = implode( ',', array_fill( 0, count( $exclude_check_ids ), '%s' ) );
+		$query        = "UPDATE {$table} SET status = 'resolved', resolved_at = %s WHERE object_id = %d AND object_type = %s AND status = 'open' AND check_id NOT IN ({$placeholders})"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared -- table name is internal, not user input; $placeholders is a generated %s-token list (see Step 5's Queue::claim_batch for the same pattern), never a value; every actual value flows through prepare() via $params.
+		$params       = array_merge( array( $now, $object_id, $object_type ), $exclude_check_ids );
+
+		$wpdb->query( $wpdb->prepare( $query, $params ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- $query is always passed through prepare() here; phpcs can't trace that through the intermediate variable.
+	}
+
+	/**
+	 * Same shape as resolve_missing_for_object(), scoped to one check_id
+	 * across every object it touched instead of one object across every
+	 * check_id — see record_for_check()'s docblock for why.
+	 *
+	 * @param string   $table
+	 * @param string   $check_id
+	 * @param string[] $exclude_url_hashes
+	 */
+	private static function resolve_missing_for_check( $table, $check_id, array $exclude_url_hashes ) {
+		global $wpdb;
+		$now = current_time( 'mysql' );
+
+		if ( empty( $exclude_url_hashes ) ) {
+			$wpdb->query(
+				$wpdb->prepare(
+					"UPDATE {$table} SET status = 'resolved', resolved_at = %s WHERE check_id = %s AND status = 'open'", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name is internal, not user input.
+					$now,
+					$check_id
+				)
+			);
+			return;
+		}
+
+		$placeholders = implode( ',', array_fill( 0, count( $exclude_url_hashes ), '%s' ) );
+		$query        = "UPDATE {$table} SET status = 'resolved', resolved_at = %s WHERE check_id = %s AND status = 'open' AND url_hash NOT IN ({$placeholders})"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared -- table name is internal; $placeholders is a generated %s-token list, never a value.
+		$params       = array_merge( array( $now, $check_id ), $exclude_url_hashes );
+
+		$wpdb->query( $wpdb->prepare( $query, $params ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- always passed through prepare(); phpcs can't trace that through the intermediate variable.
 	}
 }

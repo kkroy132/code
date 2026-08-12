@@ -52,8 +52,15 @@ class Issues_Controller extends Rest_Controller {
 		$per_page = $per_page ? min( self::MAX_PER_PAGE, max( 1, $per_page ) ) : self::DEFAULT_PER_PAGE;
 		$offset   = ( $page - 1 ) * $per_page;
 
-		$where  = array( "status = 'open'" );
-		$params = array();
+		// 'status = %s' rather than a hardcoded "status = 'open'" literal:
+		// keeps $params never empty, so prepare() always runs unconditionally
+		// below instead of branching on "are there any dynamic values" —
+		// the branch was flagged by WordPress.org's Plugin Check as an
+		// unprepared-query risk even though the no-params branch never
+		// actually held dynamic data; this sidesteps that ambiguity
+		// entirely rather than arguing with the analyzer about it.
+		$where  = array( 'status = %s' );
+		$params = array( 'open' );
 
 		$severity = $request->get_param( 'severity' );
 		if ( $severity ) {
@@ -69,14 +76,22 @@ class Issues_Controller extends Rest_Controller {
 
 		$where_sql = implode( ' AND ', $where );
 
-		$count_query = "SELECT COUNT(*) FROM {$table} WHERE {$where_sql}";
-		$total       = (int) ( $params ? $wpdb->get_var( $wpdb->prepare( $count_query, $params ) ) : $wpdb->get_var( $count_query ) );
+		// $where_sql is built entirely from %s/%d placeholder tokens above
+		// (never a raw value — verified in the Step 15 security audit),
+		// and $table is our own internally computed name
+		// (SEODoc\DB\Schema::table_names()), never user input. Every
+		// actual value still flows through prepare() via $params below;
+		// phpcs can't trace that through the intermediate variables, so
+		// this is the standard WordPress-ecosystem mitigation for that
+		// known analyzer limitation, not a bypass of real preparation.
+		$count_query = "SELECT COUNT(*) FROM {$table} WHERE {$where_sql}"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared
+		$total       = (int) $wpdb->get_var( $wpdb->prepare( $count_query, $params ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 		$rows_query  = "SELECT * FROM {$table} WHERE {$where_sql}
 		                ORDER BY FIELD(severity,'critical','high','medium','low'), last_detected DESC
-		                LIMIT %d OFFSET %d";
+		                LIMIT %d OFFSET %d"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$rows_params = array_merge( $params, array( $per_page, $offset ) );
-		$rows        = $wpdb->get_results( $wpdb->prepare( $rows_query, $rows_params ) );
+		$rows        = $wpdb->get_results( $wpdb->prepare( $rows_query, $rows_params ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
 		$response = rest_ensure_response( $rows );
 		$response->header( 'X-WP-Total', (string) $total );
