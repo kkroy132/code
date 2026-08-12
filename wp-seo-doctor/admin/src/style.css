@@ -66,3 +66,75 @@
 .seodoc-fix-first li {
 	margin-bottom: 8px;
 }
+
+.seodoc-filters {
+	display: flex;
+	gap: 16px;
+	max-width: 480px;
+	margin-bottom: 16px;
+}
+
+.seodoc-table {
+	width: 100%;
+	border-collapse: collapse;
+	background: #fff;
+	margin-bottom: 16px;
+}
+
+.seodoc-table th,
+.seodoc-table td {
+	text-align: left;
+	padding: 8px 12px;
+	border-bottom: 1px solid #dcdcde;
+	vertical-align: middle;
+}
+
+.seodoc-table th {
+	font-weight: 600;
+	background: #f6f7f7;
+}
+
+.seodoc-badge {
+	display: inline-block;
+	padding: 2px 8px;
+	border-radius: 3px;
+	font-size: 12px;
+	font-weight: 600;
+	text-transform: capitalize;
+	color: #fff;
+}
+
+.seodoc-badge--critical {
+	background: #d63638;
+}
+
+.seodoc-badge--high {
+	background: #d98800;
+}
+
+.seodoc-badge--medium {
+	background: #2271b1;
+}
+
+.seodoc-badge--low {
+	background: #646970;
+}
+
+.seodoc-pagination {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.seodoc-redirect-form {
+	display: flex;
+	align-items: flex-end;
+	gap: 16px;
+	max-width: 700px;
+	margin-bottom: 24px;
+	flex-wrap: wrap;
+}
+
+.seodoc-redirect-form .components-base-control {
+	min-width: 200px;
+}

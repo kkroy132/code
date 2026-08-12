@@ -1,5 +1,4 @@
 /admin/node_modules/
 /admin/build/
-/vendor/action-scheduler/vendor/
 *.log
 .DS_Store
