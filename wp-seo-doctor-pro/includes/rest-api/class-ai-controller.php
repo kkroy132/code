@@ -96,7 +96,7 @@ class Ai_Controller extends Rest_Controller {
 		global $wpdb;
 		$table = Schema::table_names( $wpdb )['issues'];
 
-		$issue = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table} WHERE id = %d", (int) $request['id'] ) );
+		$issue = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table} WHERE id = %d", (int) $request['id'] ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is our own internally computed name (SEODoc\DB\Schema::table_names()), never user input.
 		if ( ! $issue ) {
 			return new \WP_Error( 'seodoc_not_found', __( 'Issue not found.', 'wp-seo-doctor-pro' ), array( 'status' => 404 ) );
 		}

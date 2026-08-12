@@ -1,12 +1,13 @@
 === WP SEO Doctor Pro ===
 Requires at least: 6.5
+Tested up to: 7.0
 Requires PHP: 7.4
 Requires Plugins: wp-seo-doctor
 Stable tag: 0.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Unlocks unlimited internal-link suggestions, extra redirect types, Google Search Console insights, and AI assistance on top of the free WP SEO Doctor plugin.
+Unlimited link suggestions, extra redirect types, Search Console insights, and AI assistance for WP SEO Doctor.
 
 == Description ==
 

@@ -30,8 +30,11 @@ class Pro_Plugin {
 	private function __construct() {}
 
 	public function boot() {
-		$this->load_textdomain();
-
+		// No manual load_plugin_textdomain() call: WordPress has loaded
+		// translations automatically ("just in time," keyed off the
+		// Domain Path header) since 4.6 — a manual call here is not just
+		// redundant but flagged by WordPress.org's Plugin Check as a
+		// discouraged function.
 		$this->modules = $this->boot_core_modules();
 
 		/**
@@ -64,14 +67,6 @@ class Pro_Plugin {
 			}
 		}
 		return $instances;
-	}
-
-	private function load_textdomain() {
-		load_plugin_textdomain(
-			'wp-seo-doctor-pro',
-			false,
-			dirname( plugin_basename( SEODOC_PRO_PLUGIN_FILE ) ) . '/languages'
-		);
 	}
 
 	/**

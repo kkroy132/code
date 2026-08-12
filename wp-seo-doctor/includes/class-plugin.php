@@ -35,8 +35,11 @@ class Plugin {
 	 * must fire before anything that consumes the Module_Registry.
 	 */
 	public function boot() {
-		$this->load_textdomain();
-
+		// No manual load_plugin_textdomain() call: WordPress has loaded
+		// translations automatically ("just in time," keyed off the
+		// Domain Path header) since 4.6 — a manual call here is not just
+		// redundant but flagged by WordPress.org's Plugin Check as a
+		// discouraged function.
 		DB\Schema::maybe_upgrade();
 
 		$this->modules = $this->boot_core_modules();
@@ -84,14 +87,6 @@ class Plugin {
 			}
 		}
 		return $instances;
-	}
-
-	private function load_textdomain() {
-		load_plugin_textdomain(
-			'wp-seo-doctor',
-			false,
-			dirname( plugin_basename( SEODOC_PLUGIN_FILE ) ) . '/languages'
-		);
 	}
 
 	/**

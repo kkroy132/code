@@ -157,7 +157,7 @@ class Ai_Assistant {
 
 		$issues = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT check_id, category, severity, title FROM {$table} WHERE object_id = %d AND status = 'open'",
+				"SELECT check_id, category, severity, title FROM {$table} WHERE object_id = %d AND status = 'open'", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is our own internally computed name (SEODoc\DB\Schema::table_names()), never user input; $post_id is parameterized via prepare() immediately below.
 				$post_id
 			)
 		);
