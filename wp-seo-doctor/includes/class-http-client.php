@@ -39,6 +39,16 @@ class Http_Client {
 	}
 
 	/**
+	 * @param string $url
+	 * @param array  $args wp_remote_request() args — e.g. 'body' for a
+	 *               JSON payload, 'headers' for an Authorization header.
+	 * @return array|\WP_Error
+	 */
+	public static function post( $url, $args = array() ) {
+		return self::request( 'POST', $url, $args );
+	}
+
+	/**
 	 * Single-hop, non-following variants — for callers that need to see
 	 * an intermediate redirect itself (its status code, its Location
 	 * header) rather than have it silently resolved: Step 10's broken-

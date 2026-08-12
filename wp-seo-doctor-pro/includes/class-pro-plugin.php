@@ -53,6 +53,7 @@ class Pro_Plugin {
 			'seodoc_pro_core_modules',
 			array(
 				Feature_Gates::class,
+				Pro_Registrar::class,
 			)
 		);
 
