@@ -181,8 +181,12 @@ class Redirect_Manager {
 			return new \WP_Error( 'seodoc_invalid_destination', __( 'Enter a destination URL.', 'wp-seo-doctor' ) );
 		}
 
-		if ( 0 === strpos( $destination, '/' ) ) {
-			return true; // Site-relative path.
+		if ( 0 === strpos( $destination, '/' ) && 0 !== strpos( $destination, '//' ) ) {
+			return true; // Site-relative path — but not "//host/path", a
+			// protocol-relative URL a browser resolves to a different
+			// host despite starting with "/". That must fall through to
+			// the scheme check below, which correctly rejects it (no
+			// scheme present) instead of silently being treated as safe.
 		}
 
 		$scheme = wp_parse_url( $destination, PHP_URL_SCHEME );
