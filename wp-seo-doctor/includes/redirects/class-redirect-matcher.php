@@ -54,16 +54,32 @@ class Redirect_Matcher {
 		return $path ? untrailingslashit( $path ) : '';
 	}
 
+	/**
+	 * Checked against Redirect_Cache first (Step 16 performance audit) —
+	 * this runs on every front-end request, so most of them should never
+	 * reach the database at all once a persistent object cache is warm.
+	 */
 	private static function find_active_redirect( $path ) {
+		$hash   = md5( $path );
+		$cached = Redirect_Cache::get( $hash );
+
+		if ( false !== $cached ) {
+			return $cached;
+		}
+
 		global $wpdb;
 		$table = Schema::table_names( $wpdb )['redirects'];
 
-		return $wpdb->get_row(
+		$redirect = $wpdb->get_row(
 			$wpdb->prepare(
 				"SELECT * FROM {$table} WHERE source_hash = %s AND status = 'active' AND is_regex = 0 LIMIT 1",
-				md5( $path )
+				$hash
 			)
 		);
+
+		Redirect_Cache::set( $hash, $redirect ? $redirect : null );
+
+		return $redirect;
 	}
 
 	private static function record_hit( $id ) {

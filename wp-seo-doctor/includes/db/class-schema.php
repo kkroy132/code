@@ -20,7 +20,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Schema {
 
-	const DB_VERSION = '1.0.0';
+	/**
+	 * 1.1.0 (Step 16 performance audit): added issues.object_lookup
+	 * (object_id, object_type) — Issue_Engine::resolve_missing() filters
+	 * on exactly that pair for every scanned post, every scan, and had
+	 * no supporting index, meaning a full table scan per post once a
+	 * site accumulates any meaningful number of issue rows.
+	 */
+	const DB_VERSION = '1.1.0';
 
 	const VERSION_OPTION = 'seodoc_db_version';
 
@@ -123,7 +130,8 @@ class Schema {
 			PRIMARY KEY  (id),
 			UNIQUE KEY check_url (check_id, url_hash),
 			KEY status_severity (status, severity),
-			KEY category (category)
+			KEY category (category),
+			KEY object_lookup (object_id, object_type)
 		) {$charset_collate};";
 
 		// ---------------------------------------------------------------

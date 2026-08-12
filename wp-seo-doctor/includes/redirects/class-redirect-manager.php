@@ -80,6 +80,8 @@ class Redirect_Manager {
 			)
 		);
 
+		Redirect_Cache::flush();
+
 		return (int) $wpdb->insert_id;
 	}
 
@@ -115,6 +117,8 @@ class Redirect_Manager {
 
 		$wpdb->update( $table, $data, array( 'id' => (int) $id ) );
 
+		Redirect_Cache::flush();
+
 		return true;
 	}
 
@@ -122,6 +126,8 @@ class Redirect_Manager {
 		global $wpdb;
 		$table = Schema::table_names( $wpdb )['redirects'];
 		$wpdb->delete( $table, array( 'id' => (int) $id ) );
+
+		Redirect_Cache::flush();
 
 		return true;
 	}
