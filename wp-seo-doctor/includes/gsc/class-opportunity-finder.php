@@ -5,10 +5,10 @@
  * against real GSC data, not a ranking prediction or a guarantee (the
  * brief explicitly rules out "fake guarantees about ranking improvements").
  *
- * @package SEODocPro
+ * @package SEODoc
  */
 
-namespace SEODocPro\Gsc;
+namespace SEODoc\Gsc;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

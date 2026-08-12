@@ -7,12 +7,12 @@
  * active": an installed-but-unlicensed Pro copy must behave exactly like
  * Free, never a silent unlock.
  *
- * @package SEODocPro
+ * @package SEODoc
  */
 
-namespace SEODocPro;
+namespace SEODoc;
 
-use SEODocPro\Licensing\License_Manager;
+use SEODoc\Licensing\License_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

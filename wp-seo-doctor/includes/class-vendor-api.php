@@ -10,10 +10,10 @@
  * they can't drift on the actual base URL even though the code isn't
  * shared line-for-line.
  *
- * @package SEODocPro
+ * @package SEODoc
  */
 
-namespace SEODocPro;
+namespace SEODoc;
 
 use SEODoc\Http_Client;
 
@@ -78,7 +78,7 @@ class Vendor_Api {
 				'seodoc_vendor_api_error',
 				sprintf(
 					/* translators: %d: HTTP status code. */
-					__( 'The WP SEO Doctor service returned an error (HTTP %d).', 'wp-seo-doctor-pro' ),
+					__( 'The WP SEO Doctor service returned an error (HTTP %d).', 'wp-seo-doctor' ),
 					$code
 				)
 			);

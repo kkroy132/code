@@ -6,16 +6,16 @@
  * presence anyway. Backs the Search Console screen: connection status,
  * OAuth start/callback/disconnect, opportunities, content decay.
  *
- * @package SEODocPro
+ * @package SEODoc
  */
 
-namespace SEODocPro\Rest_Api;
+namespace SEODoc\Rest_Api;
 
 use SEODoc\Rest_Api\Rest_Controller;
-use SEODocPro\Gsc\Content_Decay;
-use SEODocPro\Gsc\Oauth;
-use SEODocPro\Gsc\Opportunity_Finder;
-use SEODocPro\Licensing\License_Manager;
+use SEODoc\Gsc\Content_Decay;
+use SEODoc\Gsc\Oauth;
+use SEODoc\Gsc\Opportunity_Finder;
+use SEODoc\Licensing\License_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -98,7 +98,7 @@ class Gsc_Controller extends Rest_Controller {
 		if ( ! License_Manager::is_valid_license() ) {
 			return new \WP_Error(
 				'seodoc_not_licensed',
-				__( 'A valid Pro license is required to connect Google Search Console.', 'wp-seo-doctor-pro' ),
+				__( 'A valid Pro license is required to connect Google Search Console.', 'wp-seo-doctor' ),
 				array( 'status' => 402 )
 			);
 		}

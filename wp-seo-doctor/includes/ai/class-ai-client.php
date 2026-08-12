@@ -19,13 +19,13 @@
  * in what the plugin actually found, and keeps prompt construction (and
  * its iteration) entirely server-side.
  *
- * @package SEODocPro
+ * @package SEODoc
  */
 
-namespace SEODocPro\Ai;
+namespace SEODoc\Ai;
 
-use SEODocPro\Licensing\License_Manager;
-use SEODocPro\Vendor_Api;
+use SEODoc\Licensing\License_Manager;
+use SEODoc\Vendor_Api;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -51,13 +51,13 @@ class Ai_Client {
 		if ( ! License_Manager::is_valid_license() ) {
 			return new \WP_Error(
 				'seodoc_not_licensed',
-				__( 'A valid Pro license is required to use the AI Assistant.', 'wp-seo-doctor-pro' ),
+				__( 'A valid Pro license is required to use the AI Assistant.', 'wp-seo-doctor' ),
 				array( 'status' => 402 )
 			);
 		}
 
 		if ( ! isset( self::TASK_ENDPOINTS[ $task ] ) ) {
-			return new \WP_Error( 'seodoc_unknown_ai_task', __( 'Unknown AI task.', 'wp-seo-doctor-pro' ) );
+			return new \WP_Error( 'seodoc_unknown_ai_task', __( 'Unknown AI task.', 'wp-seo-doctor' ) );
 		}
 
 		return Vendor_Api::post_json( self::TASK_ENDPOINTS[ $task ], $payload );

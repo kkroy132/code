@@ -45,10 +45,10 @@ class Plugin {
 		$this->modules = $this->boot_core_modules();
 
 		/**
-		 * Fires after Core's own modules are booted. Free's own
-		 * self-registering checks (Step 6) and the Pro add-on both hook
-		 * here to call seodoc_register_check() / _scanner_stage() /
-		 * _admin_page() before anything reads the registry.
+		 * Fires after Core's own modules are booted. Default_Checks (and
+		 * any third-party integration) hooks here to call
+		 * seodoc_register_check() / _scanner_stage() / _admin_page()
+		 * before anything reads the registry.
 		 */
 		do_action( 'seodoc_register_modules' );
 
@@ -64,6 +64,7 @@ class Plugin {
 			array(
 				Compat\Plugin_Detector::class,
 				Maintenance::class,
+				Feature_Gates::class,
 				Scanner\Action_Scheduler_Init::class,
 				Scanner\Batch_Processor::class,
 				Checks\Check_Registry::class,

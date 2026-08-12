@@ -28,7 +28,7 @@ internal linking, broken links, and monitoring.
 = SEO Audit =
 
 A background scanner (never a single slow page load — work is processed
-in small batches) runs 26 checks across three categories:
+in small batches) runs checks across four categories:
 
 * **On-page**: missing/duplicate SEO titles, title length, missing meta
   description, description length, missing/multiple H1, heading
@@ -40,6 +40,9 @@ in small batches) runs 26 checks across three categories:
 * **Links**: empty link text, placeholder links, excessive external
   links, missing `rel="noopener"`, nofollow internal links, insecure
   (http) internal links.
+* **Content** (requires a license — see Premium Features below): SEO
+  Opportunity Finder and Content Decay detection, both powered by your
+  connected Google Search Console data.
 
 Every issue is scored by severity (Critical/High/Medium/Low) and rolled
 into an overall **SEO Health Score**, with a **Fix First** list ranking
@@ -70,6 +73,25 @@ existing published content.
 
 Create 301/302 redirects from one screen, with built-in validation
 against invalid destinations and self-referencing loops.
+
+= Premium Features (License Required) =
+
+WP SEO Doctor is one plugin — there is no separate paid download.
+Entering a valid license key unlocks:
+
+* **Unlimited internal-link suggestions** (unlicensed sites are capped
+  at 25/month).
+* **Extra redirect types** — 307, 308, and 410, alongside 301/302.
+* **Google Search Console integration** — connect your property to
+  unlock the SEO Opportunity Finder and Content Decay detection.
+* **AI Assistant** — plain-language explanations of detected issues,
+  generated SEO titles/meta descriptions/image ALT text, an AI-written
+  summary of your Fix First action plan, and page-specific Q&A grounded
+  in your site's actual detected issues.
+
+Without a license, every one of these simply behaves as the free tier
+described above — nothing is disabled or broken, and no separate plugin
+needs to be installed to unlock them later.
 
 = Privacy =
 
@@ -122,6 +144,8 @@ confirmation.
 == Changelog ==
 
 = 0.1.0 =
-* Initial release: SEO audit engine (26 checks), SEO Health Score, Fix
-  First action plan, internal linking suggestions, broken link
-  intelligence, 404 monitor, redirect manager.
+* Initial release: SEO audit engine, SEO Health Score, Fix First action
+  plan, internal linking suggestions, broken link intelligence, 404
+  monitor, redirect manager, and license-gated premium features (Google
+  Search Console integration, AI Assistant, unlimited suggestions, extra
+  redirect types).

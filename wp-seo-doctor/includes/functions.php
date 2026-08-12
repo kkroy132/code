@@ -1,7 +1,7 @@
 <?php
 /**
  * Public procedural API: the plugin accessor and the seodoc_register_*
- * extension points Pro/third-party code use to plug into Free (Step 1 §3).
+ * extension points used to plug into the audit engine (Step 1 §3).
  *
  * @package SEODoc
  */
@@ -64,11 +64,12 @@ function seodoc_register_admin_page( array $config ) {
 }
 
 /**
- * @return bool Whether the Pro add-on plugin is active. Free only ever
- *              uses this to decide whether to show an upsell nudge —
- *              never to gate functionality, since Free has none of Pro's
- *              code loaded to gate.
+ * @return bool Whether a valid Pro license is active. Free (unlicensed)
+ *              behavior never depends on this — it's only for deciding
+ *              whether to show an upsell nudge or a licensed-feature UI.
+ *              Feature_Gates hooks this filter to the actual license
+ *              check (SEODoc\Licensing\License_Manager).
  */
 function seodoc_is_pro_active() {
-	return (bool) apply_filters( 'seodoc_is_pro_active', defined( 'SEODOC_PRO_VERSION' ) );
+	return (bool) apply_filters( 'seodoc_is_pro_active', false );
 }

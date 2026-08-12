@@ -80,6 +80,14 @@ class Default_Checks {
 			// Reads Link_Graph's edges, built by the internal-link-graph
 			// scanner stage (Links_Bootstrap) during the same scan.
 			'orphan-page'               => Checks\Links\Orphan_Page_Check::class,
+
+			// License-gated (Licensing\License_Manager) — each check's
+			// own run() returns no issues at all when unlicensed or GSC
+			// isn't connected, so registering them unconditionally here
+			// is safe: an unlicensed site just never gets any Issues
+			// from these two.
+			'seo-opportunity'           => Checks\Content\Seo_Opportunity_Check::class,
+			'content-decay'             => Checks\Content\Content_Decay_Check::class,
 		);
 	}
 }

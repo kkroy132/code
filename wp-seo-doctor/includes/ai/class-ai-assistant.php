@@ -8,10 +8,10 @@
  * post content, Action_Plan's severity-weighted ranking) — never from
  * open-ended user text alone.
  *
- * @package SEODocPro
+ * @package SEODoc
  */
 
-namespace SEODocPro\Ai;
+namespace SEODoc\Ai;
 
 use SEODoc\DB\Schema;
 use SEODoc\Issues\Action_Plan;
@@ -48,7 +48,7 @@ class Ai_Assistant {
 	public static function generate_title( $post_id ) {
 		$post = get_post( $post_id );
 		if ( ! $post ) {
-			return new \WP_Error( 'seodoc_missing_post', __( 'Post not found.', 'wp-seo-doctor-pro' ) );
+			return new \WP_Error( 'seodoc_missing_post', __( 'Post not found.', 'wp-seo-doctor' ) );
 		}
 
 		$result = Ai_Client::request(
@@ -69,7 +69,7 @@ class Ai_Assistant {
 	public static function generate_description( $post_id ) {
 		$post = get_post( $post_id );
 		if ( ! $post ) {
-			return new \WP_Error( 'seodoc_missing_post', __( 'Post not found.', 'wp-seo-doctor-pro' ) );
+			return new \WP_Error( 'seodoc_missing_post', __( 'Post not found.', 'wp-seo-doctor' ) );
 		}
 
 		$result = Ai_Client::request(
@@ -90,7 +90,7 @@ class Ai_Assistant {
 	public static function generate_alt_text( $attachment_id ) {
 		$url = wp_get_attachment_url( $attachment_id );
 		if ( ! $url ) {
-			return new \WP_Error( 'seodoc_missing_attachment', __( 'Image not found.', 'wp-seo-doctor-pro' ) );
+			return new \WP_Error( 'seodoc_missing_attachment', __( 'Image not found.', 'wp-seo-doctor' ) );
 		}
 
 		$result = Ai_Client::request(
@@ -117,7 +117,7 @@ class Ai_Assistant {
 	 */
 	public static function apply_alt_text( $attachment_id, $alt_text ) {
 		if ( ! get_post( $attachment_id ) ) {
-			return new \WP_Error( 'seodoc_missing_attachment', __( 'Image not found.', 'wp-seo-doctor-pro' ) );
+			return new \WP_Error( 'seodoc_missing_attachment', __( 'Image not found.', 'wp-seo-doctor' ) );
 		}
 
 		update_post_meta( $attachment_id, '_wp_attachment_image_alt', sanitize_text_field( $alt_text ) );

@@ -23,10 +23,10 @@
  * `can_use_premium_code()` — all real, public Freemius API, not
  * invented for this file.
  *
- * @package SEODocPro
+ * @package SEODoc
  */
 
-namespace SEODocPro\Licensing;
+namespace SEODoc\Licensing;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -39,7 +39,7 @@ class License_Manager {
 	 * product. Placeholder until the real integration snippet replaces
 	 * it — see the class docblock.
 	 */
-	const SDK_ACCESSOR_FUNCTION = 'wp_seo_doctor_pro_fs';
+	const SDK_ACCESSOR_FUNCTION = 'wp_seo_doctor_fs';
 
 	public static function is_valid_license() {
 		if ( ! function_exists( self::SDK_ACCESSOR_FUNCTION ) ) {

@@ -12,15 +12,15 @@
  * performs the code/token exchange itself; the distributed plugin only
  * ever talks to that proxy, never to Google's token endpoint directly.
  *
- * SEODOC_PRO_API_BASE points at that proxy. It is not a live, deployed
- * backend yet — see docs/12 for why that's a placeholder and not
- * fabricated, the same reasoning applied to Action Scheduler (Step 4)
- * and the Freemius SDK (Step 14).
+ * api_base() (filterable via seodoc_pro_api_base) points at that proxy.
+ * It is not a live, deployed backend yet — see docs/12 for why that's a
+ * placeholder and not fabricated, the same reasoning applied to Action
+ * Scheduler (Step 4) and the Freemius SDK (Step 14).
  *
- * @package SEODocPro
+ * @package SEODoc
  */
 
-namespace SEODocPro\Gsc;
+namespace SEODoc\Gsc;
 
 use SEODoc\Http_Client;
 
@@ -76,7 +76,7 @@ class Oauth {
 		if ( ! $expected_state || ! hash_equals( $expected_state, (string) $state ) ) {
 			return new \WP_Error(
 				'seodoc_oauth_state_mismatch',
-				__( 'This connection request could not be verified. Please try connecting again.', 'wp-seo-doctor-pro' )
+				__( 'This connection request could not be verified. Please try connecting again.', 'wp-seo-doctor' )
 			);
 		}
 		delete_transient( self::STATE_TRANSIENT );
@@ -92,7 +92,7 @@ class Oauth {
 		$body = json_decode( (string) wp_remote_retrieve_body( $response ), true );
 
 		if ( empty( $body['access_token'] ) || empty( $body['refresh_token'] ) ) {
-			return new \WP_Error( 'seodoc_oauth_exchange_failed', __( 'Could not complete the Google connection.', 'wp-seo-doctor-pro' ) );
+			return new \WP_Error( 'seodoc_oauth_exchange_failed', __( 'Could not complete the Google connection.', 'wp-seo-doctor' ) );
 		}
 
 		update_option(
@@ -126,7 +126,7 @@ class Oauth {
 		$tokens = get_option( self::OPTION_TOKENS );
 
 		if ( empty( $tokens['refresh_token'] ) ) {
-			return new \WP_Error( 'seodoc_gsc_not_connected', __( 'Google Search Console is not connected.', 'wp-seo-doctor-pro' ) );
+			return new \WP_Error( 'seodoc_gsc_not_connected', __( 'Google Search Console is not connected.', 'wp-seo-doctor' ) );
 		}
 
 		if ( ! empty( $tokens['access_token'] ) && ! empty( $tokens['expires_at'] ) && $tokens['expires_at'] > time() + 60 ) {
@@ -149,7 +149,7 @@ class Oauth {
 		if ( empty( $body['access_token'] ) ) {
 			return new \WP_Error(
 				'seodoc_gsc_refresh_failed',
-				__( 'Could not refresh the Google Search Console connection. Please reconnect.', 'wp-seo-doctor-pro' )
+				__( 'Could not refresh the Google Search Console connection. Please reconnect.', 'wp-seo-doctor' )
 			);
 		}
 

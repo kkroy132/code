@@ -1,8 +1,8 @@
 <?php
 /**
- * Registers every REST controller on rest_api_init. Pro/third-party
- * controllers add themselves via the seodoc_rest_controllers filter
- * rather than this file needing to know about them.
+ * Registers every REST controller on rest_api_init. Third-party
+ * controllers can still add themselves via the seodoc_rest_controllers
+ * filter without editing this file.
  *
  * @package SEODoc
  */
@@ -29,6 +29,8 @@ class Rest_Api {
 				Monitor_404_Controller::class,
 				Redirects_Controller::class,
 				Notices_Controller::class,
+				Gsc_Controller::class,
+				Ai_Controller::class,
 			)
 		);
 

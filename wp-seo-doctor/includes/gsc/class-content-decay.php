@@ -5,10 +5,10 @@
  * percentage-change rule against real data — same "no fake metrics"
  * principle as Opportunity_Finder.
  *
- * @package SEODocPro
+ * @package SEODoc
  */
 
-namespace SEODocPro\Gsc;
+namespace SEODoc\Gsc;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

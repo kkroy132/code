@@ -5,14 +5,14 @@
  * apply-alt-text, an explicit separate action, same "generate, then a
  * distinct approve/apply step" shape as Step 9's suggestions flow.
  *
- * @package SEODocPro
+ * @package SEODoc
  */
 
-namespace SEODocPro\Rest_Api;
+namespace SEODoc\Rest_Api;
 
 use SEODoc\DB\Schema;
 use SEODoc\Rest_Api\Rest_Controller;
-use SEODocPro\Ai\Ai_Assistant;
+use SEODoc\Ai\Ai_Assistant;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -98,7 +98,7 @@ class Ai_Controller extends Rest_Controller {
 
 		$issue = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table} WHERE id = %d", (int) $request['id'] ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is our own internally computed name (SEODoc\DB\Schema::table_names()), never user input.
 		if ( ! $issue ) {
-			return new \WP_Error( 'seodoc_not_found', __( 'Issue not found.', 'wp-seo-doctor-pro' ), array( 'status' => 404 ) );
+			return new \WP_Error( 'seodoc_not_found', __( 'Issue not found.', 'wp-seo-doctor' ), array( 'status' => 404 ) );
 		}
 
 		return $this->respond( Ai_Assistant::explain_issue( $issue ), 'explanation' );

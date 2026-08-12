@@ -6,10 +6,10 @@
  * class-oauth.php). Every request still goes through Http_Client, same
  * as every other outbound fetch in either plugin (Step 1 §9).
  *
- * @package SEODocPro
+ * @package SEODoc
  */
 
-namespace SEODocPro\Gsc;
+namespace SEODoc\Gsc;
 
 use SEODoc\Http_Client;
 
@@ -67,7 +67,7 @@ class Gsc_Client {
 				'seodoc_gsc_api_error',
 				sprintf(
 					/* translators: %d: HTTP status code. */
-					__( 'Google Search Console API returned an error (HTTP %d).', 'wp-seo-doctor-pro' ),
+					__( 'Google Search Console API returned an error (HTTP %d).', 'wp-seo-doctor' ),
 					$code
 				)
 			);

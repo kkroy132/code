@@ -6,15 +6,15 @@
  * same audit/Fix First pipeline as everything else, gated on license
  * validity (not just "Pro is installed") per Step 14's rule.
  *
- * @package SEODocPro
+ * @package SEODoc
  */
 
-namespace SEODocPro\Checks;
+namespace SEODoc\Checks\Content;
 
 use SEODoc\Checks\Scan_Level_Check;
-use SEODocPro\Gsc\Oauth;
-use SEODocPro\Gsc\Opportunity_Finder;
-use SEODocPro\Licensing\License_Manager;
+use SEODoc\Gsc\Oauth;
+use SEODoc\Gsc\Opportunity_Finder;
+use SEODoc\Licensing\License_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -42,7 +42,7 @@ class Seo_Opportunity_Check extends Scan_Level_Check {
 				self::SEVERITY_LOW,
 				sprintf(
 					/* translators: 1: search position, 2: impressions in the last 28 days. */
-					__( 'Potential opportunity: this page ranks at position %1$s with %2$s impressions in the last 28 days — close to page one.', 'wp-seo-doctor-pro' ),
+					__( 'Potential opportunity: this page ranks at position %1$s with %2$s impressions in the last 28 days — close to page one.', 'wp-seo-doctor' ),
 					$opportunity['position'],
 					number_format_i18n( $opportunity['impressions'] )
 				),
