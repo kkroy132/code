@@ -31,6 +31,8 @@ class Rest_Api {
 				Notices_Controller::class,
 				Gsc_Controller::class,
 				Ai_Controller::class,
+				Reports_Controller::class,
+				Settings_Controller::class,
 			)
 		);
 

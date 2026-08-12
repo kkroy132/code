@@ -4,19 +4,23 @@
  * react-router, no state library) — a single mount point per admin page
  * with a data-route attribute, switched on below.
  *
- * Overview, SEO Audit, Links (suggestions), 404 Monitor, and Redirects
- * are wired to real data — their REST APIs were already complete, only
- * the screens were missing. Content/Search Console/AI Assistant/
- * Reports/Settings still render "coming soon": those need more than a
- * list+action screen (an OAuth connect flow, a chat-style Q&A UI, a
- * settings form), so they're left for follow-up rather than shipped
- * half-built.
+ * Every screen in the menu is wired to real data now: Overview, SEO
+ * Audit, Links, 404 Monitor, Redirects, Action Plan, Content, Search
+ * Console, AI Assistant, Reports, and Settings.
  */
 
 import { render, useEffect, useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
 import { __, sprintf } from '@wordpress/i18n';
-import { Button, Notice, SelectControl, Spinner, TextControl } from '@wordpress/components';
+import {
+	Button,
+	Notice,
+	SelectControl,
+	Spinner,
+	TextControl,
+	TextareaControl,
+	ToggleControl,
+} from '@wordpress/components';
 
 import './style.css';
 
@@ -585,6 +589,483 @@ function RedirectsScreen() {
 	);
 }
 
+function ActionPlanScreen() {
+	const { data, error, loading } = useFetch( '/seodoc/v1/action-plan', [] );
+
+	if ( loading ) {
+		return <Spinner />;
+	}
+
+	if ( error ) {
+		return (
+			<Notice status="error" isDismissible={ false }>
+				{ __( 'Could not load the action plan.', 'wp-seo-doctor' ) }
+			</Notice>
+		);
+	}
+
+	if ( ! data || 0 === data.length ) {
+		return <p>{ __( 'No open issues — nice work.', 'wp-seo-doctor' ) }</p>;
+	}
+
+	return (
+		<ol className="seodoc-action-plan">
+			{ data.map( ( group ) => (
+				<li key={ group.check_id } className="seodoc-action-plan__item">
+					<span className={ 'seodoc-badge seodoc-badge--' + group.severity }>
+						{ group.severity }
+					</span>{ ' ' }
+					<strong>{ group.sample_title }</strong>{ ' ' }
+					{ sprintf(
+						/* translators: %d: number of affected pages. */
+						__( '(%d affected)', 'wp-seo-doctor' ),
+						group.affected_count
+					) }
+					{ group.sample_urls && group.sample_urls.length > 0 && (
+						<ul className="seodoc-action-plan__urls">
+							{ group.sample_urls.map( ( url ) => (
+								<li key={ url }>
+									<a href={ url } target="_blank" rel="noreferrer">
+										{ url }
+									</a>
+								</li>
+							) ) }
+						</ul>
+					) }
+				</li>
+			) ) }
+		</ol>
+	);
+}
+
+function ContentScreen() {
+	const { data, error, loading, reload } = useFetch( '/seodoc/v1/issues?category=content', [] );
+	const [ busyId, setBusyId ] = useState( null );
+
+	const ignoreIssue = ( id ) => {
+		setBusyId( id );
+		apiFetch( { path: `/seodoc/v1/issues/${ id }/ignore`, method: 'POST' } )
+			.then( reload )
+			.finally( () => setBusyId( null ) );
+	};
+
+	if ( loading ) {
+		return <Spinner />;
+	}
+
+	if ( error ) {
+		return (
+			<Notice status="error" isDismissible={ false }>
+				{ __( 'Could not load content issues.', 'wp-seo-doctor' ) }
+			</Notice>
+		);
+	}
+
+	if ( ! data || 0 === data.length ) {
+		return (
+			<p>
+				{ __(
+					'No content issues yet. SEO Opportunity Finder and Content Decay detection require a Pro license and a connected Google Search Console property — see the Search Console tab.',
+					'wp-seo-doctor'
+				) }
+			</p>
+		);
+	}
+
+	return (
+		<table className="seodoc-table">
+			<thead>
+				<tr>
+					<th>{ __( 'Severity', 'wp-seo-doctor' ) }</th>
+					<th>{ __( 'Issue', 'wp-seo-doctor' ) }</th>
+					<th>{ __( 'URL', 'wp-seo-doctor' ) }</th>
+					<th>{ __( 'Action', 'wp-seo-doctor' ) }</th>
+				</tr>
+			</thead>
+			<tbody>
+				{ data.map( ( item ) => (
+					<tr key={ item.id }>
+						<td>
+							<span className={ 'seodoc-badge seodoc-badge--' + item.severity }>
+								{ item.severity }
+							</span>
+						</td>
+						<td>{ item.title }</td>
+						<td>
+							<a href={ item.url } target="_blank" rel="noreferrer">
+								{ item.url }
+							</a>
+						</td>
+						<td>
+							<Button
+								variant="secondary"
+								isBusy={ busyId === item.id }
+								disabled={ busyId === item.id }
+								onClick={ () => ignoreIssue( item.id ) }
+							>
+								{ __( 'Ignore', 'wp-seo-doctor' ) }
+							</Button>
+						</td>
+					</tr>
+				) ) }
+			</tbody>
+		</table>
+	);
+}
+
+function SearchConsoleScreen() {
+	const [ status, setStatus ] = useState( null );
+	const [ error, setError ] = useState( null );
+	const [ loading, setLoading ] = useState( true );
+	const [ connecting, setConnecting ] = useState( false );
+	const [ opportunities, setOpportunities ] = useState( [] );
+	const [ decay, setDecay ] = useState( [] );
+
+	const loadStatus = () => {
+		setLoading( true );
+		apiFetch( { path: '/seodoc/v1/gsc/status' } )
+			.then( ( result ) => {
+				setStatus( result );
+				setError( null );
+				if ( result.connected ) {
+					apiFetch( { path: '/seodoc/v1/gsc/opportunities' } )
+						.then( setOpportunities )
+						.catch( () => {} );
+					apiFetch( { path: '/seodoc/v1/gsc/content-decay' } )
+						.then( setDecay )
+						.catch( () => {} );
+				}
+			} )
+			.catch( ( err ) => setError( err ) )
+			.finally( () => setLoading( false ) );
+	};
+
+	useEffect( () => {
+		const params = new URLSearchParams( window.location.search );
+		const grantCode = params.get( 'grant_code' );
+		const state = params.get( 'state' );
+
+		if ( grantCode && state ) {
+			apiFetch( {
+				path: '/seodoc/v1/gsc/callback',
+				method: 'POST',
+				data: { grant_code: grantCode, state },
+			} )
+				.catch( () => {} )
+				.finally( () => {
+					params.delete( 'grant_code' );
+					params.delete( 'state' );
+					const query = params.toString();
+					window.history.replaceState( {}, '', window.location.pathname + ( query ? '?' + query : '' ) );
+					loadStatus();
+				} );
+		} else {
+			loadStatus();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+
+	const connect = () => {
+		setConnecting( true );
+		apiFetch( { path: '/seodoc/v1/gsc/connect-url' } )
+			.then( ( result ) => {
+				window.location.href = result.url;
+			} )
+			.catch( () => setConnecting( false ) );
+	};
+
+	const disconnect = () => {
+		apiFetch( { path: '/seodoc/v1/gsc/disconnect', method: 'POST' } ).then( loadStatus );
+	};
+
+	if ( loading ) {
+		return <Spinner />;
+	}
+
+	if ( error || ! status ) {
+		return (
+			<Notice status="error" isDismissible={ false }>
+				{ __( 'Could not load Search Console status.', 'wp-seo-doctor' ) }
+			</Notice>
+		);
+	}
+
+	if ( ! status.licensed ) {
+		return (
+			<Notice status="warning" isDismissible={ false }>
+				{ __(
+					'Google Search Console integration requires a Pro license. Add your license key in Settings.',
+					'wp-seo-doctor'
+				) }
+			</Notice>
+		);
+	}
+
+	if ( ! status.connected ) {
+		return (
+			<div>
+				<p>
+					{ __(
+						'Connect Google Search Console to unlock the SEO Opportunity Finder and Content Decay detection.',
+						'wp-seo-doctor'
+					) }
+				</p>
+				<Button variant="primary" onClick={ connect } isBusy={ connecting } disabled={ connecting }>
+					{ __( 'Connect Google Search Console', 'wp-seo-doctor' ) }
+				</Button>
+			</div>
+		);
+	}
+
+	return (
+		<div className="seodoc-gsc">
+			<Button variant="secondary" onClick={ disconnect }>
+				{ __( 'Disconnect', 'wp-seo-doctor' ) }
+			</Button>
+
+			<h2>{ __( 'SEO Opportunities', 'wp-seo-doctor' ) }</h2>
+			{ 0 === opportunities.length ? (
+				<p>{ __( 'No opportunities found in the last 28 days.', 'wp-seo-doctor' ) }</p>
+			) : (
+				<table className="seodoc-table">
+					<thead>
+						<tr>
+							<th>{ __( 'Page', 'wp-seo-doctor' ) }</th>
+							<th>{ __( 'Position', 'wp-seo-doctor' ) }</th>
+							<th>{ __( 'Impressions', 'wp-seo-doctor' ) }</th>
+							<th>{ __( 'CTR', 'wp-seo-doctor' ) }</th>
+						</tr>
+					</thead>
+					<tbody>
+						{ opportunities.map( ( row ) => (
+							<tr key={ row.page }>
+								<td>{ row.page }</td>
+								<td>{ row.position }</td>
+								<td>{ row.impressions }</td>
+								<td>{ row.ctr }%</td>
+							</tr>
+						) ) }
+					</tbody>
+				</table>
+			) }
+
+			<h2>{ __( 'Content Decay', 'wp-seo-doctor' ) }</h2>
+			{ 0 === decay.length ? (
+				<p>{ __( 'No declining pages found.', 'wp-seo-doctor' ) }</p>
+			) : (
+				<table className="seodoc-table">
+					<thead>
+						<tr>
+							<th>{ __( 'Page', 'wp-seo-doctor' ) }</th>
+							<th>{ __( 'Prior clicks', 'wp-seo-doctor' ) }</th>
+							<th>{ __( 'Recent clicks', 'wp-seo-doctor' ) }</th>
+							<th>{ __( 'Change', 'wp-seo-doctor' ) }</th>
+						</tr>
+					</thead>
+					<tbody>
+						{ decay.map( ( row ) => (
+							<tr key={ row.page }>
+								<td>{ row.page }</td>
+								<td>{ row.prior_clicks }</td>
+								<td>{ row.recent_clicks }</td>
+								<td>{ row.change_percent }%</td>
+							</tr>
+						) ) }
+					</tbody>
+				</table>
+			) }
+		</div>
+	);
+}
+
+function AiAssistantScreen() {
+	const [ summary, setSummary ] = useState( '' );
+	const [ summaryError, setSummaryError ] = useState( '' );
+	const [ summaryLoading, setSummaryLoading ] = useState( true );
+
+	const [ postId, setPostId ] = useState( '' );
+	const [ question, setQuestion ] = useState( '' );
+	const [ answer, setAnswer ] = useState( '' );
+	const [ askError, setAskError ] = useState( '' );
+	const [ asking, setAsking ] = useState( false );
+
+	useEffect( () => {
+		apiFetch( { path: '/seodoc/v1/ai/action-plan-summary' } )
+			.then( ( result ) => setSummary( result.summary || '' ) )
+			.catch( ( err ) =>
+				setSummaryError( err.message || __( 'Could not load an AI summary.', 'wp-seo-doctor' ) )
+			)
+			.finally( () => setSummaryLoading( false ) );
+	}, [] );
+
+	const ask = ( event ) => {
+		event.preventDefault();
+		setAsking( true );
+		setAskError( '' );
+		setAnswer( '' );
+		apiFetch( {
+			path: `/seodoc/v1/ai/ask/${ postId }`,
+			method: 'POST',
+			data: { question },
+		} )
+			.then( ( result ) => setAnswer( result.answer || '' ) )
+			.catch( ( err ) => setAskError( err.message || __( 'Could not get an answer.', 'wp-seo-doctor' ) ) )
+			.finally( () => setAsking( false ) );
+	};
+
+	return (
+		<div className="seodoc-ai">
+			<h2>{ __( 'Action Plan Summary', 'wp-seo-doctor' ) }</h2>
+			{ summaryLoading && <Spinner /> }
+			{ summaryError && (
+				<Notice status="warning" isDismissible={ false }>
+					{ summaryError }
+				</Notice>
+			) }
+			{ ! summaryLoading && ! summaryError && (
+				<p>{ summary || __( 'No summary available yet.', 'wp-seo-doctor' ) }</p>
+			) }
+
+			<h2>{ __( 'Ask About a Page', 'wp-seo-doctor' ) }</h2>
+			<form onSubmit={ ask } className="seodoc-ai-ask">
+				<TextControl label={ __( 'Post ID', 'wp-seo-doctor' ) } value={ postId } onChange={ setPostId } type="number" />
+				<TextareaControl
+					label={ __( 'Question', 'wp-seo-doctor' ) }
+					value={ question }
+					onChange={ setQuestion }
+					placeholder={ __( 'Why is this page not SEO optimized?', 'wp-seo-doctor' ) }
+				/>
+				{ askError && (
+					<Notice status="error" isDismissible={ false }>
+						{ askError }
+					</Notice>
+				) }
+				<Button variant="primary" type="submit" isBusy={ asking } disabled={ asking || ! postId || ! question }>
+					{ __( 'Ask', 'wp-seo-doctor' ) }
+				</Button>
+			</form>
+			{ answer && <p className="seodoc-ai-answer">{ answer }</p> }
+		</div>
+	);
+}
+
+function ReportsScreen() {
+	const [ exporting, setExporting ] = useState( false );
+	const [ error, setError ] = useState( '' );
+
+	const exportCsv = () => {
+		setExporting( true );
+		setError( '' );
+		apiFetch( { path: '/seodoc/v1/reports/issues' } )
+			.then( ( rows ) => {
+				const header = [ 'Severity', 'Category', 'Title', 'URL', 'Status', 'First Detected' ];
+				const csvRows = [ header.join( ',' ) ];
+
+				rows.forEach( ( row ) => {
+					const cells = [ row.severity, row.category, row.title, row.url, row.status, row.first_detected ];
+					csvRows.push( cells.map( ( cell ) => '"' + String( cell || '' ).replace( /"/g, '""' ) + '"' ).join( ',' ) );
+				} );
+
+				const blob = new Blob( [ csvRows.join( '\n' ) ], { type: 'text/csv' } );
+				const url = window.URL.createObjectURL( blob );
+				const link = document.createElement( 'a' );
+				link.href = url;
+				link.download = 'wp-seo-doctor-issues.csv';
+				document.body.appendChild( link );
+				link.click();
+				document.body.removeChild( link );
+				window.URL.revokeObjectURL( url );
+			} )
+			.catch( () => setError( __( 'Could not export issues.', 'wp-seo-doctor' ) ) )
+			.finally( () => setExporting( false ) );
+	};
+
+	return (
+		<div className="seodoc-reports">
+			<p>{ __( 'Export every currently open issue as a CSV file.', 'wp-seo-doctor' ) }</p>
+			{ error && (
+				<Notice status="error" isDismissible={ false }>
+					{ error }
+				</Notice>
+			) }
+			<Button variant="primary" onClick={ exportCsv } isBusy={ exporting } disabled={ exporting }>
+				{ __( 'Export Open Issues (CSV)', 'wp-seo-doctor' ) }
+			</Button>
+		</div>
+	);
+}
+
+function SettingsScreen() {
+	const { data, error, loading } = useFetch( '/seodoc/v1/settings', [] );
+	const [ deleteOnUninstall, setDeleteOnUninstall ] = useState( false );
+	const [ licenseKey, setLicenseKey ] = useState( '' );
+	const [ saving, setSaving ] = useState( false );
+	const [ saved, setSaved ] = useState( false );
+
+	useEffect( () => {
+		if ( data ) {
+			setDeleteOnUninstall( !! data.delete_data_on_uninstall );
+			setLicenseKey( data.license_key || '' );
+		}
+	}, [ data ] );
+
+	const save = ( event ) => {
+		event.preventDefault();
+		setSaving( true );
+		setSaved( false );
+		apiFetch( {
+			path: '/seodoc/v1/settings',
+			method: 'POST',
+			data: { delete_data_on_uninstall: deleteOnUninstall, license_key: licenseKey },
+		} )
+			.then( () => setSaved( true ) )
+			.finally( () => setSaving( false ) );
+	};
+
+	if ( loading ) {
+		return <Spinner />;
+	}
+
+	if ( error ) {
+		return (
+			<Notice status="error" isDismissible={ false }>
+				{ __( 'Could not load settings.', 'wp-seo-doctor' ) }
+			</Notice>
+		);
+	}
+
+	return (
+		<form onSubmit={ save } className="seodoc-settings">
+			<TextControl
+				label={ __( 'Pro License Key', 'wp-seo-doctor' ) }
+				value={ licenseKey }
+				onChange={ setLicenseKey }
+				help={ __(
+					'Unlocks unlimited suggestions, extra redirect types, Search Console integration, and the AI Assistant.',
+					'wp-seo-doctor'
+				) }
+			/>
+			<ToggleControl
+				label={ __( 'Delete all data when this plugin is uninstalled', 'wp-seo-doctor' ) }
+				checked={ deleteOnUninstall }
+				onChange={ setDeleteOnUninstall }
+				help={ __(
+					'Off by default — your scan history, issues, and redirects are kept unless you turn this on.',
+					'wp-seo-doctor'
+				) }
+			/>
+			{ saved && (
+				<Notice status="success" isDismissible={ false }>
+					{ __( 'Settings saved.', 'wp-seo-doctor' ) }
+				</Notice>
+			) }
+			<Button variant="primary" type="submit" isBusy={ saving } disabled={ saving }>
+				{ __( 'Save Settings', 'wp-seo-doctor' ) }
+			</Button>
+		</form>
+	);
+}
+
 function ComingSoon() {
 	return <p>{ __( 'This section is coming soon.', 'wp-seo-doctor' ) }</p>;
 }
@@ -595,12 +1076,24 @@ function App( { route } ) {
 			return <OverviewScreen />;
 		case 'audit':
 			return <SeoAuditScreen />;
+		case 'action-plan':
+			return <ActionPlanScreen />;
 		case 'links':
 			return <LinksScreen />;
 		case '404-monitor':
 			return <Monitor404Screen />;
 		case 'redirects':
 			return <RedirectsScreen />;
+		case 'content':
+			return <ContentScreen />;
+		case 'search-console':
+			return <SearchConsoleScreen />;
+		case 'ai-assistant':
+			return <AiAssistantScreen />;
+		case 'reports':
+			return <ReportsScreen />;
+		case 'settings':
+			return <SettingsScreen />;
 		default:
 			return <ComingSoon />;
 	}

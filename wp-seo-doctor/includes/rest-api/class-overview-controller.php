@@ -21,6 +21,8 @@ class Overview_Controller extends Rest_Controller {
 
 	const FIX_FIRST_LIMIT = 5;
 
+	const ACTION_PLAN_LIMIT = 20;
+
 	public function register_routes() {
 		register_rest_route(
 			self::REST_NAMESPACE,
@@ -28,6 +30,16 @@ class Overview_Controller extends Rest_Controller {
 			array(
 				'methods'             => 'GET',
 				'callback'            => array( $this, 'get_overview' ),
+				'permission_callback' => array( $this, 'permission_check' ),
+			)
+		);
+
+		register_rest_route(
+			self::REST_NAMESPACE,
+			'/action-plan',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'get_action_plan' ),
 				'permission_callback' => array( $this, 'permission_check' ),
 			)
 		);
@@ -98,6 +110,10 @@ class Overview_Controller extends Rest_Controller {
 				'fix_first'             => Action_Plan::get( self::FIX_FIRST_LIMIT ),
 			)
 		);
+	}
+
+	public function get_action_plan() {
+		return rest_ensure_response( Action_Plan::get( self::ACTION_PLAN_LIMIT ) );
 	}
 
 	public function start_scan( \WP_REST_Request $request ) {
