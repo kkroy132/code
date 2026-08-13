@@ -723,9 +723,13 @@ class WPSD_Internal_Links {
         $content = $source->post_content;
         $url     = get_permalink($target_id);
 
-        // Only link the first unlinked occurrence, and never inside an existing
-        // anchor, heading or attribute.
-        $pattern = '#(?<![>\w])(' . preg_quote($anchor, '#') . ')(?![^<]*</a>)(?![^<]*>)#iu';
+        // Match the first whole-word occurrence that is not already inside an
+        // anchor (`(?![^<]*</a>)`) and not inside a tag or attribute value
+        // (`(?![^<]*>)` — inside a tag the next `>` precedes any `<`).
+        // The word boundaries must not exclude text that directly follows a
+        // tag, which is where most paragraphs start.
+        $boundary = '[\p{L}\p{N}_-]';
+        $pattern  = '#(?<!' . $boundary . ')(' . preg_quote($anchor, '#') . ')(?!' . $boundary . ')(?![^<]*</a>)(?![^<]*>)#iu';
         $updated = preg_replace(
             $pattern,
             '<a href="' . esc_url($url) . '">$1</a>',
@@ -738,10 +742,12 @@ class WPSD_Internal_Links {
             return false;
         }
 
-        $result = wp_update_post([
+        // wp_update_post expects slashed data; without wp_slash any backslash
+        // in the content (code samples, regex) would be stripped on save.
+        $result = wp_update_post(wp_slash([
             'ID'           => $source_id,
             'post_content' => $updated,
-        ], true);
+        ]), true);
 
         if (is_wp_error($result)) {
             return false;

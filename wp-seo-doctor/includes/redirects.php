@@ -180,7 +180,9 @@ class WPSD_Redirects {
     public static function create(array $data) {
         global $wpdb;
 
-        $source = self::normalize_source((string) ($data['source'] ?? ''));
+        $match_type = ($data['match_type'] ?? 'exact') === 'regex' ? 'regex' : 'exact';
+
+        $source = self::source_key((string) ($data['source'] ?? ''), $match_type);
         if ($source === '') {
             return new WP_Error('wpsd_redirect_source', __('A source URL or path is required.', 'wp-seo-doctor'));
         }
@@ -190,8 +192,7 @@ class WPSD_Redirects {
             $code = 301;
         }
 
-        $match_type = ($data['match_type'] ?? 'exact') === 'regex' ? 'regex' : 'exact';
-        $target     = trim((string) ($data['target'] ?? ''));
+        $target = trim((string) ($data['target'] ?? ''));
 
         if ($code !== 410 && $target === '') {
             return new WP_Error('wpsd_redirect_target', __('A target URL is required for this redirect type.', 'wp-seo-doctor'));
@@ -247,8 +248,14 @@ class WPSD_Redirects {
 
         $fields = ['updated_at' => WPSD_Helpers::now()];
 
+        // The new match type decides how the source is stored, so resolve it
+        // before normalising.
+        $new_match_type = isset($data['match_type'])
+            ? ($data['match_type'] === 'regex' ? 'regex' : 'exact')
+            : (string) $rule->match_type;
+
         if (isset($data['source'])) {
-            $source = self::normalize_source((string) $data['source']);
+            $source = self::source_key((string) $data['source'], $new_match_type);
             if ($source === '') {
                 return new WP_Error('wpsd_redirect_source', __('A source URL or path is required.', 'wp-seo-doctor'));
             }
@@ -323,7 +330,7 @@ class WPSD_Redirects {
         // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
         return $wpdb->get_row($wpdb->prepare(
             "SELECT * FROM {$table} WHERE source_hash = %s AND match_type = %s LIMIT 1",
-            md5(self::normalize_source($source)),
+            md5(self::source_key($source, $match_type)),
             $match_type
         )) ?: null;
     }
@@ -767,19 +774,23 @@ class WPSD_Redirects {
             return '';
         }
 
-        // Accept both "/pattern/flags" and a bare pattern.
-        if (strlen($source) > 2 && $source[0] === '#') {
-            $pattern = $source;
-        } elseif (strlen($source) > 2 && $source[0] === '/' && strrpos($source, '/') > 0 && strrpos($source, '/') !== 0) {
-            $last = strrpos($source, '/');
-            $body = substr($source, 1, $last - 1);
-            $flags = substr($source, $last + 1);
-            // Only allow safe flags; `e` was removed from PHP but be explicit.
-            $flags   = preg_replace('/[^imsuxA-Z]/', '', (string) $flags);
-            $pattern = '#' . str_replace('#', '\#', (string) $body) . '#' . $flags;
-        } else {
-            $pattern = '#' . str_replace('#', '\#', $source) . '#';
+        // Only `#…#flags` and `~…~flags` count as pre-delimited. A pattern
+        // opening with `/` is indistinguishable from an ordinary path
+        // (`/blog/(.+)` means the path, not a delimited empty pattern), so
+        // anything else is treated as a bare pattern and delimited here.
+        $delimiter = $source[0];
+        if (strlen($source) > 2 && ($delimiter === '#' || $delimiter === '~')) {
+            $last = strrpos($source, $delimiter);
+            if ($last !== false && $last > 0) {
+                $flags = substr($source, $last + 1);
+                if ($flags === '' || preg_match('/^[imsxuADSUXJn]+$/', $flags)) {
+                    // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+                    return @preg_match($source, '') === false ? '' : $source;
+                }
+            }
         }
+
+        $pattern = '#' . str_replace('#', '\#', $source) . '#';
 
         // Validate before ever handing it to preg_match at request time.
         // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
@@ -788,6 +799,16 @@ class WPSD_Redirects {
         }
 
         return $pattern;
+    }
+
+    /**
+     * The stored form of a rule's source.
+     *
+     * Exact sources are normalised to a site-relative path; regex sources are
+     * stored verbatim, since normalising would corrupt the pattern.
+     */
+    public static function source_key(string $source, string $match_type): string {
+        return $match_type === 'regex' ? trim($source) : self::normalize_source($source);
     }
 
     /**

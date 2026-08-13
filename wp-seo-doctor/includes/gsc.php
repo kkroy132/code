@@ -510,14 +510,20 @@ class WPSD_GSC {
         global $wpdb;
         $table = WPSD_DB::table('gsc');
 
-        $sql = "SELECT page,
-                       SUM(CASE WHEN data_date >= DATE_SUB(CURDATE(), INTERVAL %d DAY) THEN clicks ELSE 0 END) AS recent_clicks,
-                       SUM(CASE WHEN data_date <  DATE_SUB(CURDATE(), INTERVAL %d DAY) THEN clicks ELSE 0 END) AS previous_clicks
-                FROM {$table}
-                WHERE data_date >= DATE_SUB(CURDATE(), INTERVAL %d DAY) AND page <> ''
-                GROUP BY page_hash, page
-                HAVING previous_clicks >= 10 AND recent_clicks < previous_clicks
-                ORDER BY (previous_clicks - recent_clicks) DESC
+        // The aggregate columns are filtered and sorted in an outer query:
+        // MariaDB rejects an aggregate alias used inside an ORDER BY
+        // expression, so the derived table keeps this portable.
+        $sql = "SELECT * FROM (
+                    SELECT page,
+                           SUM(CASE WHEN data_date >= DATE_SUB(CURDATE(), INTERVAL %d DAY) THEN clicks ELSE 0 END) AS recent_clicks,
+                           SUM(CASE WHEN data_date <  DATE_SUB(CURDATE(), INTERVAL %d DAY) THEN clicks ELSE 0 END) AS previous_clicks
+                    FROM {$table}
+                    WHERE data_date >= DATE_SUB(CURDATE(), INTERVAL %d DAY) AND page <> ''
+                    GROUP BY page_hash, page
+                ) AS totals
+                WHERE totals.previous_clicks >= 10
+                  AND totals.recent_clicks < totals.previous_clicks
+                ORDER BY (totals.previous_clicks - totals.recent_clicks) DESC
                 LIMIT %d";
 
         // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared

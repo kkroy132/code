@@ -1,0 +1,6 @@
+# Excluded from the distributed plugin build.
+/tests
+/.distignore
+/.git
+/.gitignore
+.DS_Store

@@ -336,7 +336,8 @@ class WPSD_Broken_Links {
                 continue;
             }
 
-            $result = wp_update_post(['ID' => $post->ID, 'post_content' => $content], true);
+            // Slashed data, as wp_update_post expects — see wp_slash() note above.
+            $result = wp_update_post(wp_slash(['ID' => $post->ID, 'post_content' => $content]), true);
             if (is_wp_error($result)) {
                 continue;
             }
@@ -388,7 +389,8 @@ class WPSD_Broken_Links {
                 continue;
             }
 
-            $result = wp_update_post(['ID' => $post->ID, 'post_content' => $content], true);
+            // Slashed data, as wp_update_post expects — see wp_slash() note above.
+            $result = wp_update_post(wp_slash(['ID' => $post->ID, 'post_content' => $content]), true);
             if (is_wp_error($result)) {
                 continue;
             }
