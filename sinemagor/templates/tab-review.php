@@ -3,16 +3,16 @@
 <div class="sg-section">
 
   <!-- ── Queue Progress Bar (hidden until bulk generation starts) ── -->
-  <div id="sg-queue-bar" style="display:none;background:#1a1a28;border:1px solid #2e2e45;border-radius:10px;padding:16px 20px;margin-bottom:20px">
+  <div id="sg-queue-bar" style="display:none;background:#ffffff;border:1px solid #dcdcde;border-radius:10px;padding:16px 20px;margin-bottom:20px">
     <div class="sg-queue-info" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
       <div>
-        <strong style="color:#e0e0f0">⚡ Bulk Generation Running...</strong>
-        <span id="sg-queue-text" style="color:#aaa;margin-left:12px;font-size:.85rem">0 / 0 completed</span>
+        <strong style="color:#1e1e1e">⚡ Bulk Generation Running...</strong>
+        <span id="sg-queue-text" style="color:#6b7280;margin-left:12px;font-size:.85rem">0 / 0 completed</span>
       </div>
       <button id="sg-queue-clear-btn" class="sg-btn sg-btn--ghost sg-btn--sm">Cancel Queue</button>
     </div>
-    <div style="height:6px;background:#2e2e45;border-radius:3px">
-      <div id="sg-progress-fill" style="height:100%;background:#e8b84b;border-radius:3px;width:0%;transition:width .4s"></div>
+    <div style="height:6px;background:#dcdcde;border-radius:3px">
+      <div id="sg-progress-fill" style="height:100%;background:#c9972c;border-radius:3px;width:0%;transition:width .4s"></div>
     </div>
     <div id="sg-queue-errors" style="margin-top:8px;font-size:.8rem;color:#e57373"></div>
   </div>
@@ -51,7 +51,7 @@
   </div>
 
   <!-- ── Stats bar ── -->
-  <div id="sg-rev-stats" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:12px;font-size:.85rem;color:#aaa;">
+  <div id="sg-rev-stats" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:12px;font-size:.85rem;color:#6b7280;">
     <span>📦 Total loaded: <strong id="sg-rev-total">—</strong></span>
     <span>✅ Published: <strong id="sg-rev-count-published">—</strong></span>
     <span>📝 Pending/Draft: <strong id="sg-rev-count-pending">—</strong></span>
@@ -91,10 +91,10 @@
 <!-- ── Generation Modal ── -->
 <div id="sg-modal" style="display:none;position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center">
   <div class="sg-modal-backdrop" style="position:absolute;inset:0;background:rgba(0,0,0,.7)"></div>
-  <div class="sg-modal-box" style="position:relative;background:#1a1a28;border:1px solid #2e2e45;border-radius:12px;width:520px;max-width:90vw;padding:28px;z-index:1">
+  <div class="sg-modal-box" style="position:relative;background:#ffffff;border:1px solid #dcdcde;border-radius:12px;width:520px;max-width:90vw;padding:28px;z-index:1">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-      <h2 id="sg-modal-title" style="margin:0;font-size:1.1rem;color:#e0e0f0"></h2>
-      <button id="sg-modal-close" style="background:none;border:none;color:#aaa;font-size:1.4rem;cursor:pointer;line-height:1">×</button>
+      <h2 id="sg-modal-title" style="margin:0;font-size:1.1rem;color:#1e1e1e"></h2>
+      <button id="sg-modal-close" style="background:none;border:none;color:#6b7280;font-size:1.4rem;cursor:pointer;line-height:1">×</button>
     </div>
     <div id="sg-modal-body"></div>
     <div id="sg-modal-footer" style="display:none;margin-top:20px;display:none;gap:10px;justify-content:flex-end">

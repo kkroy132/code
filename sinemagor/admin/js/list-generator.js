@@ -230,7 +230,7 @@
                         <div class="sg-modal-success">
                             <div class="sg-success-icon">📋</div>
                             <p><strong>${esc(d.title)}</strong></p>
-                            <p style="color:#aaa">${statusLabel} with ${selectedMovieIds.length} movies.</p>
+                            <p style="color:#6b7280">${statusLabel} with ${selectedMovieIds.length} movies.</p>
                         </div>
                     `);
                     $('#sg-list-view-btn').attr('href', d.post_url);
@@ -265,7 +265,7 @@
                 <td><span class="sg-badge sg-badge--blue">${esc(p.template || 'custom')}</span></td>
                 <td>${p.movie_count || '—'}</td>
                 <td><span class="sg-badge sg-badge--${p.status === 'publish' ? 'green' : 'gray'}">${p.status}</span></td>
-                <td style="color:#7a7a9a;font-size:.85rem">${p.date}</td>
+                <td style="color:#6b7280;font-size:.85rem">${p.date}</td>
                 <td>
                     <a href="${esc(p.edit_url)}" class="sg-link" target="_blank">Edit</a>
                     ${p.view_url ? ' · <a href="' + esc(p.view_url) + '" class="sg-link" target="_blank">View</a>' : ''}
@@ -288,7 +288,7 @@
             <div class="sg-spinner-wrap">
                 <div class="sg-spinner"></div>
                 <p>AI is writing your list post...<br>
-                <small style="color:#7a7a9a">This may take 30–60 seconds</small></p>
+                <small style="color:#6b7280">This may take 30–60 seconds</small></p>
             </div>
         `);
         $('#sg-list-modal-footer').hide();

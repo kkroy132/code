@@ -83,7 +83,7 @@
     <div class="sg-modal-body" id="sg-vs-modal-body">
       <div class="sg-spinner-wrap">
         <div class="sg-spinner"></div>
-        <p>AI is writing the comparison...<br><small style="color:#7a7a9a">30–60 seconds</small></p>
+        <p>AI is writing the comparison...<br><small style="color:#6b7280">30–60 seconds</small></p>
       </div>
     </div>
     <div class="sg-modal-footer" id="sg-vs-modal-footer" style="display:none">
@@ -205,7 +205,7 @@
 
   function openVsModal(title){
     $('#sg-vs-modal-title').text(title);
-    $('#sg-vs-modal-body').html('<div class="sg-spinner-wrap"><div class="sg-spinner"></div><p>AI is writing the comparison...<br><small style="color:#7a7a9a">30–60 seconds</small></p></div>');
+    $('#sg-vs-modal-body').html('<div class="sg-spinner-wrap"><div class="sg-spinner"></div><p>AI is writing the comparison...<br><small style="color:#6b7280">30–60 seconds</small></p></div>');
     $('#sg-vs-modal-footer').hide();
     $('#sg-vs-modal').show();
   }

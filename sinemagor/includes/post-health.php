@@ -110,7 +110,7 @@ class Sinemagor_Post_Health {
         $color = $pct >= 80 ? '#4caf50' : ($pct >= 50 ? '#ffa726' : '#e53935');
         ?>
         <div class="sg-health-wrap">
-            <h2 style="color:#e8b84b">🩺 Post Health Dashboard</h2>
+            <h2 style="color:#c9972c">🩺 Post Health Dashboard</h2>
 
             <!-- Score -->
             <div class="sg-health-score">
@@ -118,7 +118,7 @@ class Sinemagor_Post_Health {
                     <span><?php echo esc_html($pct); ?>%</span>
                 </div>
                 <div class="sg-health-meta">
-                    <div><strong style="color:#e0e0f0"><?php echo esc_html($report['healthy']); ?> / <?php echo esc_html($report['total']); ?></strong> posts fully healthy</div>
+                    <div><strong style="color:#1e1e1e"><?php echo esc_html($report['healthy']); ?> / <?php echo esc_html($report['total']); ?></strong> posts fully healthy</div>
                     <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
                         <?php foreach ([
                             'no_faq'           => '❓ No FAQ',
@@ -127,8 +127,8 @@ class Sinemagor_Post_Health {
                             'no_rating'        => '⭐ No Rating',
                             'no_verdict'       => '🏆 No Verdict',
                         ] as $key => $label): ?>
-                            <span class="sg-health-badge" style="background:rgba(255,255,255,.06);border:1px solid #2e2e45;padding:4px 10px;border-radius:6px;font-size:.82rem;color:#aaa">
-                                <?php echo esc_html($label); ?>: <strong style="color:#e8b84b"><?php echo esc_html($report['summary'][$key]); ?></strong>
+                            <span class="sg-health-badge" style="background:#f6f7f7;border:1px solid #dcdcde;padding:4px 10px;border-radius:6px;font-size:.82rem;color:#6b7280">
+                                <?php echo esc_html($label); ?>: <strong style="color:#c9972c"><?php echo esc_html($report['summary'][$key]); ?></strong>
                             </span>
                         <?php endforeach; ?>
                     </div>
@@ -155,7 +155,7 @@ class Sinemagor_Post_Health {
                         </td>
                         <td>
                             <?php foreach ($row['issues'] as $iss): ?>
-                                <span style="display:inline-block;background:rgba(229,57,53,.15);color:#ef9a9a;font-size:.75rem;padding:2px 7px;border-radius:4px;margin:2px">
+                                <span style="display:inline-block;background:rgba(229,57,53,.15);color:#c62828;font-size:.75rem;padding:2px 7px;border-radius:4px;margin:2px">
                                     <?php echo esc_html(str_replace('no_', '', $iss)); ?>
                                 </span>
                             <?php endforeach; ?>
@@ -180,10 +180,10 @@ class Sinemagor_Post_Health {
         </div>
 
         <style>
-        .sg-health-score{display:flex;gap:24px;align-items:center;background:#1a1a28;border:1px solid #2e2e45;border-radius:12px;padding:20px;margin-bottom:16px;flex-wrap:wrap}
-        .sg-health-circle{width:90px;height:90px;border-radius:50%;background:conic-gradient(var(--color) calc(var(--pct)*1%),#2e2e45 0);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative}
-        .sg-health-circle::before{content:'';position:absolute;width:70px;height:70px;border-radius:50%;background:#1a1a28}
-        .sg-health-circle span{position:relative;z-index:1;font-weight:800;font-size:1.1rem;color:#e0e0f0}
+        .sg-health-score{display:flex;gap:24px;align-items:center;background:#ffffff;border:1px solid #dcdcde;border-radius:12px;padding:20px;margin-bottom:16px;flex-wrap:wrap}
+        .sg-health-circle{width:90px;height:90px;border-radius:50%;background:conic-gradient(var(--color) calc(var(--pct)*1%),#dcdcde 0);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative}
+        .sg-health-circle::before{content:'';position:absolute;width:70px;height:70px;border-radius:50%;background:#ffffff}
+        .sg-health-circle span{position:relative;z-index:1;font-weight:800;font-size:1.1rem;color:#1e1e1e}
         </style>
 
         <script>

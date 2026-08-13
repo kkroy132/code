@@ -17,10 +17,10 @@ $log   = Sinemagor_IndexNow::get_log();
       ['🟢', 'Success',        $stats['success']],
       ['❌', 'Failed',          $stats['failed']],
     ] as [$icon, $label, $val]): ?>
-    <div style="background:#1a1a28;border:1px solid #2e2e45;border-radius:8px;padding:12px 20px;min-width:110px;text-align:center">
+    <div style="background:#ffffff;border:1px solid #dcdcde;border-radius:8px;padding:12px 20px;min-width:110px;text-align:center">
       <div style="font-size:1.3rem"><?php echo esc_html($icon); ?></div>
-      <div style="font-size:1.3rem;font-weight:700;color:#e8b84b"><?php echo esc_html((int) $val); ?></div>
-      <div style="font-size:.75rem;color:#7a7a9a"><?php echo esc_html($label); ?></div>
+      <div style="font-size:1.3rem;font-weight:700;color:#c9972c"><?php echo esc_html((int) $val); ?></div>
+      <div style="font-size:.75rem;color:#6b7280"><?php echo esc_html($label); ?></div>
     </div>
     <?php endforeach; ?>
   </div>
@@ -71,12 +71,12 @@ $log   = Sinemagor_IndexNow::get_log();
   <!-- ── Log ── -->
   <?php if ($log): ?>
   <div style="margin-top:28px">
-    <h3 style="margin:0 0 10px;color:#aaa;font-size:.9rem;text-transform:uppercase;letter-spacing:1px">📋 Submission Log (last 200)</h3>
-    <div style="background:#0f0f17;border:1px solid #2e2e45;border-radius:8px;padding:14px;max-height:300px;overflow-y:auto;font-family:monospace;font-size:.8rem;line-height:1.7" id="sg-in-log-wrap">
+    <h3 style="margin:0 0 10px;color:#6b7280;font-size:.9rem;text-transform:uppercase;letter-spacing:1px">📋 Submission Log (last 200)</h3>
+    <div style="background:#f0f0f1;border:1px solid #dcdcde;border-radius:8px;padding:14px;max-height:300px;overflow-y:auto;font-family:monospace;font-size:.8rem;line-height:1.7" id="sg-in-log-wrap">
       <?php foreach ($log as $entry): ?>
-      <div style="display:flex;gap:12px;border-bottom:1px solid #1e1e30;padding:4px 0">
+      <div style="display:flex;gap:12px;border-bottom:1px solid #dcdcde;padding:4px 0">
         <span style="color:#555;flex-shrink:0"><?php echo esc_html($entry['time']); ?></span>
-        <span style="color:#9090b0;flex:1;word-break:break-all"><?php echo esc_html($entry['url']); ?></span>
+        <span style="color:#6b7280;flex:1;word-break:break-all"><?php echo esc_html($entry['url']); ?></span>
         <span style="color:<?php echo in_array($entry['indexnow'], [200, 202]) ? '#4caf50' : '#e57373'; ?>;flex-shrink:0">IN:<?php echo esc_html($entry['indexnow']); ?></span>
         <span style="color:<?php echo in_array($entry['bing'],     [200, 202]) ? '#4caf50' : '#e57373'; ?>;flex-shrink:0">Bing:<?php echo esc_html($entry['bing']); ?></span>
       </div>
@@ -109,10 +109,10 @@ jQuery(function($){
                 $('#sg-in-tbody').html('<tr><td colspan="6" class="sg-empty">No posts found.</td></tr>');
             } else {
                 var html = rows.map(function(r){
-                    var sc = (r.status === 'success') ? '#4caf50' : (r.status === 'failed' ? '#e57373' : '#7a7a9a');
+                    var sc = (r.status === 'success') ? '#4caf50' : (r.status === 'failed' ? '#e57373' : '#6b7280');
                     return '<tr data-pid="'+r.id+'">'
                         +'<td><a href="'+r.url+'" target="_blank" class="sg-link" style="max-width:220px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+escHtml(r.title)+'</a></td>'
-                        +'<td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.8rem"><a href="'+r.url+'" target="_blank" rel="noopener" style="color:#7a7a9a">'+escHtml(r.url)+'</a></td>'
+                        +'<td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.8rem"><a href="'+r.url+'" target="_blank" rel="noopener" style="color:#6b7280">'+escHtml(r.url)+'</a></td>'
                         +'<td style="white-space:nowrap">'+escHtml(r.date)+'</td>'
                         +'<td style="white-space:nowrap;font-size:.82rem">'+escHtml(r.submitted_at || '—')+'</td>'
                         +'<td><span style="color:'+sc+'">'+escHtml(r.status.replace('_',' '))+'</span></td>'

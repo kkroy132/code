@@ -94,14 +94,14 @@ class Sinemagor_Admin_Menu {
         // ── Post Health ──
         echo '<div id="sg-panel-health" class="sg-tab-panel"' . ($active !== 'health' ? ' style="display:none"' : '') . '>';
 
-        echo '<div id="sg-rebuild-bar" style="display:none;background:#1a1a28;border:1px solid #2e2e45;border-radius:10px;padding:16px 20px;margin-bottom:20px">';
-        echo '<strong style="color:#e0e0f0">🔗 Rebuilding Internal Links...</strong> ';
-        echo '<span id="sg-rebuild-text" style="color:#aaa">0 / 0</span>';
-        echo '<div style="height:6px;background:#2e2e45;border-radius:3px;margin-top:8px"><div id="sg-rebuild-fill" style="height:100%;background:#e8b84b;border-radius:3px;width:0%;transition:width .4s"></div></div>';
+        echo '<div id="sg-rebuild-bar" style="display:none;background:#ffffff;border:1px solid #dcdcde;border-radius:10px;padding:16px 20px;margin-bottom:20px">';
+        echo '<strong style="color:#1e1e1e"><span class="dashicons dashicons-admin-links"></span> Rebuilding Internal Links...</strong> ';
+        echo '<span id="sg-rebuild-text" style="color:#6b7280">0 / 0</span>';
+        echo '<div style="height:6px;background:#dcdcde;border-radius:3px;margin-top:8px"><div id="sg-rebuild-fill" style="height:100%;background:#c9972c;border-radius:3px;width:0%;transition:width .4s"></div></div>';
         echo '</div>';
 
         echo '<div style="margin-bottom:16px">';
-        echo '<button id="sg-bulk-rebuild-btn" class="sg-btn sg-btn--secondary">🔗 Bulk Rebuild All Internal Links</button>';
+        echo '<button id="sg-bulk-rebuild-btn" class="sg-btn sg-btn--secondary"><span class="dashicons dashicons-admin-links"></span> Bulk Rebuild All Internal Links</button>';
         echo '</div>';
 
         Sinemagor_Post_Health::render();
@@ -119,22 +119,24 @@ class Sinemagor_Admin_Menu {
 
     private static function render_tabs(string $active): void {
         $tabs = [
-            'library'    => ['url' => admin_url('admin.php?page=sinemagor&tab=library'),    'label' => '🎬 Library',          'ajax' => true],
-            'review'     => ['url' => admin_url('admin.php?page=sinemagor&tab=review'),     'label' => '📝 Review & Publish', 'ajax' => true],
-            'list'       => ['url' => admin_url('admin.php?page=sinemagor&tab=list'),       'label' => '📋 List Posts',       'ajax' => true],
-            'comparison' => ['url' => admin_url('admin.php?page=sinemagor&tab=comparison'), 'label' => '⚔️ Comparisons',     'ajax' => true],
-            'indexnow'   => ['url' => admin_url('admin.php?page=sinemagor&tab=indexnow'),   'label' => '⚡ IndexNow',          'ajax' => true],
-            'health'     => ['url' => admin_url('admin.php?page=sinemagor&tab=health'),     'label' => '🩺 Post Health',      'ajax' => true],
-            'settings'   => ['url' => admin_url('admin.php?page=sinemagor-settings'),       'label' => '⚙️ Settings',         'ajax' => false],
+            'library'    => ['url' => admin_url('admin.php?page=sinemagor&tab=library'),    'label' => 'Library',          'icon' => 'video-alt2',   'ajax' => true],
+            'review'     => ['url' => admin_url('admin.php?page=sinemagor&tab=review'),     'label' => 'Review & Publish', 'icon' => 'edit',         'ajax' => true],
+            'list'       => ['url' => admin_url('admin.php?page=sinemagor&tab=list'),       'label' => 'List Posts',       'icon' => 'list-view',    'ajax' => true],
+            'comparison' => ['url' => admin_url('admin.php?page=sinemagor&tab=comparison'), 'label' => 'Comparisons',      'icon' => 'randomize',    'ajax' => true],
+            'indexnow'   => ['url' => admin_url('admin.php?page=sinemagor&tab=indexnow'),   'label' => 'IndexNow',         'icon' => 'megaphone',    'ajax' => true],
+            'health'     => ['url' => admin_url('admin.php?page=sinemagor&tab=health'),     'label' => 'Post Health',      'icon' => 'heart',        'ajax' => true],
+            'settings'   => ['url' => admin_url('admin.php?page=sinemagor-settings'),       'label' => 'Settings',         'icon' => 'admin-generic', 'ajax' => false],
         ];
 
-        echo '<h1 class="sg-page-title">🎬 Sinemagor</h1>';
+        echo '<h1 class="sg-page-title"><span class="dashicons dashicons-video-alt2"></span> Sinemagor</h1>';
         echo '<nav class="sg-tabs">';
         foreach ($tabs as $key => $tab) {
             $class = $active === $key ? 'sg-tab sg-tab--active' : 'sg-tab';
             $data  = $tab['ajax'] ? ' data-tab="' . esc_attr($key) . '"' : '';
-            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $class is a hardcoded string, $data is pre-escaped above.
-            echo '<a href="' . esc_url($tab['url']) . '" class="' . esc_attr($class) . '"' . $data . '>' . esc_html($tab['label']) . '</a>';
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $class and the dashicons span are hardcoded/pre-escaped above.
+            echo '<a href="' . esc_url($tab['url']) . '" class="' . esc_attr($class) . '"' . $data . '>'
+                . '<span class="dashicons dashicons-' . esc_attr($tab['icon']) . '"></span> '
+                . esc_html($tab['label']) . '</a>';
         }
         echo '</nav>';
     }

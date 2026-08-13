@@ -41,27 +41,27 @@
       <option value="150">150 movies</option>
       <option value="200">200 movies</option>
     </select>
-    <button id="sg-discover-btn" class="sg-btn sg-btn--primary">🔍 Discover</button>
+    <button id="sg-discover-btn" class="sg-btn sg-btn--primary"><span class="dashicons dashicons-search"></span> Discover</button>
   </div>
 
   <!-- ── Bulk Actions ── -->
   <div class="sg-bulk-bar" style="display:none;" id="sg-lib-bulk-bar">
     <label><input type="checkbox" id="sg-select-all-discover" /> Select All</label>
     <span id="sg-selected-count">0 selected</span>
-    <button id="sg-add-selected-btn" class="sg-btn sg-btn--success">+ Add to Library</button>
+    <button id="sg-add-selected-btn" class="sg-btn sg-btn--success"><span class="dashicons dashicons-plus-alt2"></span> Add to Library</button>
     <button id="sg-clear-selection-btn" class="sg-btn sg-btn--ghost">Clear</button>
   </div>
 
   <!-- ── Add progress bar (shown while adding) ── -->
-  <div id="sg-add-progress-bar" style="display:none;background:#1a1a28;border:1px solid #2e2e45;border-radius:10px;padding:14px 18px;margin-bottom:16px;">
+  <div id="sg-add-progress-bar" style="display:none;background:#ffffff;border:1px solid #dcdcde;border-radius:10px;padding:14px 18px;margin-bottom:16px;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-      <strong style="color:#e0e0f0">➕ Adding to Library...</strong>
-      <span id="sg-add-progress-text" style="color:#aaa;font-size:.85rem">0 / 0</span>
+      <strong style="color:#1e1e1e"><span class="dashicons dashicons-plus-alt2"></span> Adding to Library...</strong>
+      <span id="sg-add-progress-text" style="color:#6b7280;font-size:.85rem">0 / 0</span>
     </div>
-    <div style="height:6px;background:#2e2e45;border-radius:3px;">
+    <div style="height:6px;background:#dcdcde;border-radius:3px;">
       <div id="sg-add-progress-fill" style="height:100%;background:#4caf50;border-radius:3px;width:0%;transition:width .3s;"></div>
     </div>
-    <div id="sg-add-progress-detail" style="margin-top:6px;font-size:.8rem;color:#aaa;"></div>
+    <div id="sg-add-progress-detail" style="margin-top:6px;font-size:.8rem;color:#6b7280;"></div>
   </div>
 
   <!-- ── TMDB Results Grid ── -->
@@ -71,8 +71,8 @@
   <!-- ── Library Table ── -->
   <div class="sg-library-section">
     <h3 class="sg-section-title" style="cursor:pointer;user-select:none;" id="sg-lib-toggle">
-      📚 Your Library <span id="sg-lib-count-badge" style="font-size:.8rem;color:#aaa;font-weight:normal;margin-left:8px;"></span>
-      <span id="sg-lib-chevron" style="font-size:.85rem;color:#666;margin-left:6px;">▼</span>
+      <span class="dashicons dashicons-book-alt"></span> Your Library <span id="sg-lib-count-badge" style="font-size:.8rem;color:#6b7280;font-weight:normal;margin-left:8px;"></span>
+      <span id="sg-lib-chevron" style="font-size:.85rem;color:#8c8f94;margin-left:6px;">▼</span>
     </h3>
     <div id="sg-lib-body">
 
@@ -84,13 +84,13 @@
         <option value="draft">Draft</option>
         <option value="published">Published</option>
       </select>
-      <button id="sg-lib-filter-btn" class="sg-btn sg-btn--secondary">Filter</button>
+      <button id="sg-lib-filter-btn" class="sg-btn sg-btn--secondary"><span class="dashicons dashicons-filter"></span> Filter</button>
     </div>
 
     <div class="sg-bulk-bar" id="sg-lib-bulk-bar2">
       <label><input type="checkbox" id="sg-lib-select-all" /> Select All</label>
       <span id="sg-lib-selected-count">0 selected</span>
-      <button id="sg-lib-delete-btn" class="sg-btn sg-btn--danger">🗑 Delete Selected</button>
+      <button id="sg-lib-delete-btn" class="sg-btn sg-btn--danger"><span class="dashicons dashicons-trash"></span> Delete Selected</button>
     </div>
 
     <div class="sg-table-wrap">

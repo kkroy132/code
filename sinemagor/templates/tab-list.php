@@ -87,7 +87,7 @@ $years   = Sinemagor_DB::get_years();
 
       <!-- Title preview -->
       <div class="sg-form-row">
-        <label class="sg-form-label">Post Title <span style="color:#7a7a9a;font-weight:400">(auto-generated, editable)</span></label>
+        <label class="sg-form-label">Post Title <span style="color:#6b7280;font-weight:400">(auto-generated, editable)</span></label>
         <input type="text" id="sg-list-custom-title" class="sg-input" placeholder="Loading preview..." />
       </div>
 
@@ -106,13 +106,13 @@ $years   = Sinemagor_DB::get_years();
     <!-- Movie preview grid -->
     <div id="sg-list-preview-wrap" style="display:none;margin-top:24px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <h4 style="margin:0;color:#e0e0f0" id="sg-list-preview-title">Movies in this list:</h4>
-        <label style="color:#7a7a9a;font-size:.85rem">
+        <h4 style="margin:0;color:#1e1e1e" id="sg-list-preview-title">Movies in this list:</h4>
+        <label style="color:#6b7280;font-size:.85rem">
           <input type="checkbox" id="sg-list-select-all" checked /> Select All
         </label>
       </div>
       <div id="sg-list-movie-grid" class="sg-list-movie-grid"></div>
-      <div style="margin-top:14px;color:#7a7a9a;font-size:.85rem" id="sg-list-warning"></div>
+      <div style="margin-top:14px;color:#6b7280;font-size:.85rem" id="sg-list-warning"></div>
     </div>
 
   </div><!-- .sg-list-form-wrap -->
@@ -152,7 +152,7 @@ $years   = Sinemagor_DB::get_years();
     <div class="sg-modal-body" id="sg-list-modal-body">
       <div class="sg-spinner-wrap">
         <div class="sg-spinner"></div>
-        <p>AI is writing your list post...<br><small style="color:#7a7a9a">This may take 30-60 seconds</small></p>
+        <p>AI is writing your list post...<br><small style="color:#6b7280">This may take 30-60 seconds</small></p>
       </div>
     </div>
     <div class="sg-modal-footer" id="sg-list-modal-footer" style="display:none">

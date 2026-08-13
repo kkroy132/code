@@ -157,11 +157,11 @@ class Sinemagor_Settings {
                             <button type="button" id="sg-test-model-btn" class="button button-secondary">
                                 🧪 Test Selected Model
                             </button>
-                            <span id="sg-test-status" style="color:#aaa;font-size:.85rem"></span>
+                            <span id="sg-test-status" style="color:#6b7280;font-size:.85rem"></span>
                         </div>
 
                         <!-- Test result preview -->
-                        <div id="sg-test-result" style="display:none;margin-top:14px;background:#0f0f17;border:1px solid #2e2e45;border-radius:8px;padding:16px;font-size:.85rem;line-height:1.7;color:#c0c0d8;max-height:320px;overflow-y:auto;white-space:pre-wrap;font-family:monospace"></div>
+                        <div id="sg-test-result" style="display:none;margin-top:14px;background:#f0f0f1;border:1px solid #dcdcde;border-radius:8px;padding:16px;font-size:.85rem;line-height:1.7;color:#8c8f94;max-height:320px;overflow-y:auto;white-space:pre-wrap;font-family:monospace"></div>
                     </td>
                 </tr>
                 <tr>
@@ -212,9 +212,9 @@ class Sinemagor_Settings {
             </table>
 
             <!-- ══ Retro Linker Section ══ -->
-            <hr style="margin:30px 0;border-color:#2e2e45"/>
-            <h2 style="color:#e8b84b">🔄 Retroactive Link Rebuilder</h2>
-            <p style="color:#7a7a9a;margin-bottom:16px;font-size:.9rem">
+            <hr style="margin:30px 0;border-color:#dcdcde"/>
+            <h2 style="color:#c9972c">🔄 Retroactive Link Rebuilder</h2>
+            <p style="color:#6b7280;margin-bottom:16px;font-size:.9rem">
                 When a new post is published, old posts with the same cast/director automatically get updated links and categories.
                 Also runs nightly at 3 AM.
             </p>
@@ -222,13 +222,13 @@ class Sinemagor_Settings {
             <?php $retro_progress = Sinemagor_Retro_Linker::get_progress(); ?>
 
             <!-- Progress Bar -->
-            <div id="sg-retro-bar" style="background:#1a1a28;border:1px solid #2e2e45;border-radius:10px;padding:16px 20px;margin-bottom:16px">
+            <div id="sg-retro-bar" style="background:#ffffff;border:1px solid #dcdcde;border-radius:10px;padding:16px 20px;margin-bottom:16px">
                 <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:10px">
                     <div>
-                        <strong style="color:#e0e0f0" id="sg-retro-status-label">
+                        <strong style="color:#1e1e1e" id="sg-retro-status-label">
                             <?php echo $retro_progress['running'] ? '⚡ Running...' : '✅ Ready'; ?>
                         </strong>
-                        <span style="color:#7a7a9a;font-size:.85rem;margin-left:10px" id="sg-retro-text">
+                        <span style="color:#6b7280;font-size:.85rem;margin-left:10px" id="sg-retro-text">
                             <?php echo esc_html($retro_progress['done']); ?> / <?php echo esc_html($retro_progress['total']); ?> posts updated
                         </span>
                     </div>
@@ -238,11 +238,11 @@ class Sinemagor_Settings {
                         </button>
                     </div>
                 </div>
-                <div style="height:6px;background:#2e2e45;border-radius:3px">
-                    <div id="sg-retro-fill" style="height:100%;background:linear-gradient(90deg,#e8b84b,#4caf50);border-radius:3px;width:<?php echo esc_attr($retro_progress['percent']); ?>%;transition:width .4s"></div>
+                <div style="height:6px;background:#dcdcde;border-radius:3px">
+                    <div id="sg-retro-fill" style="height:100%;background:linear-gradient(90deg,#c9972c,#4caf50);border-radius:3px;width:<?php echo esc_attr($retro_progress['percent']); ?>%;transition:width .4s"></div>
                 </div>
                 <?php if ($retro_progress['done_at']): ?>
-                <div style="font-size:.78rem;color:#606080;margin-top:6px">
+                <div style="font-size:.78rem;color:#6b7280;margin-top:6px">
                     Last completed: <?php echo esc_html($retro_progress['done_at']); ?>
                     · Source: <?php echo esc_html($retro_progress['source'] ?: 'manual'); ?>
                 </div>
@@ -252,10 +252,10 @@ class Sinemagor_Settings {
             <table class="form-table sg-form-table">
                 <tr>
                     <th>How it works</th>
-                    <td style="color:#7a7a9a;font-size:.88rem;line-height:1.7">
-                        <strong style="color:#e0e0f0">On new publish:</strong> Finds posts sharing the same cast/director/genre → queues them → updates categories + links in background.<br>
-                        <strong style="color:#e0e0f0">Nightly 3 AM:</strong> Full rebuild of all posts to catch anything missed.<br>
-                        <strong style="color:#e0e0f0">Full Rebuild:</strong> Manually trigger a complete rebuild of all <?php echo esc_html(wp_count_posts()->publish ?? 0); ?> posts.
+                    <td style="color:#6b7280;font-size:.88rem;line-height:1.7">
+                        <strong style="color:#1e1e1e">On new publish:</strong> Finds posts sharing the same cast/director/genre → queues them → updates categories + links in background.<br>
+                        <strong style="color:#1e1e1e">Nightly 3 AM:</strong> Full rebuild of all posts to catch anything missed.<br>
+                        <strong style="color:#1e1e1e">Full Rebuild:</strong> Manually trigger a complete rebuild of all <?php echo esc_html(wp_count_posts()->publish ?? 0); ?> posts.
                     </td>
                 </tr>
             </table>
@@ -297,9 +297,9 @@ class Sinemagor_Settings {
             </script>
 
             <!-- ══ Auto Category Section ══ -->
-            <hr style="margin:30px 0;border-color:#2e2e45"/>
-            <h2 style="color:#e8b84b">🗂 Auto Category Settings</h2>
-            <p style="color:#7a7a9a;margin-bottom:16px;font-size:.9rem">
+            <hr style="margin:30px 0;border-color:#dcdcde"/>
+            <h2 style="color:#c9972c">🗂 Auto Category Settings</h2>
+            <p style="color:#6b7280;margin-bottom:16px;font-size:.9rem">
                 Automatically create and assign categories for genre, director, cast, and language on post publish.
             </p>
 
@@ -322,10 +322,10 @@ class Sinemagor_Settings {
                     'cast'     => ['👤', 'Cast'],
                     'language' => ['🌍', 'Language'],
                 ] as $type => [$icon, $label]): ?>
-                <div style="background:#1a1a28;border:1px solid #2e2e45;border-radius:8px;padding:10px 16px;min-width:100px;text-align:center">
+                <div style="background:#ffffff;border:1px solid #dcdcde;border-radius:8px;padding:10px 16px;min-width:100px;text-align:center">
                     <div style="font-size:1.2rem"><?php echo esc_html($icon); ?></div>
-                    <div style="font-size:1.1rem;font-weight:700;color:#e8b84b"><?php echo esc_html($stats[$type] ?? 0); ?></div>
-                    <div style="font-size:.75rem;color:#7a7a9a"><?php echo esc_html($label); ?> cats</div>
+                    <div style="font-size:1.1rem;font-weight:700;color:#c9972c"><?php echo esc_html($stats[$type] ?? 0); ?></div>
+                    <div style="font-size:.75rem;color:#6b7280"><?php echo esc_html($label); ?> cats</div>
                 </div>
                 <?php endforeach; ?>
                 <div style="margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
@@ -392,8 +392,8 @@ class Sinemagor_Settings {
             </script>
 
             <!-- ══ v1.3 Settings ══ -->
-            <hr style="margin:30px 0;border-color:#2e2e45"/>
-            <h2 style="color:#e8b84b">🔗 Affiliate & Streaming</h2>
+            <hr style="margin:30px 0;border-color:#dcdcde"/>
+            <h2 style="color:#c9972c">🔗 Affiliate & Streaming</h2>
             <table class="form-table sg-form-table">
                 <tr>
                     <th>Amazon Affiliate Tag</th>
@@ -434,26 +434,26 @@ class Sinemagor_Settings {
             </table>
 
             <!-- ══ Auto Pilot Section ══ -->
-            <hr style="margin:30px 0;border-color:#2e2e45"/>
-            <h2 style="color:#e8b84b">🤖 Auto Pilot Settings</h2>
-            <p style="color:#7a7a9a;margin-bottom:16px">Fully automatic: TMDB fetch → AI review → Publish. Runs every 6 hours via WP Cron.</p>
+            <hr style="margin:30px 0;border-color:#dcdcde"/>
+            <h2 style="color:#c9972c">🤖 Auto Pilot Settings</h2>
+            <p style="color:#6b7280;margin-bottom:16px">Fully automatic: TMDB fetch → AI review → Publish. Runs every 6 hours via WP Cron.</p>
 
             <!-- Status bar -->
-            <div style="background:#1a1a28;border:1px solid #2e2e45;border-radius:10px;padding:16px 20px;margin-bottom:20px">
+            <div style="background:#ffffff;border:1px solid #dcdcde;border-radius:10px;padding:16px 20px;margin-bottom:20px">
                 <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center">
                     <div>
-                        <strong style="color:#aaa;font-size:.8rem;text-transform:uppercase;letter-spacing:1px">Status</strong><br>
-                        <span style="color:<?php echo $ap_status['status'] === 'running' ? '#4caf50' : ($ap_status['status'] === 'error' ? '#e53935' : '#e8b84b'); ?>;font-weight:700">
+                        <strong style="color:#6b7280;font-size:.8rem;text-transform:uppercase;letter-spacing:1px">Status</strong><br>
+                        <span style="color:<?php echo $ap_status['status'] === 'running' ? '#4caf50' : ($ap_status['status'] === 'error' ? '#e53935' : '#c9972c'); ?>;font-weight:700">
                             <?php echo esc_html(ucfirst($ap_status['status'])); ?>
                         </span>
                     </div>
                     <div>
-                        <strong style="color:#aaa;font-size:.8rem;text-transform:uppercase;letter-spacing:1px">Next Run</strong><br>
-                        <span style="color:#e0e0f0"><?php echo esc_html($ap_next); ?></span>
+                        <strong style="color:#6b7280;font-size:.8rem;text-transform:uppercase;letter-spacing:1px">Next Run</strong><br>
+                        <span style="color:#1e1e1e"><?php echo esc_html($ap_next); ?></span>
                     </div>
                     <div>
-                        <strong style="color:#aaa;font-size:.8rem;text-transform:uppercase;letter-spacing:1px">Last Result</strong><br>
-                        <span style="color:#aaa;font-size:.85rem"><?php echo esc_html($ap_status['message'] ?: '—'); ?></span>
+                        <strong style="color:#6b7280;font-size:.8rem;text-transform:uppercase;letter-spacing:1px">Last Result</strong><br>
+                        <span style="color:#6b7280;font-size:.85rem"><?php echo esc_html($ap_status['message'] ?: '—'); ?></span>
                     </div>
                     <div style="margin-left:auto">
                         <button type="submit" name="sinemagor_run_now" class="button" style="background:#c2185b;color:#fff;border-color:#c2185b">
@@ -516,18 +516,18 @@ class Sinemagor_Settings {
             <?php if ($ap_log): ?>
             <div style="margin-top:24px">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-                    <h3 style="margin:0;color:#aaa;font-size:.9rem;text-transform:uppercase;letter-spacing:1px">📋 Activity Log (last 100)</h3>
+                    <h3 style="margin:0;color:#6b7280;font-size:.9rem;text-transform:uppercase;letter-spacing:1px">📋 Activity Log (last 100)</h3>
                     <button type="submit" name="sinemagor_clear_log" class="button button-small">Clear Log</button>
                 </div>
-                <div style="background:#0f0f17;border:1px solid #2e2e45;border-radius:8px;padding:14px;max-height:280px;overflow-y:auto;font-family:monospace;font-size:.8rem;line-height:1.7">
+                <div style="background:#f0f0f1;border:1px solid #dcdcde;border-radius:8px;padding:14px;max-height:280px;overflow-y:auto;font-family:monospace;font-size:.8rem;line-height:1.7">
                     <?php foreach ($ap_log as $entry): ?>
                         <div style="color:<?php
                             $msg = $entry['msg'];
                             if (strpos($msg, '✅') !== false || strpos($msg, '✓') !== false) echo '#4caf50';
                             elseif (strpos($msg, '✗') !== false || strpos($msg, '💥') !== false || strpos($msg, 'error') !== false) echo '#e57373';
                             elseif (strpos($msg, '⚠') !== false) echo '#ffa726';
-                            elseif (strpos($msg, '🚀') !== false) echo '#e8b84b';
-                            else echo '#9090b0';
+                            elseif (strpos($msg, '🚀') !== false) echo '#c9972c';
+                            else echo '#6b7280';
                         ?>">
                             <span style="color:#555"><?php echo esc_html($entry['time']); ?></span>
                             <?php echo esc_html($entry['msg']); ?>
@@ -538,8 +538,8 @@ class Sinemagor_Settings {
             <?php endif; ?>
 
             <!-- IndexNow API Key (full tab is at ⚡ IndexNow) -->
-            <hr style="margin:30px 0;border-color:#2e2e45"/>
-            <h2 style="color:#e8b84b">⚡ IndexNow</h2>
+            <hr style="margin:30px 0;border-color:#dcdcde"/>
+            <h2 style="color:#c9972c">⚡ IndexNow</h2>
             <?php $in_key = Sinemagor_Settings::get('indexnow_key', ''); ?>
             <table class="form-table sg-form-table">
                 <tr>
@@ -585,7 +585,7 @@ class Sinemagor_Settings {
                     }
 
                     $(this).prop('disabled', true);
-                    $('#sg-test-status').css('color','#e8b84b').text('⏳ Sending test request...');
+                    $('#sg-test-status').css('color','#c9972c').text('⏳ Sending test request...');
                     $('#sg-test-result').hide().text('');
 
                     $.post(sinemagor.ajax_url, {
