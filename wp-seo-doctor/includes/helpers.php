@@ -533,7 +533,86 @@ class WPSD_Helpers {
         return '';
     }
 
-    /** Rendered post content with blocks and shortcodes expanded. */
+    /**
+     * Guards against a `the_content` filter that re-enters the analyser.
+     */
+    private static int $filter_depth = 0;
+
+    /**
+     * Globals that staging a singular view disturbs — the ones WordPress's own
+     * setup_postdata() writes, plus the query and post it runs against.
+     */
+    const POSTDATA_GLOBALS = [
+        'post', 'wp_query', 'id', 'authordata', 'currentday', 'currentmonth',
+        'page', 'pages', 'multipage', 'more', 'numpages',
+    ];
+
+    /**
+     * Make the current request look like a singular view of $post, so filters
+     * guarded by is_single()/is_singular() and get_the_ID() behave as they do
+     * on the front end.
+     *
+     * @return array{post:mixed, wp_query:mixed} State for leave_singular_context().
+     */
+    private static function enter_singular_context(WP_Post $post): array {
+        // setup_postdata() writes a whole family of globals. Indexing runs
+        // inside save_post as well as during scans, so every one of them has to
+        // be handed back untouched.
+        $state = ['globals' => []];
+        foreach (self::POSTDATA_GLOBALS as $key) {
+            $state['globals'][$key] = $GLOBALS[$key] ?? null;
+            $state['isset'][$key]   = array_key_exists($key, $GLOBALS);
+        }
+
+        // A throwaway query object: nothing the filters touch leaks into the
+        // real main query, which the admin screen still needs afterwards.
+        if (class_exists('WP_Query')) {
+            $query = new WP_Query();
+            if (method_exists($query, 'init')) {
+                $query->init();
+            }
+
+            $query->posts             = [$post];
+            $query->post              = $post;
+            $query->post_count        = 1;
+            $query->found_posts       = 1;
+            $query->current_post      = 0;
+            $query->in_the_loop       = true;
+            $query->queried_object    = $post;
+            $query->queried_object_id = (int) $post->ID;
+            $query->is_singular       = true;
+            $query->is_page           = ($post->post_type === 'page');
+            $query->is_single         = !$query->is_page;
+            $query->is_home           = false;
+            $query->is_archive        = false;
+            $query->is_404            = false;
+
+            $GLOBALS['wp_query'] = $query;
+        }
+
+        $GLOBALS['post'] = $post;
+        if (function_exists('setup_postdata')) {
+            setup_postdata($post);
+        }
+
+        return $state;
+    }
+
+    /**
+     * @param array{globals:array<string,mixed>, isset:array<string,bool>} $state
+     */
+    private static function leave_singular_context(array $state): void {
+        foreach (self::POSTDATA_GLOBALS as $key) {
+            if (!empty($state['isset'][$key])) {
+                $GLOBALS[$key] = $state['globals'][$key];
+            } else {
+                // The global did not exist before we ran; do not invent it.
+                unset($GLOBALS[$key]);
+            }
+        }
+    }
+
+    /** Rendered post content, including anything `the_content` filters add. */
     public static function rendered_content(WP_Post $post): string {
         static $cache = [];
         if (isset($cache[$post->ID])) {
@@ -542,19 +621,40 @@ class WPSD_Helpers {
 
         $content = $post->post_content;
 
-        // Expand blocks and shortcodes rather than running the full `the_content`
-        // filter chain — third-party filters outside the loop are a common source
-        // of fatals, and this gives us the markup the checks actually need.
-        if (function_exists('has_blocks') && has_blocks($content)) {
-            $content = do_blocks($content);
+        // Themes and plugins routinely add content-area links through
+        // `the_content` — related posts, automatic internal linking, tables of
+        // contents. Those links are part of the published page, so the analysis
+        // has to run the filter chain or the link graph misses them entirely.
+        //
+        // Most such filters bail unless they are on a singular view and can
+        // resolve the current post, so the singular context is staged first and
+        // restored immediately afterwards.
+        if (self::$filter_depth === 0 && WPSD_Settings::get('apply_content_filters', true)) {
+            self::$filter_depth++;
+            $state = self::enter_singular_context($post);
+
+            try {
+                $content = (string) apply_filters('the_content', $content);
+            } catch (Throwable $e) {
+                // A third-party filter must not take down the scan.
+                $content = $post->post_content;
+            } finally {
+                self::leave_singular_context($state);
+                self::$filter_depth--;
+            }
+        } else {
+            // Filters disabled, or we are already inside one: expand the core
+            // transforms only. `the_content` would apply these itself.
+            if (function_exists('has_blocks') && has_blocks($content)) {
+                $content = do_blocks($content);
+            }
+            try {
+                $content = do_shortcode($content);
+            } catch (Throwable $e) {
+                $content = $post->post_content;
+            }
+            $content = wpautop($content);
         }
-        try {
-            $content = do_shortcode($content);
-        } catch (Throwable $e) {
-            // A misbehaving shortcode should not abort a scan.
-            $content = $post->post_content;
-        }
-        $content = wpautop($content);
 
         /**
          * Filter the content WP SEO Doctor analyses for a post.

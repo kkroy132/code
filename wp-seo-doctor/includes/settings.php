@@ -25,6 +25,11 @@ class WPSD_Settings {
             // Live-fetch each URL during a scan. Needed for HTTP status,
             // redirect, schema and Open Graph checks; costs one request per page.
             'check_http_status'     => true,
+            // Run the `the_content` filter chain when analysing a page. Required
+            // to see links injected by themes and plugins (related posts,
+            // automatic internal linking). Turn off only if a third-party filter
+            // misbehaves during scans.
+            'apply_content_filters' => true,
 
             // ── On-page thresholds ──
             'title_min'             => 30,

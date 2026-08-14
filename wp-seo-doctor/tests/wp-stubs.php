@@ -60,12 +60,102 @@ function wp_parse_args($args, $defaults = []) {
     return array_merge($defaults, (array) $args);
 }
 
-function apply_filters($tag, $value) {
+// ── A real hook system, so filter-injected content is actually exercised ──
+
+$GLOBALS['wp_filter_stub'] = [];
+
+function add_filter($tag, $callback, $priority = 10, $accepted_args = 1) {
+    $GLOBALS['wp_filter_stub'][$tag][$priority][] = $callback;
+    return true;
+}
+
+function apply_filters($tag, $value, ...$args) {
+    if (empty($GLOBALS['wp_filter_stub'][$tag])) {
+        return $value;
+    }
+    $hooks = $GLOBALS['wp_filter_stub'][$tag];
+    ksort($hooks);
+    foreach ($hooks as $callbacks) {
+        foreach ($callbacks as $callback) {
+            $value = call_user_func($callback, $value, ...$args);
+        }
+    }
     return $value;
 }
-function add_filter() { return true; }
-function add_action() { return true; }
-function do_action() { return true; }
+
+function add_action($tag, $callback = null, $priority = 10, $accepted_args = 1) {
+    return $callback ? add_filter($tag, $callback, $priority, $accepted_args) : true;
+}
+
+function do_action($tag, ...$args) {
+    if (empty($GLOBALS['wp_filter_stub'][$tag])) {
+        return;
+    }
+    $hooks = $GLOBALS['wp_filter_stub'][$tag];
+    ksort($hooks);
+    foreach ($hooks as $callbacks) {
+        foreach ($callbacks as $callback) {
+            call_user_func($callback, ...$args);
+        }
+    }
+}
+
+function remove_all_filters($tag) {
+    unset($GLOBALS['wp_filter_stub'][$tag]);
+}
+
+// ── Query context, so filters guarded by is_single() behave like on a real page ──
+
+class WP_Query {
+    public $posts = [];
+    public $post = null;
+    public $post_count = 0;
+    public $found_posts = 0;
+    public $in_the_loop = false;
+    public $queried_object = null;
+    public $queried_object_id = 0;
+    public $is_single = false;
+    public $is_page = false;
+    public $is_singular = false;
+    public $is_home = false;
+    public $is_404 = false;
+    public $is_archive = false;
+    public $current_post = -1;
+    public $is_admin = false;
+    public $query_vars = [];
+
+    public function init() {}
+    public function is_single() { return (bool) $this->is_single; }
+    public function is_page() { return (bool) $this->is_page; }
+    public function is_singular() { return (bool) $this->is_singular; }
+    public function is_main_query() { return true; }
+    public function get($var, $default = '') { return $this->query_vars[$var] ?? $default; }
+}
+
+$GLOBALS['wp_query'] = new WP_Query();
+$GLOBALS['post'] = null;
+
+function is_single() { return isset($GLOBALS['wp_query']) && $GLOBALS['wp_query']->is_single(); }
+function is_page() { return isset($GLOBALS['wp_query']) && $GLOBALS['wp_query']->is_page(); }
+function is_singular($types = '') { return isset($GLOBALS['wp_query']) && $GLOBALS['wp_query']->is_singular(); }
+function is_admin() { return false; }
+function is_404() { return isset($GLOBALS['wp_query']) && (bool) $GLOBALS['wp_query']->is_404; }
+
+function get_the_ID() {
+    return isset($GLOBALS['post']) && $GLOBALS['post'] ? (int) $GLOBALS['post']->ID : 0;
+}
+
+function setup_postdata($post) {
+    if ($post instanceof WP_Post) { $GLOBALS['post'] = $post; }
+    return true;
+}
+
+function wp_reset_postdata() {
+    if (isset($GLOBALS['wp_query']) && $GLOBALS['wp_query']->post) {
+        $GLOBALS['post'] = $GLOBALS['wp_query']->post;
+    }
+    return true;
+}
 function has_blocks($c) { return strpos((string) $c, '<!-- wp:') !== false; }
 function do_blocks($c) { return preg_replace('/<!--\s*\/?wp:.*?-->/s', '', (string) $c); }
 function do_shortcode($c) { return (string) $c; }

@@ -3,7 +3,7 @@
  * Plugin Name: WP SEO Doctor
  * Plugin URI:  https://example.com/wp-seo-doctor
  * Description: Complete SEO audit toolkit — on-page & technical audits, internal linking, broken links, 404 monitor, redirect manager, content SEO, Search Console, AI suggestions, affiliate & WooCommerce SEO, and reports.
- * Version:     1.0.0
+ * Version:     1.0.1
  * Requires at least: 5.8
  * Requires PHP: 7.4
  * Author:      WP SEO Doctor
@@ -16,7 +16,7 @@
 
 defined('ABSPATH') || exit;
 
-define('WPSD_VERSION', '1.0.0');
+define('WPSD_VERSION', '1.0.1');
 define('WPSD_FILE', __FILE__);
 define('WPSD_DIR', plugin_dir_path(__FILE__));
 define('WPSD_URL', plugin_dir_url(__FILE__));
