@@ -8,8 +8,8 @@
 namespace LWBLC\Admin;
 
 use LWBLC\Ajax;
+use LWBLC\Database;
 use LWBLC\Plugin;
-use LWBLC\Scanner;
 use LWBLC\Scheduler;
 
 defined( 'ABSPATH' ) || exit;
@@ -201,7 +201,16 @@ class Admin {
 			<?php endif; ?>
 
 			<div class="lwblc-summary" id="lwblc-summary">
-				<h2><?php esc_html_e( 'Scan status', 'lwblc' ); ?></h2>
+				<h2><?php esc_html_e( 'Overview', 'lwblc' ); ?></h2>
+
+				<div class="lwblc-summary-grid">
+					<?php foreach ( self::summary_items( $progress ) as $item ) : ?>
+						<div class="lwblc-summary-item">
+							<strong id="<?php echo esc_attr( $item['id'] ); ?>"><?php echo esc_html( $item['value'] ); ?></strong>
+							<span><?php echo esc_html( $item['label'] ); ?></span>
+						</div>
+					<?php endforeach; ?>
+				</div>
 
 				<div class="lwblc-progress">
 					<div class="lwblc-progress-bar" id="lwblc-progress-bar" style="width: <?php echo esc_attr( (string) (int) $progress['percent'] ); ?>%"></div>
@@ -229,11 +238,77 @@ class Admin {
 				</p>
 			</div>
 
+			<?php $table->views(); ?>
+
 			<form method="get">
 				<input type="hidden" name="page" value="<?php echo esc_attr( self::PAGE_SLUG ); ?>" />
-				<?php $table->display(); ?>
+				<?php
+				$status_filter = self::current_status_filter();
+
+				if ( '' !== $status_filter ) {
+					printf(
+						'<input type="hidden" name="status" value="%s" />',
+						esc_attr( $status_filter )
+					);
+				}
+
+				$table->search_box( __( 'Search links', 'lwblc' ), 'lwblc-search' );
+				$table->display();
+				?>
 			</form>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Returns the validated status filter from the query string.
+	 *
+	 * @return string Empty string when no valid filter is active.
+	 */
+	public static function current_status_filter() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read only filter on an admin screen.
+		$status = isset( $_GET['status'] ) ? sanitize_key( wp_unslash( $_GET['status'] ) ) : '';
+
+		return in_array( $status, Database::statuses(), true ) ? $status : '';
+	}
+
+	/**
+	 * Builds the numbers shown in the summary box.
+	 *
+	 * @param array<string,mixed> $progress Progress payload.
+	 * @return array<int,array{id:string,label:string,value:string}>
+	 */
+	private static function summary_items( array $progress ) {
+		$counts = isset( $progress['counts'] ) ? (array) $progress['counts'] : array();
+
+		$items = array(
+			array(
+				'id'    => 'lwblc-count-total',
+				'label' => __( 'Links tracked', 'lwblc' ),
+				'value' => number_format_i18n( (int) $progress['total_links'] ),
+			),
+			array(
+				'id'    => 'lwblc-count-broken',
+				'label' => __( 'Broken', 'lwblc' ),
+				'value' => number_format_i18n( (int) ( $counts[ Database::STATUS_BROKEN ] ?? 0 ) ),
+			),
+			array(
+				'id'    => 'lwblc-count-redirect',
+				'label' => __( 'Redirects', 'lwblc' ),
+				'value' => number_format_i18n( (int) ( $counts[ Database::STATUS_REDIRECT ] ?? 0 ) ),
+			),
+			array(
+				'id'    => 'lwblc-count-pending',
+				'label' => __( 'Waiting to be checked', 'lwblc' ),
+				'value' => number_format_i18n( (int) ( $counts[ Database::STATUS_PENDING ] ?? 0 ) ),
+			),
+			array(
+				'id'    => 'lwblc-next-check',
+				'label' => __( 'Next link check', 'lwblc' ),
+				'value' => (string) $progress['next_check'],
+			),
+		);
+
+		return $items;
 	}
 }

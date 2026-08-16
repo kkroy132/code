@@ -40,6 +40,10 @@
 			$( '#lwblc-count-' + status ).text( count );
 		} );
 
+		if ( typeof progress.total_links !== 'undefined' ) {
+			$( '#lwblc-count-total' ).text( progress.total_links );
+		}
+
 		if ( progress.next_check ) {
 			$( '#lwblc-next-check' ).text( progress.next_check );
 		}

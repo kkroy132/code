@@ -91,3 +91,33 @@
 .lwblc-wrap .lwblc-notice {
 	margin: 10px 0;
 }
+
+.lwblc-wrap .lwblc-summary-item span {
+	color: #50575e;
+	font-size: 12px;
+}
+
+.lwblc-wrap .lwblc-muted {
+	color: #646970;
+	font-size: 12px;
+}
+
+.lwblc-wrap .lwblc-anchor-text {
+	color: #646970;
+	font-size: 12px;
+	margin: 2px 0 4px;
+}
+
+.lwblc-wrap .lwblc-recheck.lwblc-busy {
+	opacity: 0.5;
+	pointer-events: none;
+}
+
+.lwblc-wrap .column-status,
+.lwblc-wrap .column-http_code {
+	width: 130px;
+}
+
+.lwblc-wrap .column-last_checked {
+	width: 140px;
+}
