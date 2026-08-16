@@ -1,0 +1,93 @@
+/* Lightweight Broken Link Checker — admin styles. */
+
+.lwblc-wrap .lwblc-summary {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	margin: 16px 0;
+	padding: 12px 16px;
+}
+
+.lwblc-wrap .lwblc-summary h2 {
+	font-size: 14px;
+	margin: 0 0 8px;
+}
+
+.lwblc-wrap .lwblc-summary-grid {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 24px;
+}
+
+.lwblc-wrap .lwblc-summary-item {
+	min-width: 120px;
+}
+
+.lwblc-wrap .lwblc-summary-item strong {
+	display: block;
+	font-size: 20px;
+	line-height: 1.4;
+}
+
+.lwblc-wrap .lwblc-progress {
+	background: #f0f0f1;
+	border-radius: 3px;
+	height: 18px;
+	margin: 10px 0 6px;
+	overflow: hidden;
+	width: 100%;
+}
+
+.lwblc-wrap .lwblc-progress-bar {
+	background: #2271b1;
+	height: 100%;
+	transition: width 0.4s ease;
+	width: 0;
+}
+
+.lwblc-wrap .lwblc-progress-text {
+	color: #50575e;
+	font-size: 12px;
+}
+
+.lwblc-wrap .lwblc-badge {
+	border-radius: 9px;
+	display: inline-block;
+	font-size: 11px;
+	font-weight: 600;
+	line-height: 1.8;
+	padding: 0 10px;
+	text-transform: uppercase;
+}
+
+.lwblc-wrap .lwblc-badge-ok {
+	background: #edfaef;
+	color: #007017;
+}
+
+.lwblc-wrap .lwblc-badge-broken {
+	background: #fcf0f1;
+	color: #8a2424;
+}
+
+.lwblc-wrap .lwblc-badge-redirect {
+	background: #fcf9e8;
+	color: #8a6116;
+}
+
+.lwblc-wrap .lwblc-badge-pending {
+	background: #f0f0f1;
+	color: #50575e;
+}
+
+.lwblc-wrap .lwblc-url {
+	word-break: break-all;
+}
+
+.lwblc-wrap .lwblc-actions {
+	margin: 12px 0;
+}
+
+.lwblc-wrap .lwblc-notice {
+	margin: 10px 0;
+}
