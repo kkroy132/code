@@ -27,7 +27,8 @@ class Installer {
 	public static function activate() {
 		self::install_tables();
 
-		update_option( self::DB_VERSION_OPTION, LWBLC_DB_VERSION, false );
+		// Autoloaded on purpose: maybe_upgrade() reads it on every request.
+		update_option( self::DB_VERSION_OPTION, LWBLC_DB_VERSION );
 
 		// Start the recurring link check straight away.
 		Checker::maybe_schedule();
@@ -52,25 +53,29 @@ class Installer {
 	public static function install_tables() {
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
+		// Never run dbDelta() against a `blc_links` table owned by someone else.
+		Database::resolve_table_name();
+
 		dbDelta( Database::schema() );
 	}
 
 	/**
 	 * Upgrades the schema when the stored version is behind the code version.
 	 *
-	 * Runs on every load, but only touches the database when the version
-	 * differs, which also repairs installs where activation could not run
-	 * (for example a plugin dropped in during a multisite network upgrade).
+	 * Runs on every load, so it only compares an autoloaded option and never
+	 * queries the database on its own. It also covers installs where the
+	 * activation hook could not run, for example a plugin dropped in during a
+	 * multisite network upgrade.
 	 *
 	 * @return void
 	 */
 	public static function maybe_upgrade() {
-		if ( get_option( self::DB_VERSION_OPTION ) === LWBLC_DB_VERSION && Database::table_exists() ) {
+		if ( get_option( self::DB_VERSION_OPTION ) === LWBLC_DB_VERSION ) {
 			return;
 		}
 
 		self::install_tables();
 
-		update_option( self::DB_VERSION_OPTION, LWBLC_DB_VERSION, false );
+		update_option( self::DB_VERSION_OPTION, LWBLC_DB_VERSION );
 	}
 }

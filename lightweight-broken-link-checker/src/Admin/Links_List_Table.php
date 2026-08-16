@@ -458,7 +458,8 @@ class Links_List_Table extends WP_List_Table {
 			return '';
 		}
 
-		return date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $timestamp );
+		// Dates are stored in UTC; wp_date() renders them in the site timezone.
+		return wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $timestamp );
 	}
 
 	/**

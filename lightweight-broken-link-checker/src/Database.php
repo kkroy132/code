@@ -43,14 +43,118 @@ class Database {
 	const URL_INDEX_LENGTH = 180;
 
 	/**
+	 * Unprefixed table name.
+	 */
+	const TABLE = 'blc_links';
+
+	/**
+	 * Unprefixed table name used when `blc_links` is already taken.
+	 */
+	const FALLBACK_TABLE = 'lwblc_links';
+
+	/**
+	 * Option holding the unprefixed table name actually in use.
+	 */
+	const TABLE_OPTION = 'lwblc_table_name';
+
+	/**
+	 * Request level cache for table_exists().
+	 *
+	 * @var bool|null
+	 */
+	private static $table_exists = null;
+
+	/**
+	 * Request level cache for status_counts().
+	 *
+	 * @var array<string,int>|null
+	 */
+	private static $counts = null;
+
+	/**
+	 * Request level cache for the resolved table name.
+	 *
+	 * @var string|null
+	 */
+	private static $table_name = null;
+
+	/**
+	 * Clears the request level caches.
+	 *
+	 * @return void
+	 */
+	public static function flush_cache() {
+		self::$table_exists = null;
+		self::$counts       = null;
+		self::$table_name   = null;
+	}
+
+	/**
 	 * Returns the prefixed table name.
+	 *
+	 * Normally `{prefix}blc_links`. If that name is already held by a table
+	 * this plugin did not create — the long standing Broken Link Checker
+	 * plugin uses exactly the same name with a completely different schema —
+	 * activation switches to `{prefix}lwblc_links` and records the choice, so
+	 * the two plugins never write to each other's data.
 	 *
 	 * @return string
 	 */
 	public static function table() {
 		global $wpdb;
 
-		return $wpdb->prefix . 'blc_links';
+		if ( null === self::$table_name ) {
+			$stored = get_option( self::TABLE_OPTION, '' );
+
+			self::$table_name = self::FALLBACK_TABLE === $stored
+				? $wpdb->prefix . self::FALLBACK_TABLE
+				: $wpdb->prefix . self::TABLE;
+		}
+
+		return self::$table_name;
+	}
+
+	/**
+	 * Picks the table name to install into and stores it.
+	 *
+	 * Called before the schema is created. A `blc_links` table that has no
+	 * `source_post_id` column belongs to another plugin and must be left alone.
+	 *
+	 * @return string The unprefixed table name that will be used.
+	 */
+	public static function resolve_table_name() {
+		global $wpdb;
+
+		$stored = get_option( self::TABLE_OPTION, '' );
+
+		if ( self::FALLBACK_TABLE === $stored || self::TABLE === $stored ) {
+			return $stored;
+		}
+
+		$name  = self::TABLE;
+		$table = $wpdb->prefix . self::TABLE;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Schema lookup during activation.
+		$exists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table ) ) );
+
+		if ( $exists === $table ) {
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is built from $wpdb->prefix.
+			$sql = $wpdb->prepare( "SHOW COLUMNS FROM `{$table}` LIKE %s", 'source_post_id' );
+			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Schema lookup, prepared above.
+			$column = $wpdb->get_var( $sql );
+
+			if ( 'source_post_id' !== $column ) {
+				$name = self::FALLBACK_TABLE;
+			}
+		}
+
+		update_option( self::TABLE_OPTION, $name );
+
+		self::flush_cache();
+
+		return $name;
 	}
 
 	/**
@@ -124,25 +228,41 @@ class Database {
 	public static function table_exists() {
 		global $wpdb;
 
+		if ( null !== self::$table_exists ) {
+			return self::$table_exists;
+		}
+
 		$table = self::table();
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Schema check, not cacheable.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Schema lookup, cached for the request above.
 		$found = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table ) ) );
 
-		return $found === $table;
+		self::$table_exists = ( $found === $table );
+
+		return self::$table_exists;
 	}
 
 	/**
 	 * Counts rows grouped by status.
 	 *
+	 * The result is cached for the rest of the request: the admin screen asks
+	 * for it from the summary box, the filter views and the AJAX payload.
+	 *
+	 * @param bool $refresh Set to true to bypass the request cache.
 	 * @return array<string,int> Status => count, including zero counts.
 	 */
-	public static function status_counts() {
+	public static function status_counts( $refresh = false ) {
 		global $wpdb;
+
+		if ( ! $refresh && null !== self::$counts ) {
+			return self::$counts;
+		}
 
 		$counts = array_fill_keys( self::statuses(), 0 );
 
 		if ( ! self::table_exists() ) {
+			self::$counts = $counts;
+
 			return $counts;
 		}
 
@@ -160,6 +280,8 @@ class Database {
 					: (int) $row['total'];
 			}
 		}
+
+		self::$counts = $counts;
 
 		return $counts;
 	}
@@ -189,5 +311,7 @@ class Database {
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is built from $wpdb->prefix.
 		$wpdb->query( "TRUNCATE TABLE {$table}" );
+
+		self::flush_cache();
 	}
 }

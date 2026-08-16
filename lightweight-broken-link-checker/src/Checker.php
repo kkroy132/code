@@ -136,11 +136,11 @@ class Checker {
 		$cutoff = gmdate( 'Y-m-d H:i:s', time() - self::RECHECK_AFTER );
 
 		/*
-		 * `priority` keeps the two groups apart, then each group gets its own
+		 * The CASE keeps the two groups apart, then each group gets its own
 		 * ordering: pending links by id, stale ones by how old the source post
 		 * is (NULL dates last).
 		 */
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name comes from $wpdb->prefix.
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is built from $wpdb->prefix; every value is a placeholder.
 		$sql = $wpdb->prepare(
 			"SELECT id, link_url, status, fail_count, http_code
 			FROM {$table}
@@ -158,8 +158,9 @@ class Checker {
 			Database::STATUS_PENDING,
 			$limit
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Query prepared above.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Custom table, prepared above.
 		$rows = $wpdb->get_results( $sql, ARRAY_A );
 
 		return is_array( $rows ) ? $rows : array();
@@ -191,7 +192,7 @@ class Checker {
 			$seen_hosts[ $host ] = true;
 
 			self::check_link( $link );
-			$checked++;
+			++$checked;
 		}
 
 		/**
@@ -221,17 +222,17 @@ class Checker {
 
 		if ( 0 === $code ) {
 			// Transport level failure (DNS, TLS, timeout): count it, do not judge yet.
-			$fail_count++;
+			++$fail_count;
 			$status = $fail_count >= self::FAIL_THRESHOLD ? Database::STATUS_BROKEN : Database::STATUS_PENDING;
 		} elseif ( self::is_soft_failure( $code ) ) {
 			/*
 			 * 403 and 429 usually mean bot protection or rate limiting rather
 			 * than a dead link, so only repeated failures confirm it.
 			 */
-			$fail_count++;
+			++$fail_count;
 			$status = $fail_count >= self::FAIL_THRESHOLD ? Database::STATUS_BROKEN : Database::STATUS_PENDING;
 		} elseif ( $code >= 400 ) {
-			$fail_count++;
+			++$fail_count;
 			$status = $fail_count >= self::FAIL_THRESHOLD ? Database::STATUS_BROKEN : Database::STATUS_PENDING;
 		} elseif ( $code >= 300 ) {
 			$status     = Database::STATUS_REDIRECT;
@@ -385,11 +386,12 @@ class Checker {
 
 		$table = Database::table();
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name comes from $wpdb->prefix; value is prepared.
-		$row = $wpdb->get_row(
-			$wpdb->prepare( "SELECT * FROM {$table} WHERE id = %d", (int) $id ),
-			ARRAY_A
-		);
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is built from $wpdb->prefix.
+		$sql = $wpdb->prepare( "SELECT * FROM {$table} WHERE id = %d", (int) $id );
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Custom table, prepared above.
+		$row = $wpdb->get_row( $sql, ARRAY_A );
 
 		return is_array( $row ) ? $row : null;
 	}

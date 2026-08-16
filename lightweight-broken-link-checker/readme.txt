@@ -1,0 +1,101 @@
+=== Lightweight Broken Link Checker ===
+Contributors: lightweightplugins
+Tags: broken links, link checker, seo, 404, maintenance
+Requires at least: 6.5
+Tested up to: 6.8
+Requires PHP: 7.4
+Stable tag: 1.0.0
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+
+Finds broken links in your content using small, controlled background batches instead of constant scanning, so your site stays fast.
+
+== Description ==
+
+Most broken link checkers scan continuously, store enormous amounts of data and slow the whole site down. This plugin takes the opposite approach: it does a strictly limited amount of work at a time and then stops.
+
+* **Controlled batches.** Content is scanned 50 posts at a time, and each batch queues the next one. Nothing runs in parallel, and no request ever processes your entire site.
+* **A small, fixed check budget.** A recurring background job verifies at most 15 links every five minutes. That is the ceiling, whether you have 500 links or 500,000.
+* **One compact table.** Links live in a single custom table with one row per link per post, not scattered across postmeta.
+* **Powered by Action Scheduler.** All background work runs through Action Scheduler, the same queue WooCommerce uses. Native wp-cron is not used, so batches are not tied to page views and are retried reliably.
+
+= Careful checking, fewer false alarms =
+
+* Each link is checked with a lightweight `HEAD` request first. If that fails or is refused, the plugin retries with `GET`, because many servers answer `HEAD` with 403, 405 or 500 while the page is perfectly fine.
+* `403` and `429` responses, timeouts and DNS errors do not immediately mark a link broken. The failure is counted, and only three consecutive failures confirm it.
+* When several links in one batch point at the same host, requests are spaced out so the target server is not hammered.
+* Links that never had a check are always verified first. After that, working links are re-verified once a week, oldest content first.
+
+= Dashboard =
+
+The **Broken Links** screen lists every link with its source post, status badge, HTTP code and last check time. Filter by Broken, Redirect, Pending or OK, search across URLs and post titles, recheck a single link on demand, or jump straight to editing the post that contains it.
+
+= Privacy =
+
+The plugin sends HTTP requests to the URLs found in your own content in order to check whether they still work. Those requests identify themselves with a user agent containing your site address. No data is sent to the plugin author or any third party service.
+
+== Installation ==
+
+1. Upload the `lightweight-broken-link-checker` folder to `/wp-content/plugins/`, or install the plugin through the **Plugins > Add New** screen.
+2. Activate the plugin through the **Plugins** screen. Activation creates the link table and schedules the recurring check.
+3. Open **Broken Links** in the admin menu and press **Scan Now** to collect the links in your content.
+4. Leave it alone. The background checker works through the list on its own and the dashboard shows what it found.
+
+Action Scheduler is bundled with the plugin, so there is nothing else to install. If another plugin (such as WooCommerce) already ships Action Scheduler, the newest available copy is used automatically.
+
+== Frequently Asked Questions ==
+
+= How long does the first check take? =
+
+Fifteen links every five minutes is 180 links per hour, so around 4,000 links a day. A large site therefore takes a few days to work through its backlog the first time. That is deliberate: the point of the plugin is that it never spikes your resource usage. You can raise the batch size with the `lwblc_check_batch_size` filter if your host can take it.
+
+= Does it slow down my site? =
+
+No. Front end requests do no database work for this plugin at all; scanning and checking happen in background jobs. Each background run is capped, so it cannot grow into a long request.
+
+= Why is a link I know is broken still shown as pending? =
+
+A single failure is not enough. Timeouts, `403` and `429` responses are counted but not trusted, because bot protection and rate limits produce them constantly on perfectly healthy pages. After three consecutive failures the link is confirmed as broken.
+
+= Why is a working link reported as broken? =
+
+Some servers block automated requests entirely. Use the **Recheck now** row action to verify by hand. If a whole host is affected, the `lwblc_request_args` and `lwblc_user_agent` filters let you adjust how requests are sent.
+
+= Which content is scanned? =
+
+Every published post, page and public custom post type, minus attachments. Adjust the list with the `lwblc_scan_post_types` filter. Only links inside the post content are collected; `mailto:`, `tel:`, `javascript:` and same page anchors are skipped.
+
+= What happens to links I remove from a post? =
+
+They are removed from the list the next time that post is scanned, and all links of a post are dropped when the post itself is deleted.
+
+= Does it modify my content? =
+
+Never. The plugin only reads your content and reports what it finds. Fixing a link is always your decision, made in the post editor.
+
+= Can I use it next to the old Broken Link Checker plugin? =
+
+Yes. That plugin uses a table with the same name but a different structure, so if it is already installed this plugin detects it during activation and stores its own links in a separate table instead. Neither plugin touches the other's data.
+
+= What is removed when I delete the plugin? =
+
+The link table, the plugin options and any queued background jobs. Deactivating alone keeps your data, so you can deactivate and reactivate without losing scan results.
+
+== Screenshots ==
+
+1. The Broken Links dashboard with status filters, the summary box and the scan progress bar.
+2. Row actions for rechecking a link or editing the post that contains it.
+
+== Changelog ==
+
+= 1.0.0 =
+* Initial release.
+* Batched content scanner (50 posts per batch) chained through Action Scheduler.
+* Recurring link checker: 15 links every five minutes, never-checked links first, then working links older than a week.
+* `HEAD` request with a `GET` fallback, per host request spacing, and a three strike rule before a link is confirmed broken.
+* Broken Links dashboard with status filters, search, sorting, per link recheck and a summary box.
+
+== Upgrade Notice ==
+
+= 1.0.0 =
+Initial release.

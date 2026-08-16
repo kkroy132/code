@@ -44,6 +44,9 @@ class Scanner {
 	 */
 	public static function init() {
 		add_action( Scheduler::HOOK_SCAN_BATCH, array( __CLASS__, 'run_batch' ), 10, 1 );
+
+		// Keep the table from collecting links whose source post is gone.
+		add_action( 'deleted_post', array( __CLASS__, 'delete_post_links' ), 10, 1 );
 	}
 
 	/**
@@ -197,11 +200,12 @@ class Scanner {
 
 		$placeholders = implode( ', ', array_fill( 0, count( $post_types ), '%s' ) );
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $placeholders only contains %s tokens.
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- $placeholders holds only %s tokens; values are passed as an array.
 		$sql = $wpdb->prepare(
 			"SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_status = %s AND post_type IN ({$placeholders})",
 			array_merge( array( 'publish' ), $post_types )
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Query prepared above.
 		return (int) $wpdb->get_var( $sql );
@@ -233,7 +237,7 @@ class Scanner {
 		$placeholders = implode( ', ', array_fill( 0, count( $post_types ), '%s' ) );
 		$args         = array_merge( array( 'publish' ), $post_types, array( self::BATCH_SIZE, $offset ) );
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $placeholders only contains %s tokens.
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- $placeholders holds only %s tokens; values are passed as an array.
 		$sql = $wpdb->prepare(
 			"SELECT ID, post_title, post_content, post_modified_gmt
 			FROM {$wpdb->posts}
@@ -242,6 +246,7 @@ class Scanner {
 			LIMIT %d OFFSET %d",
 			$args
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Query prepared above.
 		$posts = $wpdb->get_results( $sql, ARRAY_A );
@@ -255,8 +260,11 @@ class Scanner {
 
 		foreach ( $posts as $post ) {
 			$links = self::extract_links( (string) $post['post_content'] );
+			$urls  = array();
 
 			foreach ( $links as $link ) {
+				$urls[] = $link['url'];
+
 				$stored = self::store_link(
 					$link['url'],
 					$link['text'],
@@ -266,9 +274,12 @@ class Scanner {
 				);
 
 				if ( $stored ) {
-					$found++;
+					++$found;
 				}
 			}
+
+			// Links that were edited out of the post must not stay on the list.
+			self::prune_post_links( (int) $post['ID'], $urls );
 		}
 
 		$state['offset']        = $offset + count( $posts );
@@ -322,6 +333,11 @@ class Scanner {
 			return array();
 		}
 
+		// ext-dom is bundled with virtually every PHP build, but never assume it.
+		if ( ! class_exists( 'DOMDocument' ) ) {
+			return array();
+		}
+
 		$document = new DOMDocument();
 
 		$previous = libxml_use_internal_errors( true );
@@ -358,6 +374,7 @@ class Scanner {
 
 			$seen[ $key ] = true;
 
+			// phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase -- DOM API property.
 			$text = trim( preg_replace( '/\s+/u', ' ', (string) $anchor->textContent ) );
 
 			$links[] = array(
@@ -467,14 +484,16 @@ class Scanner {
 		$post_title    = self::trim_length( wp_strip_all_tags( (string) $post_title ), 255 );
 		$post_modified = self::sanitize_datetime( $post_modified );
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name comes from $wpdb->prefix.
-		$existing_id = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT id FROM {$table} WHERE source_post_id = %d AND link_url = %s",
-				$post_id,
-				$url
-			)
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is built from $wpdb->prefix.
+		$lookup_sql = $wpdb->prepare(
+			"SELECT id FROM {$table} WHERE source_post_id = %d AND link_url = %s",
+			$post_id,
+			$url
 		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Custom table, prepared above.
+		$existing_id = $wpdb->get_var( $lookup_sql );
 
 		if ( $existing_id ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table.
@@ -514,6 +533,59 @@ class Scanner {
 		);
 
 		return (bool) $inserted;
+	}
+
+	/**
+	 * Removes stored links of a post that its content no longer contains.
+	 *
+	 * @param int      $post_id   Source post ID.
+	 * @param string[] $keep_urls URLs found in the current content.
+	 * @return int Rows removed.
+	 */
+	public static function prune_post_links( $post_id, array $keep_urls ) {
+		global $wpdb;
+
+		$post_id = (int) $post_id;
+
+		if ( $post_id < 1 ) {
+			return 0;
+		}
+
+		$table = Database::table();
+
+		if ( empty( $keep_urls ) ) {
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is built from $wpdb->prefix.
+			$sql = $wpdb->prepare( "DELETE FROM {$table} WHERE source_post_id = %d", $post_id );
+			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		} else {
+			$placeholders = implode( ', ', array_fill( 0, count( $keep_urls ), '%s' ) );
+
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- $table comes from $wpdb->prefix, $placeholders holds only %s tokens.
+			$sql = $wpdb->prepare(
+				"DELETE FROM {$table} WHERE source_post_id = %d AND link_url NOT IN ({$placeholders})",
+				array_merge( array( $post_id ), array_values( $keep_urls ) )
+			);
+			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
+		}
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Custom table, prepared above.
+		$removed = (int) $wpdb->query( $sql );
+
+		if ( $removed > 0 ) {
+			Database::flush_cache();
+		}
+
+		return $removed;
+	}
+
+	/**
+	 * Removes every stored link of a deleted post.
+	 *
+	 * @param int $post_id Deleted post ID.
+	 * @return void
+	 */
+	public static function delete_post_links( $post_id ) {
+		self::prune_post_links( (int) $post_id, array() );
 	}
 
 	/**

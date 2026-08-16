@@ -100,6 +100,7 @@ class Ajax {
 	public static function recheck_link() {
 		self::guard();
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- self::guard() ran check_ajax_referer() above.
 		$link_id = isset( $_POST['link_id'] ) ? absint( wp_unslash( $_POST['link_id'] ) ) : 0;
 
 		if ( $link_id < 1 ) {
@@ -150,6 +151,23 @@ class Ajax {
 
 		$counts = Database::status_counts();
 
+		if ( $running ) {
+			$text = sprintf(
+				/* translators: 1: number of posts scanned, 2: total number of posts. */
+				__( 'Scanning %1$s of %2$s posts…', 'lwblc' ),
+				number_format_i18n( $scanned ),
+				number_format_i18n( $total )
+			);
+		} elseif ( $scanned > 0 ) {
+			$text = sprintf(
+				/* translators: %s: number of posts covered by the last scan. */
+				__( 'Last scan covered %s posts.', 'lwblc' ),
+				number_format_i18n( $scanned )
+			);
+		} else {
+			$text = __( 'No scan has run yet.', 'lwblc' );
+		}
+
 		return array(
 			'running'     => $running,
 			'scanned'     => $scanned,
@@ -159,12 +177,7 @@ class Ajax {
 			'counts'      => $counts,
 			'total_links' => array_sum( $counts ),
 			'next_check'  => Checker::next_run_label(),
-			'text'        => $running
-				/* translators: 1: number of posts scanned, 2: total posts. */
-				? sprintf( __( 'Scanning %1$s of %2$s posts…', 'lwblc' ), number_format_i18n( $scanned ), number_format_i18n( $total ) )
-				/* translators: %s: number of posts scanned. */
-				: sprintf( __( 'Last scan covered %s posts.', 'lwblc' ), number_format_i18n( $scanned ) ),
+			'text'        => $text,
 		);
 	}
-
 }
