@@ -62,8 +62,11 @@ class Plugin {
 
 		Installer::maybe_upgrade();
 
+		Scanner::init();
+
 		if ( is_admin() ) {
 			Admin::init();
+			Ajax::init();
 		}
 	}
 

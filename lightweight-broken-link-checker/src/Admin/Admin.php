@@ -7,7 +7,10 @@
 
 namespace LWBLC\Admin;
 
+use LWBLC\Ajax;
 use LWBLC\Plugin;
+use LWBLC\Scanner;
+use LWBLC\Scheduler;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -148,6 +151,25 @@ class Admin {
 			LWBLC_VERSION,
 			true
 		);
+
+		wp_localize_script(
+			'lwblc-admin',
+			'lwblcAdmin',
+			array(
+				'ajaxUrl'      => admin_url( 'admin-ajax.php' ),
+				'nonce'        => wp_create_nonce( Ajax::NONCE_ACTION ),
+				'pollInterval' => 3000,
+				'progress'     => Ajax::progress_payload(),
+				'i18n'         => array(
+					'scanning'  => __( 'Scanning…', 'lwblc' ),
+					'scanNow'   => __( 'Scan Now', 'lwblc' ),
+					'cancel'    => __( 'Cancel scan', 'lwblc' ),
+					'confirm'   => __( 'Start a new scan of all published content?', 'lwblc' ),
+					'error'     => __( 'Something went wrong. Please try again.', 'lwblc' ),
+					'rechecked' => __( 'Link queued for rechecking.', 'lwblc' ),
+				),
+			)
+		);
 	}
 
 	/**
@@ -163,10 +185,49 @@ class Admin {
 		$table = self::get_list_table();
 		$table->prepare_items();
 
+		$progress  = Ajax::progress_payload();
+		$scanning  = ! empty( $progress['running'] );
+		$scheduler = Scheduler::is_available();
+
 		?>
 		<div class="wrap lwblc-wrap">
 			<h1 class="wp-heading-inline"><?php esc_html_e( 'Broken Links', 'lwblc' ); ?></h1>
 			<hr class="wp-header-end" />
+
+			<?php if ( ! $scheduler ) : ?>
+				<div class="notice notice-error lwblc-notice">
+					<p><?php esc_html_e( 'Action Scheduler could not be loaded, so scanning and checking are disabled. Reinstall the plugin to restore the bundled library.', 'lwblc' ); ?></p>
+				</div>
+			<?php endif; ?>
+
+			<div class="lwblc-summary" id="lwblc-summary">
+				<h2><?php esc_html_e( 'Scan status', 'lwblc' ); ?></h2>
+
+				<div class="lwblc-progress">
+					<div class="lwblc-progress-bar" id="lwblc-progress-bar" style="width: <?php echo esc_attr( (string) (int) $progress['percent'] ); ?>%"></div>
+				</div>
+				<p class="lwblc-progress-text" id="lwblc-progress-text"><?php echo esc_html( $progress['text'] ); ?></p>
+
+				<p class="lwblc-actions">
+					<button
+						type="button"
+						class="button button-primary"
+						id="lwblc-scan-button"
+						<?php disabled( ! $scheduler ); ?>
+					>
+						<?php echo $scanning ? esc_html__( 'Scanning…', 'lwblc' ) : esc_html__( 'Scan Now', 'lwblc' ); ?>
+					</button>
+					<button
+						type="button"
+						class="button"
+						id="lwblc-cancel-button"
+						<?php echo $scanning ? '' : 'style="display:none"'; ?>
+					>
+						<?php esc_html_e( 'Cancel scan', 'lwblc' ); ?>
+					</button>
+					<span class="spinner" id="lwblc-spinner"></span>
+				</p>
+			</div>
 
 			<form method="get">
 				<input type="hidden" name="page" value="<?php echo esc_attr( self::PAGE_SLUG ); ?>" />
