@@ -28,6 +28,7 @@ class Ajax {
 		add_action( 'wp_ajax_lwblc_start_scan', array( __CLASS__, 'start_scan' ) );
 		add_action( 'wp_ajax_lwblc_cancel_scan', array( __CLASS__, 'cancel_scan' ) );
 		add_action( 'wp_ajax_lwblc_scan_progress', array( __CLASS__, 'scan_progress' ) );
+		add_action( 'wp_ajax_lwblc_recheck_link', array( __CLASS__, 'recheck_link' ) );
 	}
 
 	/**
@@ -92,6 +93,34 @@ class Ajax {
 	}
 
 	/**
+	 * Rechecks one link immediately.
+	 *
+	 * @return void
+	 */
+	public static function recheck_link() {
+		self::guard();
+
+		$link_id = isset( $_POST['link_id'] ) ? absint( wp_unslash( $_POST['link_id'] ) ) : 0;
+
+		if ( $link_id < 1 ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid link.', 'lwblc' ) ) );
+		}
+
+		$result = Checker::recheck( $link_id );
+
+		if ( null === $result ) {
+			wp_send_json_error( array( 'message' => __( 'That link no longer exists.', 'lwblc' ) ) );
+		}
+
+		wp_send_json_success(
+			array(
+				'message' => __( 'Link rechecked.', 'lwblc' ),
+				'result'  => $result,
+			)
+		);
+	}
+
+	/**
 	 * Returns scan progress for the admin progress bar.
 	 *
 	 * @return void
@@ -129,7 +158,7 @@ class Ajax {
 			'links_found' => (int) $state['links_found'],
 			'counts'      => $counts,
 			'total_links' => array_sum( $counts ),
-			'next_check'  => self::next_check_label(),
+			'next_check'  => Checker::next_run_label(),
 			'text'        => $running
 				/* translators: 1: number of posts scanned, 2: total posts. */
 				? sprintf( __( 'Scanning %1$s of %2$s posts…', 'lwblc' ), number_format_i18n( $scanned ), number_format_i18n( $total ) )
@@ -138,25 +167,4 @@ class Ajax {
 		);
 	}
 
-	/**
-	 * Human readable time until the next scheduled link check.
-	 *
-	 * @return string
-	 */
-	private static function next_check_label() {
-		$next = Scheduler::next_run( Scheduler::HOOK_CHECK_BATCH );
-
-		if ( $next <= 0 ) {
-			return __( 'Not scheduled', 'lwblc' );
-		}
-
-		$now = time();
-
-		if ( $next <= $now ) {
-			return __( 'Due now', 'lwblc' );
-		}
-
-		/* translators: %s: human readable time difference, e.g. "5 mins". */
-		return sprintf( __( 'in %s', 'lwblc' ), human_time_diff( $now, $next ) );
-	}
 }

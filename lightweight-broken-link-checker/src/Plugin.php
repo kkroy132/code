@@ -63,6 +63,7 @@ class Plugin {
 		Installer::maybe_upgrade();
 
 		Scanner::init();
+		Checker::init();
 
 		if ( is_admin() ) {
 			Admin::init();

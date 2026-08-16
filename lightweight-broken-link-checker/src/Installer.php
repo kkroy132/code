@@ -28,6 +28,9 @@ class Installer {
 		self::install_tables();
 
 		update_option( self::DB_VERSION_OPTION, LWBLC_DB_VERSION, false );
+
+		// Start the recurring link check straight away.
+		Checker::maybe_schedule();
 	}
 
 	/**
