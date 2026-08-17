@@ -46,6 +46,9 @@ class WPSD_Settings {
             'min_internal_links'    => 3,
             'min_incoming_links'    => 2,
             'link_suggestion_limit' => 8,
+            // Pages rendered when working out which links are site chrome
+            // (menu, footer). Higher is more accurate and slower.
+            'boilerplate_sample_size' => 6,
 
             // ── Broken links ──
             'link_check_schedule'   => 'weekly',

@@ -192,10 +192,32 @@ class WP_Error {
 }
 function is_wp_error($t) { return $t instanceof WP_Error; }
 
-function wp_remote_request($url, $args = []) { return new WP_Error('offline', 'No network in the harness.'); }
+/**
+ * Honours `pre_http_request` exactly as core does, so tests can serve
+ * responses without any special-casing in the plugin. Anything not served
+ * that way fails, since the harness has no network.
+ */
+function wp_remote_request($url, $args = []) {
+    $short_circuit = apply_filters('pre_http_request', false, $args, $url);
+    if ($short_circuit !== false) {
+        return $short_circuit;
+    }
+    return new WP_Error('offline', 'No network in the harness.');
+}
 function wp_remote_get($url, $args = []) { return wp_remote_request($url, $args); }
 function wp_remote_post($url, $args = []) { return wp_remote_request($url, $args); }
-function wp_remote_retrieve_response_code($r) { return 0; }
-function wp_remote_retrieve_body($r) { return ''; }
-function wp_remote_retrieve_header($r, $h) { return ''; }
-function wp_remote_retrieve_headers($r) { return []; }
+
+function wp_remote_retrieve_response_code($r) {
+    return is_array($r) ? (int) ($r['response']['code'] ?? 0) : 0;
+}
+function wp_remote_retrieve_body($r) {
+    return is_array($r) ? (string) ($r['body'] ?? '') : '';
+}
+function wp_remote_retrieve_header($r, $h) {
+    if (!is_array($r) || empty($r['headers'])) { return ''; }
+    $headers = array_change_key_case((array) $r['headers']);
+    return (string) ($headers[strtolower($h)] ?? '');
+}
+function wp_remote_retrieve_headers($r) {
+    return is_array($r) ? (array) ($r['headers'] ?? []) : [];
+}

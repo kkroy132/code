@@ -122,6 +122,11 @@ class WPSD_Checks_Links {
             return [];
         }
 
+        // Reachable from the menu, footer or homepage: crawlable, not orphaned.
+        if (in_array($c->id, WPSD_Internal_Links::navigation_targets(), true)) {
+            return [];
+        }
+
         return [[
             'severity' => 'high',
             'message'  => __('No internal links point to this page, so crawlers can only find it via the sitemap.', 'wp-seo-doctor'),

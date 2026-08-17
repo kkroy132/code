@@ -15,6 +15,11 @@ class WPSD_Internal_Links {
 
     const DEPTH_TRANSIENT = 'wpsd_crawl_depths';
 
+    const BOILERPLATE_TRANSIENT = 'wpsd_boilerplate_targets';
+
+    /** Share of sampled pages a link must appear on to count as site chrome. */
+    const BOILERPLATE_RATIO = 0.8;
+
     public static function init(): void {
         // Keep the graph fresh as content changes.
         add_action('save_post', [self::class, 'on_save_post'], 20, 2);
@@ -229,6 +234,15 @@ class WPSD_Internal_Links {
         $placeholders = WPSD_DB::in_placeholders($types, '%s');
         $front        = (int) get_option('page_on_front');
 
+        // A page in the main menu or footer is reachable and indexable, so it
+        // is not an orphan even though no post body links to it.
+        $excluded = self::navigation_targets();
+        $excluded[] = $front;
+        $excluded = array_values(array_unique(array_filter(array_map('intval', $excluded))));
+        $excluded = $excluded ?: [0];
+
+        $excluded_placeholders = WPSD_DB::in_placeholders($excluded);
+
         $sql = "SELECT p.ID, p.post_title, p.post_type, p.post_date, p.post_modified
                 FROM {$wpdb->posts} p
                 LEFT JOIN {$links} l
@@ -237,12 +251,12 @@ class WPSD_Internal_Links {
                       AND l.source_id <> p.ID
                 WHERE p.post_status = 'publish'
                   AND p.post_type IN ({$placeholders})
-                  AND p.ID <> %d
+                  AND p.ID NOT IN ({$excluded_placeholders})
                   AND l.id IS NULL
                 ORDER BY p.post_modified DESC
                 LIMIT %d";
 
-        $params = array_merge($types, [$front, max(1, $limit)]);
+        $params = array_merge($types, $excluded, [max(1, $limit)]);
 
         // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
         $rows = $wpdb->get_results($wpdb->prepare($sql, $params)) ?: [];
@@ -401,7 +415,28 @@ class WPSD_Internal_Links {
             $depths[$front] = 0;
             $queue[]        = $front;
         } else {
-            foreach (self::homepage_link_targets() as $id) {
+            $seeds = self::homepage_link_targets();
+            if (!$seeds) {
+                // Depth is advisory, so an approximation is better than an
+                // empty graph — unlike orphan detection, which must not guess.
+                $recent = get_posts([
+                    'post_type'      => WPSD_Helpers::auditable_post_types(),
+                    'posts_per_page' => (int) get_option('posts_per_page', 10),
+                    'fields'         => 'ids',
+                ]);
+                $seeds = array_map('intval', (array) $recent);
+            }
+            foreach ($seeds as $id) {
+                $depths[$id] = 1;
+                $queue[]     = $id;
+            }
+        }
+
+        // Anything in the site chrome is one click from every page, including
+        // the homepage. Seeding it here keeps crawl depth consistent with
+        // orphan detection, which also treats chrome as a real route in.
+        foreach (self::navigation_targets() as $id) {
+            if (!isset($depths[$id])) {
                 $depths[$id] = 1;
                 $queue[]     = $id;
             }
@@ -425,22 +460,167 @@ class WPSD_Internal_Links {
     }
 
     /**
+     * Post IDs reachable without any post body linking to them: the site
+     * chrome plus whatever the homepage itself links to.
+     *
+     * Orphan detection and crawl depth both need this. Using one definition
+     * keeps them from disagreeing — the homepage is usually not a post, so its
+     * links are invisible to the link graph even though they are the most
+     * important routes on the site.
+     *
+     * @return array<int,int>
+     */
+    public static function navigation_targets(bool $force = false): array {
+        return array_values(array_unique(array_merge(
+            self::boilerplate_targets($force),
+            self::homepage_link_targets()
+        )));
+    }
+
+    /**
+     * Post IDs reached from the site's chrome — the main menu, footer,
+     * sidebar, breadcrumbs.
+     *
+     * These links live in theme templates, never in post content, so the link
+     * graph cannot see them. Without this, a page reached only from the menu
+     * looks orphaned. They are found by rendering a sample of pages and keeping
+     * the links that appear on nearly all of them: that is what "site-wide
+     * navigation" means in practice, and it needs no theme-specific knowledge.
+     *
+     * @return array<int,int>
+     */
+    public static function boilerplate_targets(bool $force = false): array {
+        static $cache = null;
+        if ($cache !== null && !$force) {
+            return $cache;
+        }
+
+        if (!$force) {
+            $stored = get_transient(self::BOILERPLATE_TRANSIENT);
+            if (is_array($stored)) {
+                return $cache = $stored;
+            }
+        }
+
+        $sample = self::sample_urls();
+        if (count($sample) < 2) {
+            // Too small to tell chrome from content.
+            return $cache = [];
+        }
+
+        $seen_on = [];
+        $fetched = 0;
+
+        foreach ($sample as $url) {
+            $response = WPSD_Helpers::request($url, ['method' => 'GET']);
+            if ($response['status'] !== 200 || $response['body'] === '') {
+                continue;
+            }
+            $fetched++;
+
+            // Distinct targets per page: a menu repeated in a mobile drawer
+            // must not count twice.
+            $targets = [];
+            foreach (WPSD_Helpers::extract_links($response['body'], $url) as $link) {
+                if (!WPSD_Helpers::is_internal_url($link['url'])) {
+                    continue;
+                }
+                $targets[WPSD_Helpers::normalize_url($link['url'])] = $link['url'];
+            }
+
+            foreach ($targets as $normalized => $original) {
+                if (!isset($seen_on[$normalized])) {
+                    $seen_on[$normalized] = ['count' => 0, 'url' => $original];
+                }
+                $seen_on[$normalized]['count']++;
+            }
+        }
+
+        if ($fetched < 2) {
+            return $cache = [];
+        }
+
+        $threshold = max(2, (int) ceil($fetched * self::BOILERPLATE_RATIO));
+
+        $ids = [];
+        foreach ($seen_on as $entry) {
+            if ($entry['count'] < $threshold) {
+                continue;
+            }
+            $id = self::resolve_post_id($entry['url']);
+            if ($id > 0) {
+                $ids[$id] = $id;
+            }
+        }
+
+        $ids = array_values($ids);
+        set_transient(self::BOILERPLATE_TRANSIENT, $ids, HOUR_IN_SECONDS);
+
+        return $cache = $ids;
+    }
+
+    /**
+     * URLs to render when looking for site chrome: the homepage plus a spread
+     * of published pages.
+     *
+     * @return array<int,string>
+     */
+    private static function sample_urls(): array {
+        global $wpdb;
+
+        $urls  = [home_url('/')];
+        $types = WPSD_Helpers::auditable_post_types();
+        $size  = max(2, (int) WPSD_Settings::get('boilerplate_sample_size', 6));
+
+        $placeholders = WPSD_DB::in_placeholders($types, '%s');
+
+        // Spread the sample across the site rather than taking the newest few,
+        // so a template used by only part of the site cannot dominate.
+        $sql = "SELECT ID FROM {$wpdb->posts}
+                WHERE post_status = 'publish' AND post_type IN ({$placeholders})
+                ORDER BY RAND()
+                LIMIT %d";
+
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        $ids = $wpdb->get_col($wpdb->prepare($sql, array_merge($types, [$size])));
+
+        foreach ((array) $ids as $id) {
+            $permalink = get_permalink((int) $id);
+            if ($permalink) {
+                $urls[] = $permalink;
+            }
+        }
+
+        return array_values(array_unique($urls));
+    }
+
+    /**
      * Post IDs linked from the homepage HTML — the BFS seed when there is no
      * static front page.
      *
      * @return array<int,int>
      */
     private static function homepage_link_targets(): array {
+        static $cache = null;
+        if ($cache !== null) {
+            return $cache;
+        }
+
+        $cache = self::fetch_homepage_link_targets();
+        return $cache;
+    }
+
+    /**
+     * @return array<int,int>
+     */
+    private static function fetch_homepage_link_targets(): array {
         $response = WPSD_Helpers::request(home_url('/'), ['method' => 'GET']);
+
+        // No guessing here. This feeds orphan detection, and inventing links
+        // the homepage might have would silently hide genuine orphans. An
+        // unreachable homepage means no verified targets.
         if ($response['status'] !== 200 || $response['body'] === '') {
-            // Fall back to the most recent posts, which is what the homepage
-            // would list anyway.
-            $recent = get_posts([
-                'post_type'      => WPSD_Helpers::auditable_post_types(),
-                'posts_per_page' => (int) get_option('posts_per_page', 10),
-                'fields'         => 'ids',
-            ]);
-            return array_map('intval', (array) $recent);
+            return [];
         }
 
         $ids = [];
@@ -872,6 +1052,7 @@ class WPSD_Internal_Links {
 
     public static function flush_graph_cache(): void {
         delete_transient(self::DEPTH_TRANSIENT);
+        delete_transient(self::BOILERPLATE_TRANSIENT);
     }
 
     /**
@@ -890,12 +1071,16 @@ class WPSD_Internal_Links {
         // phpcs:enable
 
         return [
-            'internal_links' => $internal,
-            'external_links' => $external,
-            'linked_pages'   => $pages,
-            'orphans'        => count(self::orphan_pages(1000)),
-            'weak'           => count(self::weakly_linked(1000)),
-            'avg_outgoing'   => $pages > 0 ? (int) round($internal / $pages) : 0,
+            'internal_links'     => $internal,
+            'external_links'     => $external,
+            'linked_pages'       => $pages,
+            'orphans'            => count(self::orphan_pages(1000)),
+            'weak'               => count(self::weakly_linked(1000)),
+            'avg_outgoing'       => $pages > 0 ? (int) round($internal / $pages) : 0,
+            // Counted separately: chrome links are real routes for crawlers but
+            // carry no editorial signal, so mixing them into the content link
+            // totals would flatter every page on the site.
+            'navigation_targets' => count(self::navigation_targets()),
         ];
     }
 }
