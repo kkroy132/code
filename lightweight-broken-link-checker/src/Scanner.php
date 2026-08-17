@@ -585,7 +585,7 @@ class Scanner {
 	public static function store_link( $url, $text, $post_id, $post_title, $post_modified ) {
 		global $wpdb;
 
-		$table = Database::table();
+		$table = esc_sql( Database::table() );
 		$now   = Plugin::now();
 
 		$url           = (string) $url;
@@ -661,7 +661,7 @@ class Scanner {
 			return 0;
 		}
 
-		$table = Database::table();
+		$table = esc_sql( Database::table() );
 
 		if ( empty( $keep_urls ) ) {
 			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is built from $wpdb->prefix.

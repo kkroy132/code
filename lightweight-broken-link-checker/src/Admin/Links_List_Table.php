@@ -209,47 +209,67 @@ class Links_List_Table extends WP_List_Table {
 			return;
 		}
 
-		$table  = Database::table();
+		$table  = esc_sql( Database::table() );
 		$search = $this->read_search();
 		$sort   = $this->read_order();
 
-		$where  = array( '1=1' );
-		$params = array();
+		/*
+		 * "All" is expressed as every status rather than as a missing WHERE
+		 * clause, so both query shapes stay literal instead of being stitched
+		 * together from fragments, and the status index is always usable.
+		 */
+		$statuses     = 'all' === $this->filter ? Database::statuses() : array( $this->filter );
+		$placeholders = implode( ', ', array_fill( 0, count( $statuses ), '%s' ) );
 
-		if ( 'all' !== $this->filter ) {
-			$where[]  = 'status = %s';
-			$params[] = $this->filter;
-		}
+		/*
+		 * read_order() only ever returns a column from its own whitelist and
+		 * ASC or DESC, so this second pass through sanitize_sql_orderby() is a
+		 * belt-and-braces check that cannot fail — which is why there is no
+		 * fallback branch here.
+		 */
+		$order_by = sanitize_sql_orderby( $sort['orderby'] . ' ' . $sort['order'] );
 
 		if ( '' !== $search ) {
-			$like     = '%' . $wpdb->esc_like( $search ) . '%';
-			$where[]  = '( link_url LIKE %s OR link_text LIKE %s OR source_post_title LIKE %s )';
-			$params[] = $like;
-			$params[] = $like;
-			$params[] = $like;
+			$like = '%' . $wpdb->esc_like( $search ) . '%';
+
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Table name escaped above, the other fragments hold only %s tokens and a whitelisted ORDER BY.
+			$count_sql = $wpdb->prepare(
+				"SELECT COUNT(*) FROM {$table}
+				WHERE status IN ({$placeholders})
+					AND ( link_url LIKE %s OR link_text LIKE %s OR source_post_title LIKE %s )",
+				array_merge( $statuses, array( $like, $like, $like ) )
+			);
+
+			$rows_sql = $wpdb->prepare(
+				"SELECT * FROM {$table}
+				WHERE status IN ({$placeholders})
+					AND ( link_url LIKE %s OR link_text LIKE %s OR source_post_title LIKE %s )
+				ORDER BY {$order_by}
+				LIMIT %d OFFSET %d",
+				array_merge( $statuses, array( $like, $like, $like, $per_page, $offset ) )
+			);
+			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
+		} else {
+			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Table name escaped above, the other fragments hold only %s tokens and a whitelisted ORDER BY.
+			$count_sql = $wpdb->prepare(
+				"SELECT COUNT(*) FROM {$table} WHERE status IN ({$placeholders})",
+				$statuses
+			);
+
+			$rows_sql = $wpdb->prepare(
+				"SELECT * FROM {$table}
+				WHERE status IN ({$placeholders})
+				ORDER BY {$order_by}
+				LIMIT %d OFFSET %d",
+				array_merge( $statuses, array( $per_page, $offset ) )
+			);
+			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
 		}
 
-		$where_sql = implode( ' AND ', $where );
-
-		// $where_sql, $sort and $table are built from validated, non-user values.
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Placeholders only; values are passed to prepare().
-		$count_sql = "SELECT COUNT(*) FROM {$table} WHERE {$where_sql}";
-
-		if ( ! empty( $params ) ) {
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Prepared right here.
-			$count_sql = $wpdb->prepare( $count_sql, $params );
-		}
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Query prepared above.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Custom table, prepared above.
 		$total_items = (int) $wpdb->get_var( $count_sql );
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Sort column and direction are whitelisted in read_order().
-		$rows_sql = "SELECT * FROM {$table} WHERE {$where_sql} ORDER BY {$sort['orderby']} {$sort['order']} LIMIT %d OFFSET %d";
-
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Prepared right here.
-		$rows_sql = $wpdb->prepare( $rows_sql, array_merge( $params, array( $per_page, $offset ) ) );
-
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Query prepared above.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Custom table, prepared above.
 		$items = $wpdb->get_results( $rows_sql, ARRAY_A );
 
 		$this->items = is_array( $items ) ? $items : array();

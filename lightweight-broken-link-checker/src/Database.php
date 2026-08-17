@@ -267,7 +267,7 @@ class Database {
 			return $counts;
 		}
 
-		$table = self::table();
+		$table = esc_sql( self::table() );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is built from $wpdb->prefix; no user input in this query.
 		$rows = $wpdb->get_results( "SELECT status, COUNT(*) AS total FROM {$table} GROUP BY status", ARRAY_A );
@@ -308,7 +308,7 @@ class Database {
 			return;
 		}
 
-		$table = self::table();
+		$table = esc_sql( self::table() );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is built from $wpdb->prefix.
 		$wpdb->query( "TRUNCATE TABLE {$table}" );

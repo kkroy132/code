@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Lightweight Broken Link Checker
  * Description:       Finds broken links in your content using controlled, resource-friendly background batches instead of continuous scanning.
- * Version:           1.1.0
+ * Version:           1.1.1
  * Requires at least: 6.5
  * Requires PHP:      7.4
  * Author:            Lightweight Plugins
@@ -16,7 +16,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'LWBLC_VERSION', '1.1.0' );
+define( 'LWBLC_VERSION', '1.1.1' );
 define( 'LWBLC_DB_VERSION', '1.1.0' );
 define( 'LWBLC_FILE', __FILE__ );
 define( 'LWBLC_DIR', plugin_dir_path( __FILE__ ) );

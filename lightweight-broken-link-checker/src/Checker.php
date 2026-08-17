@@ -133,11 +133,13 @@ class Checker {
 	 *
 	 * Within tiers 1 and 2 the oldest `post_modified_date` comes first, so
 	 * stale content is revisited before freshly edited content; tier 3 goes by
-	 * how long ago the link was last checked.
+	 * how long ago the link was last checked. MySQL sorts NULLs first, which is
+	 * what we want anyway — an unknown date counts as the oldest.
 	 *
 	 * Each tier is its own query on purpose. A single query would need
 	 * `ORDER BY CASE ...`, which no index can satisfy, forcing MySQL to sort
-	 * the whole table on every run.
+	 * the whole table on every run. Each tier only asks for the slots the tiers
+	 * above it left free, so a full first tier costs exactly one query.
 	 *
 	 * @param int $limit Maximum rows to return in total.
 	 * @return array<int,array<string,mixed>>
@@ -149,85 +151,109 @@ class Checker {
 			return array();
 		}
 
-		$now = time();
+		$links = self::query_pending( $limit );
 
-		$tiers = array(
-			// Never checked yet: no age condition.
-			array(
-				'statuses' => array( Database::STATUS_PENDING ),
-				'cutoff'   => '',
-				'order_by' => 'post_modified_date',
-			),
-			array(
-				'statuses' => array( Database::STATUS_OK ),
-				'cutoff'   => gmdate( 'Y-m-d H:i:s', $now - self::RECHECK_AFTER ),
-				'order_by' => 'post_modified_date',
-			),
-			array(
-				'statuses' => array( Database::STATUS_BROKEN, Database::STATUS_REDIRECT ),
-				'cutoff'   => gmdate( 'Y-m-d H:i:s', $now - self::RECHECK_SETTLED_AFTER ),
-				'order_by' => 'last_checked_at',
-			),
-		);
+		$remaining = $limit - count( $links );
 
-		$links = array();
+		if ( $remaining > 0 ) {
+			$links = array_merge( $links, self::query_stale_ok( $remaining ) );
+		}
 
-		foreach ( $tiers as $tier ) {
-			$remaining = $limit - count( $links );
+		$remaining = $limit - count( $links );
 
-			if ( $remaining < 1 ) {
-				break;
-			}
-
-			$links = array_merge( $links, self::query_tier( $tier, $remaining ) );
+		if ( $remaining > 0 ) {
+			$links = array_merge( $links, self::query_settled( $remaining ) );
 		}
 
 		return $links;
 	}
 
 	/**
-	 * Runs the query for one priority tier.
+	 * Tier 1: links that have never been checked.
 	 *
-	 * @param array{statuses:string[],cutoff:string,order_by:string} $tier  Tier definition.
-	 * @param int                                                    $limit Maximum rows.
+	 * @param int $limit Maximum rows.
 	 * @return array<int,array<string,mixed>>
 	 */
-	private static function query_tier( array $tier, $limit ) {
+	private static function query_pending( $limit ) {
 		global $wpdb;
 
-		$table        = Database::table();
-		$placeholders = implode( ', ', array_fill( 0, count( $tier['statuses'] ), '%s' ) );
-		$params       = $tier['statuses'];
+		$table = esc_sql( Database::table() );
 
-		$age_clause = '';
-
-		if ( '' !== $tier['cutoff'] ) {
-			$age_clause = ' AND ( last_checked_at IS NULL OR last_checked_at < %s )';
-			$params[]   = $tier['cutoff'];
-		}
-
-		/*
-		 * Only ever one of two hard coded column names. Plain `ORDER BY col
-		 * ASC` keeps the (status, col) index usable; MySQL sorts NULLs first,
-		 * which is what we want anyway — an unknown date counts as the oldest.
-		 */
-		$order_by = 'last_checked_at' === $tier['order_by'] ? 'last_checked_at' : 'post_modified_date';
-
-		$params[] = (int) $limit;
-
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- $table comes from $wpdb->prefix, the other fragments are placeholders and hard coded column names.
-		$sql = $wpdb->prepare(
-			"SELECT id, link_url, status, fail_count, http_code
-			FROM {$table}
-			WHERE status IN ({$placeholders}){$age_clause}
-			ORDER BY {$order_by} ASC, id ASC
-			LIMIT %d",
-			$params
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table, name escaped above; every value is a placeholder.
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT id, link_url, status, fail_count, http_code
+				FROM {$table}
+				WHERE status = %s
+				ORDER BY post_modified_date ASC, id ASC
+				LIMIT %d",
+				Database::STATUS_PENDING,
+				(int) $limit
+			),
+			ARRAY_A
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Custom table, prepared above.
-		$rows = $wpdb->get_results( $sql, ARRAY_A );
+		return is_array( $rows ) ? $rows : array();
+	}
+
+	/**
+	 * Tier 2: working links that have not been verified for a week.
+	 *
+	 * @param int $limit Maximum rows.
+	 * @return array<int,array<string,mixed>>
+	 */
+	private static function query_stale_ok( $limit ) {
+		global $wpdb;
+
+		$table = esc_sql( Database::table() );
+
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table, name escaped above; every value is a placeholder.
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT id, link_url, status, fail_count, http_code
+				FROM {$table}
+				WHERE status = %s AND ( last_checked_at IS NULL OR last_checked_at < %s )
+				ORDER BY post_modified_date ASC, id ASC
+				LIMIT %d",
+				Database::STATUS_OK,
+				gmdate( 'Y-m-d H:i:s', time() - self::RECHECK_AFTER ),
+				(int) $limit
+			),
+			ARRAY_A
+		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+
+		return is_array( $rows ) ? $rows : array();
+	}
+
+	/**
+	 * Tier 3: broken and redirecting links that settled a month ago.
+	 *
+	 * @param int $limit Maximum rows.
+	 * @return array<int,array<string,mixed>>
+	 */
+	private static function query_settled( $limit ) {
+		global $wpdb;
+
+		$table = esc_sql( Database::table() );
+
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table, name escaped above; every value is a placeholder.
+		$rows = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT id, link_url, status, fail_count, http_code
+				FROM {$table}
+				WHERE status IN ( %s, %s ) AND ( last_checked_at IS NULL OR last_checked_at < %s )
+				ORDER BY last_checked_at ASC, id ASC
+				LIMIT %d",
+				Database::STATUS_BROKEN,
+				Database::STATUS_REDIRECT,
+				gmdate( 'Y-m-d H:i:s', time() - self::RECHECK_SETTLED_AFTER ),
+				(int) $limit
+			),
+			ARRAY_A
+		);
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 
 		return is_array( $rows ) ? $rows : array();
 	}
@@ -451,7 +477,7 @@ class Checker {
 	public static function get_link( $id ) {
 		global $wpdb;
 
-		$table = Database::table();
+		$table = esc_sql( Database::table() );
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is built from $wpdb->prefix.
 		$sql = $wpdb->prepare( "SELECT * FROM {$table} WHERE id = %d", (int) $id );

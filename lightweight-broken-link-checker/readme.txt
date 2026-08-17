@@ -2,9 +2,9 @@
 Contributors: lightweightplugins
 Tags: broken links, link checker, seo, 404, maintenance
 Requires at least: 6.5
-Tested up to: 6.8
+Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -97,6 +97,10 @@ The link table, the plugin options and any queued background jobs. Deactivating 
 
 == Changelog ==
 
+= 1.1.1 =
+* Tested against WordPress 7.0.
+* Reworked every direct database query so each one is a single literal statement: table names go through `esc_sql()`, sort order through `sanitize_sql_orderby()`, and the list table builds one complete query per case instead of stitching a WHERE clause together from fragments. No behaviour change, but the queries now pass the WordPress Plugin Check security sniff cleanly.
+
 = 1.1.0 =
 * Saving a published post now queues a rescan of that post, so new and edited links are picked up without a full scan. Unpublishing, trashing or drafting a post removes its links.
 * Broken and redirecting links are rechecked once a month at the lowest priority, so a link that gets fixed returns to the healthy list without a manual recheck.
@@ -112,6 +116,9 @@ The link table, the plugin options and any queued background jobs. Deactivating 
 * Broken Links dashboard with status filters, search, sorting, per link recheck and a summary box.
 
 == Upgrade Notice ==
+
+= 1.1.1 =
+Compatibility with WordPress 7.0, plus hardened database query construction. No database changes.
 
 = 1.1.0 =
 Posts are now rescanned as you save them, and broken links are rechecked monthly so fixed links clear themselves. Adds a database index; the update runs automatically.
