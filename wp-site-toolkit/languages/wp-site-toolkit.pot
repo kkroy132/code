@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-17T01:50:47+00:00\n"
+"POT-Creation-Date: 2026-08-17T17:20:33+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Domain: wp-site-toolkit\n"
@@ -30,11 +30,11 @@ msgstr[1] ""
 msgid "%1$d images use %2$s in total (measured for %3$d files)."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:593
+#: includes/modules/class-wpstk-module-links.php:663
 msgid "%1$d links redirect before reaching their destination, and %2$d of those go through more than one hop."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:720
+#: includes/modules/class-wpstk-module-links.php:790
 msgid "%1$d of %2$d entries are not linked from any other scanned entry."
 msgstr ""
 
@@ -46,11 +46,11 @@ msgstr ""
 msgid "%1$d of %2$d entries have a title worth revisiting: %3$d empty, %4$d over 60 characters, %5$d under 30 characters."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:693
+#: includes/modules/class-wpstk-module-links.php:763
 msgid "%1$d of %2$d entries link to nothing else on this site. %3$d internal links were found in total."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:511
+#: includes/modules/class-wpstk-module-links.php:581
 msgid "%1$d of %2$d external links did not respond normally (%3$s)."
 msgstr ""
 
@@ -62,7 +62,7 @@ msgstr ""
 msgid "%1$d of %2$d images in your content have no alt attribute at all. A further %3$d use an empty alt, which is correct for decorative images."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:415
+#: includes/modules/class-wpstk-module-links.php:485
 msgid "%1$d of %2$d internal links did not respond normally (%3$s)."
 msgstr ""
 
@@ -70,17 +70,21 @@ msgstr ""
 msgid "%1$d of %2$d recommended response headers are missing."
 msgstr ""
 
+#: includes/modules/class-wpstk-module-links.php:396
+msgid "%1$d of %2$d redirects are active and have been used %3$s times in total."
+msgstr ""
+
 #: includes/modules/class-wpstk-module-security.php:502
 msgid "%1$d plugin updates and %2$d theme updates are waiting."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:574
+#: includes/modules/class-wpstk-module-links.php:644
 msgid "%1$d redirect to %2$s"
 msgid_plural "%1$d redirects to %2$s"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/modules/class-wpstk-module-links.php:770
+#: includes/modules/class-wpstk-module-links.php:840
 msgid "%1$d request, last seen %2$s"
 msgid_plural "%1$d requests, last seen %2$s"
 msgstr[0] ""
@@ -102,7 +106,7 @@ msgstr ""
 msgid "%1$s — %2$d × %3$d pixels"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:375 includes/modules/class-wpstk-module-links.php:477
+#: includes/modules/class-wpstk-module-links.php:445 includes/modules/class-wpstk-module-links.php:547
 msgid "%1$s — linked from \"%2$s\""
 msgstr ""
 
@@ -116,7 +120,7 @@ msgid_plural "%d H1 headings"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/modules/class-wpstk-module-links.php:817
+#: includes/modules/class-wpstk-module-links.php:887
 msgid "%d access denied"
 msgid_plural "%d access denied"
 msgstr[0] ""
@@ -140,13 +144,13 @@ msgid_plural "%d characters"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/modules/class-wpstk-module-links.php:821
+#: includes/modules/class-wpstk-module-links.php:891
 msgid "%d client error"
 msgid_plural "%d client errors"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/modules/class-wpstk-module-links.php:786
+#: includes/modules/class-wpstk-module-links.php:856
 msgid "%d distinct address returned a 404 in the last 30 days."
 msgid_plural "%d distinct addresses returned a 404 in the last 30 days."
 msgstr[0] ""
@@ -164,15 +168,27 @@ msgid_plural "%d entries share a title with another entry."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/modules/class-wpstk-module-links.php:496
+#: includes/modules/class-wpstk-module-links.php:566
 msgid "%d external link responded normally."
 msgid_plural "All %d external links responded normally."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/modules/class-wpstk-module-links.php:447
+#: includes/modules/class-wpstk-module-links.php:517
 msgid "%d external link was found. External link checking is turned off, so no third-party site was contacted."
 msgid_plural "%d external links were found. External link checking is turned off, so no third-party site was contacted."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-wpstk-post-insights.php:330
+msgid "%d image has alt text"
+msgid_plural "%d images have alt text"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-wpstk-post-insights.php:323
+msgid "%d image missing alt text"
+msgid_plural "%d images missing alt text"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -188,19 +204,19 @@ msgid_plural "%d images without an alt attribute"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/modules/class-wpstk-module-links.php:397
+#: includes/modules/class-wpstk-module-links.php:467
 msgid "%d internal link responded normally."
 msgid_plural "All %d internal links responded normally."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/modules/class-wpstk-module-links.php:599
+#: includes/modules/class-wpstk-module-links.php:669
 msgid "%d link redirects once before reaching its destination."
 msgid_plural "%d links redirect once before reaching their destination."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/modules/class-wpstk-module-links.php:813
+#: includes/modules/class-wpstk-module-links.php:883
 msgid "%d not found"
 msgid_plural "%d not found"
 msgstr[0] ""
@@ -218,7 +234,7 @@ msgid_plural "%d published entries across all public post types."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/modules/class-wpstk-module-links.php:833
+#: includes/modules/class-wpstk-module-links.php:903
 msgid "%d redirect problem"
 msgid_plural "%d redirect problems"
 msgstr[0] ""
@@ -242,19 +258,19 @@ msgid_plural "%d seconds"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/modules/class-wpstk-module-links.php:825
+#: includes/modules/class-wpstk-module-links.php:895
 msgid "%d server error"
 msgid_plural "%d server errors"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/modules/class-wpstk-module-links.php:829
+#: includes/modules/class-wpstk-module-links.php:899
 msgid "%d timed out"
 msgid_plural "%d timed out"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/modules/class-wpstk-module-links.php:837
+#: includes/modules/class-wpstk-module-links.php:907
 msgid "%d unreachable"
 msgid_plural "%d unreachable"
 msgstr[0] ""
@@ -282,7 +298,7 @@ msgstr ""
 msgid "%s version"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:515 includes/modules/class-wpstk-module-links.php:377 includes/modules/class-wpstk-module-links.php:479 includes/class-wpstk-check.php:169
+#: includes/modules/class-wpstk-module-seo.php:515 includes/modules/class-wpstk-module-links.php:447 includes/modules/class-wpstk-module-links.php:549 includes/class-wpstk-check.php:169
 msgid "(no title)"
 msgstr ""
 
@@ -294,7 +310,19 @@ msgstr ""
 msgid "128 MB is enough for most sites. Image-heavy sites and page builders benefit from more."
 msgstr ""
 
-#: admin/views/module.php:70 admin/views/module.php:86
+#: admin/views/partials/tab-redirects.php:58
+msgid "301 — Permanent"
+msgstr ""
+
+#: admin/views/partials/tab-redirects.php:59
+msgid "302 — Temporary"
+msgstr ""
+
+#: admin/views/partials/tab-redirects.php:60
+msgid "307 — Temporary (method preserved)"
+msgstr ""
+
+#: admin/views/module.php:70 admin/views/module.php:89
 msgid "404 monitor"
 msgstr ""
 
@@ -302,15 +330,15 @@ msgstr ""
 msgid "404 monitoring"
 msgstr ""
 
-#: admin/views/module.php:90
+#: admin/views/module.php:93
 msgid "404 monitoring is currently turned off, so nothing new is being recorded."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:747
+#: includes/modules/class-wpstk-module-links.php:817
 msgid "404 monitoring is turned off in the settings."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:744
+#: includes/modules/class-wpstk-module-links.php:814
 msgid "404 requests"
 msgstr ""
 
@@ -346,12 +374,24 @@ msgstr ""
 msgid "A noindex directive asks search engines to leave the page out of their results. That is sometimes intentional, but it is worth confirming."
 msgstr ""
 
+#: admin/views/partials/tab-redirects.php:50
+msgid "A path on this site or a full web address."
+msgstr ""
+
+#: admin/views/partials/tab-redirects.php:43
+msgid "A path on this site, starting with a slash."
+msgstr ""
+
 #: includes/modules/class-wpstk-module-performance.php:637
 msgid "A persistent object cache is active."
 msgstr ""
 
 #: includes/modules/class-wpstk-module-performance.php:638
 msgid "A persistent object cache saves repeating the same database queries on every request."
+msgstr ""
+
+#: includes/class-wpstk-redirects.php:271 includes/class-wpstk-redirects.php:338
+msgid "A redirect for that address already exists."
 msgstr ""
 
 #: includes/modules/class-wpstk-module-performance.php:295
@@ -378,7 +418,11 @@ msgstr ""
 msgid "A slow first byte delays everything that follows, however well optimised the rest of the page is."
 msgstr ""
 
-#: includes/class-wpstk-http.php:236
+#: includes/class-wpstk-redirects.php:377
+msgid "A source path and a target address are both required."
+msgstr ""
+
+#: includes/class-wpstk-http.php:240
 msgid "Access denied (HTTP %d)"
 msgstr ""
 
@@ -386,12 +430,16 @@ msgstr ""
 msgid "Account configuration"
 msgstr ""
 
-#: admin/views/module.php:117 includes/class-wpstk-view.php:287
+#: admin/views/module.php:120 includes/class-wpstk-view.php:287
 msgid "Action"
 msgstr ""
 
-#: admin/views/reports.php:216
+#: admin/views/reports.php:216 admin/views/partials/tab-redirects.php:107
 msgid "Actions"
+msgstr ""
+
+#: admin/views/partials/tab-redirects.php:120
+msgid "Active"
 msgstr ""
 
 #: includes/modules/class-wpstk-module-technical.php:300
@@ -406,8 +454,12 @@ msgstr ""
 msgid "Add Open Graph tags through your theme or an SEO plugin. At minimum set og:title, og:description and og:image."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:705
+#: includes/modules/class-wpstk-module-links.php:775
 msgid "Add a few relevant links from these entries to other pages on your site."
+msgstr ""
+
+#: admin/views/partials/tab-redirects.php:27
+msgid "Add a redirect"
 msgstr ""
 
 #: includes/modules/class-wpstk-module-images.php:446
@@ -426,15 +478,19 @@ msgstr ""
 msgid "Add define( 'WP_MEMORY_LIMIT', '256M' ); to wp-config.php. Your host also has to allow that much."
 msgstr ""
 
+#: admin/views/partials/tab-redirects.php:82
+msgid "Add redirect"
+msgstr ""
+
 #: includes/modules/class-wpstk-module-seo.php:1076
 msgid "Addresses checked: /wp-sitemap.xml, /sitemap_index.xml, /sitemap.xml"
 msgstr ""
 
-#: includes/class-wpstk-export.php:73
+#: includes/class-wpstk-export.php:76
 msgid "Affected items"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:700
+#: includes/modules/class-wpstk-module-links.php:770
 msgid "All %1$d entries link to at least one other page. %2$d internal links were found in total."
 msgstr ""
 
@@ -450,7 +506,7 @@ msgstr ""
 msgid "All of the response headers this check looks for are present."
 msgstr ""
 
-#: includes/class-wpstk-admin.php:271
+#: includes/class-wpstk-admin.php:280
 msgid "All stored audit data was removed."
 msgstr ""
 
@@ -560,7 +616,7 @@ msgid_plural "Based on %d pages loaded from this site."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/modules/class-wpstk-module-links.php:634
+#: includes/modules/class-wpstk-module-links.php:704
 msgid "Based on the first %1$d of %2$d published entries, so a page linked from content outside that range may appear here incorrectly."
 msgstr ""
 
@@ -576,7 +632,7 @@ msgstr ""
 msgid "Basic local check only. This is a request from your server to itself, so it excludes network latency, DNS and browser rendering. It is not a substitute for a page speed or Core Web Vitals test."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:355
+#: includes/modules/class-wpstk-module-links.php:425
 msgid "Broken internal links"
 msgstr ""
 
@@ -588,7 +644,7 @@ msgstr ""
 msgid "CSV"
 msgstr ""
 
-#: includes/class-wpstk-view.php:390
+#: admin/views/partials/tab-redirects.php:84 includes/class-wpstk-view.php:390
 msgid "Cancel"
 msgstr ""
 
@@ -616,7 +672,7 @@ msgstr ""
 msgid "Change limits"
 msgstr ""
 
-#: includes/class-wpstk-export.php:68
+#: includes/class-wpstk-export.php:71
 msgid "Check"
 msgstr ""
 
@@ -632,7 +688,7 @@ msgstr ""
 msgid "Check results, including the titles and addresses of the affected pages."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:517
+#: includes/modules/class-wpstk-module-links.php:587
 msgid "Check the listed addresses in a browser. Some sites block automated requests, so treat \"access denied\" results as a hint rather than proof."
 msgstr ""
 
@@ -672,11 +728,11 @@ msgstr ""
 msgid "Clear all stored data"
 msgstr ""
 
-#: admin/views/module.php:192
+#: admin/views/module.php:198
 msgid "Clear the 404 log"
 msgstr ""
 
-#: includes/class-wpstk-http.php:239
+#: includes/class-wpstk-http.php:243
 msgid "Client error (HTTP %d)"
 msgstr ""
 
@@ -696,7 +752,7 @@ msgstr ""
 msgid "Consider a caching plugin, a persistent object cache, or a faster hosting plan. Deactivating plugins one at a time is the usual way to find a slow one."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:725
+#: includes/modules/class-wpstk-module-links.php:795
 msgid "Content that nothing links to is harder for both visitors and search engines to discover."
 msgstr ""
 
@@ -760,12 +816,16 @@ msgstr ""
 msgid "Debug output can reveal file paths and database details to visitors."
 msgstr ""
 
-#: admin/views/reports.php:270
+#: admin/views/reports.php:270 admin/views/partials/tab-redirects.php:162
 msgid "Delete"
 msgstr ""
 
 #: admin/views/reports.php:83
 msgid "Delete scan"
+msgstr ""
+
+#: admin/views/partials/tab-redirects.php:147
+msgid "Delete this redirect?"
 msgstr ""
 
 #: admin/views/reports.php:68 admin/views/reports.php:255
@@ -780,8 +840,32 @@ msgstr ""
 msgid "Deleting the plugin will leave its tables and settings in place, so nothing is lost if you reinstall it. Tick the uninstall option on the left to have everything removed instead."
 msgstr ""
 
+#: includes/class-wpstk-post-insights.php:350
+msgid "Description"
+msgstr ""
+
+#: includes/class-wpstk-post-insights.php:270
+msgid "Description is long (%d characters)"
+msgstr ""
+
+#: includes/class-wpstk-post-insights.php:262
+msgid "Description is short (%d characters)"
+msgstr ""
+
+#: includes/class-wpstk-post-insights.php:277
+msgid "Description length is good (%d characters)"
+msgstr ""
+
 #: includes/class-wpstk-view.php:286
 msgid "Detail"
+msgstr ""
+
+#: admin/views/partials/tab-redirects.php:146
+msgid "Disable"
+msgstr ""
+
+#: admin/views/partials/tab-redirects.php:122
+msgid "Disabled"
 msgstr ""
 
 #: includes/class-wpstk-settings.php:269
@@ -812,7 +896,7 @@ msgstr ""
 msgid "During an audit the plugin makes requests to:"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:602
+#: includes/modules/class-wpstk-module-links.php:672
 msgid "Each redirect adds a round trip. Chains of two or more are slower still and can lose referral information."
 msgstr ""
 
@@ -820,11 +904,15 @@ msgstr ""
 msgid "Each section runs a fixed set of checks. A check that passes scores full marks, a recommendation scores most of them, a warning scores half, and a critical finding scores none. Checks that could not run are excluded."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:962 includes/class-wpstk-check.php:177
+#: admin/views/partials/tab-redirects.php:128 includes/modules/class-wpstk-module-seo.php:962 includes/class-wpstk-check.php:177
 msgid "Edit"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:381 includes/modules/class-wpstk-module-links.php:483 includes/modules/class-wpstk-module-links.php:580
+#: admin/views/partials/tab-redirects.php:27
+msgid "Edit redirect"
+msgstr ""
+
+#: includes/modules/class-wpstk-module-links.php:451 includes/modules/class-wpstk-module-links.php:553 includes/modules/class-wpstk-module-links.php:650
 msgid "Edit source page"
 msgstr ""
 
@@ -832,7 +920,11 @@ msgstr ""
 msgid "Empty the trash and the spam queue when you are sure you no longer need them. Expired transients are cleared by WordPress automatically."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-technical.php:257 includes/modules/class-wpstk-module-technical.php:265
+#: admin/views/partials/tab-redirects.php:146
+msgid "Enable"
+msgstr ""
+
+#: admin/views/partials/tab-redirects.php:67 includes/modules/class-wpstk-module-technical.php:257 includes/modules/class-wpstk-module-technical.php:265
 msgid "Enabled"
 msgstr ""
 
@@ -844,7 +936,7 @@ msgstr ""
 msgid "Environment overview"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:724
+#: includes/modules/class-wpstk-module-links.php:794
 msgid "Every analysed entry is linked from at least one other entry."
 msgstr ""
 
@@ -888,7 +980,7 @@ msgstr ""
 msgid "Everything the toolkit checks looks healthy."
 msgstr ""
 
-#: includes/class-wpstk-export.php:74
+#: includes/class-wpstk-export.php:77
 msgid "Examples"
 msgstr ""
 
@@ -900,7 +992,7 @@ msgstr ""
 msgid "Export CSV"
 msgstr ""
 
-#: includes/class-wpstk-export.php:46
+#: includes/class-wpstk-export.php:49
 msgid "Export failed"
 msgstr ""
 
@@ -916,11 +1008,11 @@ msgstr ""
 msgid "External link checking is on, so sites you link to are requested to see whether they still respond."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:438
+#: includes/modules/class-wpstk-module-links.php:508
 msgid "External links"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:518
+#: includes/modules/class-wpstk-module-links.php:588
 msgid "External sites sometimes rate limit or block automated requests. Verify before removing a link."
 msgstr ""
 
@@ -928,7 +1020,7 @@ msgstr ""
 msgid "Files up to %s can be uploaded."
 msgstr ""
 
-#: includes/class-wpstk-export.php:70
+#: includes/class-wpstk-export.php:73
 msgid "Finding"
 msgstr ""
 
@@ -940,7 +1032,7 @@ msgstr ""
 msgid "Finishing up"
 msgstr ""
 
-#: admin/views/module.php:115
+#: admin/views/module.php:118
 msgid "First seen"
 msgstr ""
 
@@ -948,8 +1040,16 @@ msgstr ""
 msgid "Forcing HTTPS in the admin area makes sure login details are never sent unencrypted, even if someone types the http address."
 msgstr ""
 
-#: admin/views/module.php:211
+#: admin/views/partials/tab-redirects.php:101
+msgid "From"
+msgstr ""
+
+#: admin/views/module.php:219
 msgid "From the audit finished on %s."
+msgstr ""
+
+#: admin/views/partials/tab-redirects.php:39
+msgid "From this address"
 msgstr ""
 
 #: includes/class-wpstk-admin.php:56
@@ -1020,7 +1120,7 @@ msgstr ""
 msgid "History is kept for %1$s days, up to %2$s scans."
 msgstr ""
 
-#: admin/views/module.php:114
+#: admin/views/partials/tab-redirects.php:104 admin/views/module.php:117
 msgid "Hits"
 msgstr ""
 
@@ -1060,7 +1160,7 @@ msgstr ""
 msgid "If this site is live, turn off \"Discourage search engines from indexing this site\" in Settings → Reading."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-images.php:402
+#: includes/modules/class-wpstk-module-images.php:402 includes/class-wpstk-post-insights.php:385
 msgid "Image alt text"
 msgstr ""
 
@@ -1072,7 +1172,7 @@ msgstr ""
 msgid "Image files above this size are reported."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-images.php:28
+#: includes/modules/class-wpstk-module-images.php:28 includes/class-wpstk-post-insights.php:351
 msgid "Images"
 msgstr ""
 
@@ -1096,15 +1196,15 @@ msgstr ""
 msgid "Inspecting response headers"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:618
+#: includes/modules/class-wpstk-module-links.php:688
 msgid "Internal linking"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:704
+#: includes/modules/class-wpstk-module-links.php:774
 msgid "Internal links help readers find related content and help search engines understand how your pages relate to each other."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:400 includes/modules/class-wpstk-module-links.php:420
+#: includes/modules/class-wpstk-module-links.php:470 includes/modules/class-wpstk-module-links.php:490
 msgid "Internal links that lead nowhere waste visitors' time and stop search engines from reaching your pages."
 msgstr ""
 
@@ -1148,7 +1248,7 @@ msgstr ""
 msgid "Last error: %s"
 msgstr ""
 
-#: admin/views/module.php:116
+#: admin/views/module.php:119
 msgid "Last seen"
 msgstr ""
 
@@ -1164,11 +1264,11 @@ msgstr ""
 msgid "Link results"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:726
+#: includes/modules/class-wpstk-module-links.php:796
 msgid "Link to these entries from related content, a menu or a listing page."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:557
+#: includes/modules/class-wpstk-module-links.php:627
 msgid "Linking straight to the final address saves a round trip for every visitor."
 msgstr ""
 
@@ -1176,11 +1276,11 @@ msgstr ""
 msgid "Links"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:727
+#: includes/modules/class-wpstk-module-links.php:797
 msgid "Links from menus, widgets and archive pages are not counted, so some entries listed here may still be reachable."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:499 includes/modules/class-wpstk-module-links.php:516
+#: includes/modules/class-wpstk-module-links.php:569 includes/modules/class-wpstk-module-links.php:586
 msgid "Links to sites that have disappeared make your content look neglected."
 msgstr ""
 
@@ -1190,6 +1290,10 @@ msgstr ""
 
 #: includes/modules/class-wpstk-module-seo.php:878
 msgid "Make sure each page renders exactly one H1, usually the page title supplied by your theme."
+msgstr ""
+
+#: includes/modules/class-wpstk-module-links.php:405
+msgid "Manage redirects"
 msgstr ""
 
 #: includes/class-wpstk-check.php:291
@@ -1244,6 +1348,10 @@ msgstr ""
 msgid "Memory limit"
 msgstr ""
 
+#: includes/class-wpstk-post-insights.php:384
+msgid "Meta description"
+msgstr ""
+
 #: includes/modules/class-wpstk-module-seo.php:649 includes/modules/class-wpstk-module-seo.php:787
 msgid "Meta descriptions"
 msgstr ""
@@ -1254,6 +1362,10 @@ msgstr ""
 
 #: includes/modules/class-wpstk-module-security.php:621
 msgid "Missing headers are not a vulnerability on their own. They are defence in depth."
+msgstr ""
+
+#: includes/class-wpstk-post-insights.php:211
+msgid "Missing title"
 msgstr ""
 
 #: includes/modules/class-wpstk-module-seo.php:440
@@ -1308,11 +1420,11 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:757
+#: includes/modules/class-wpstk-module-links.php:827
 msgid "No 404 requests have been recorded in the last 30 days."
 msgstr ""
 
-#: admin/views/module.php:106
+#: admin/views/module.php:109
 msgid "No 404 requests have been recorded yet."
 msgstr ""
 
@@ -1324,7 +1436,7 @@ msgstr ""
 msgid "No Sitemap directive"
 msgstr ""
 
-#: admin/views/module.php:201
+#: admin/views/module.php:209
 msgid "No audit has been completed yet, so there is nothing to show for this section."
 msgstr ""
 
@@ -1356,7 +1468,7 @@ msgstr ""
 msgid "No description or excerpt"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:459
+#: includes/modules/class-wpstk-module-links.php:529
 msgid "No external links were found in the content that was scanned."
 msgstr ""
 
@@ -1368,6 +1480,10 @@ msgstr ""
 msgid "No image is wider or taller than %d pixels."
 msgstr ""
 
+#: includes/class-wpstk-post-insights.php:315
+msgid "No images to check"
+msgstr ""
+
 #: includes/modules/class-wpstk-module-images.php:405
 msgid "No images were found in your content or media library."
 msgstr ""
@@ -1376,7 +1492,7 @@ msgstr ""
 msgid "No images were measured in this scan."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:358
+#: includes/modules/class-wpstk-module-links.php:428
 msgid "No internal links were found in the content that was scanned."
 msgstr ""
 
@@ -1384,16 +1500,20 @@ msgstr ""
 msgid "No limit"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:678
+#: includes/modules/class-wpstk-module-links.php:748
 msgid "No links found from other scanned pages"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:647
+#: includes/modules/class-wpstk-module-links.php:717
 msgid "No links to other pages on this site"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:549
+#: includes/modules/class-wpstk-module-links.php:619
 msgid "No links were available to check."
+msgstr ""
+
+#: includes/class-wpstk-post-insights.php:254
+msgid "No meta description"
 msgstr ""
 
 #: includes/modules/class-wpstk-module-performance.php:648
@@ -1404,7 +1524,7 @@ msgstr ""
 msgid "No plugin or theme updates are waiting."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:623 includes/modules/class-wpstk-module-links.php:624
+#: includes/modules/class-wpstk-module-links.php:693 includes/modules/class-wpstk-module-links.php:694
 msgid "No published content was available to analyse."
 msgstr ""
 
@@ -1412,8 +1532,12 @@ msgstr ""
 msgid "No published content was found to analyse."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:556
+#: includes/modules/class-wpstk-module-links.php:626
 msgid "No redirected links were found in your content."
+msgstr ""
+
+#: admin/views/partials/tab-redirects.php:95 includes/modules/class-wpstk-module-links.php:369
+msgid "No redirects have been created yet."
 msgstr ""
 
 #: includes/modules/class-wpstk-module-seo.php:1073
@@ -1448,7 +1572,7 @@ msgstr ""
 msgid "Not enabled"
 msgstr ""
 
-#: includes/class-wpstk-http.php:233
+#: includes/class-wpstk-http.php:237
 msgid "Not found (HTTP %d)"
 msgstr ""
 
@@ -1458,6 +1582,10 @@ msgstr ""
 
 #: includes/modules/class-wpstk-module-security.php:581
 msgid "Not sent"
+msgstr ""
+
+#: includes/class-wpstk-post-insights.php:377
+msgid "Nothing to check yet."
 msgstr ""
 
 #: includes/class-wpstk-view.php:208
@@ -1508,7 +1636,7 @@ msgstr ""
 msgid "Only the most recent scans are kept, whichever limit is reached first."
 msgstr ""
 
-#: includes/class-wpstk-view.php:316
+#: includes/modules/class-wpstk-module-links.php:377 includes/modules/class-wpstk-module-links.php:407 includes/class-wpstk-view.php:316
 msgid "Open"
 msgstr ""
 
@@ -1540,7 +1668,7 @@ msgstr ""
 msgid "Open each listed page and remove the noindex setting if the page should be findable."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:421
+#: includes/modules/class-wpstk-module-links.php:491
 msgid "Open each source page and either fix the address or remove the link. Timeouts are sometimes temporary — re-run the audit to confirm."
 msgstr ""
 
@@ -1572,7 +1700,7 @@ msgstr ""
 msgid "Original files only. The smaller sizes WordPress generates are not counted."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:619
+#: includes/modules/class-wpstk-module-links.php:689
 msgid "Orphaned content"
 msgstr ""
 
@@ -1688,7 +1816,7 @@ msgstr ""
 msgid "Reachable"
 msgstr ""
 
-#: includes/class-wpstk-http.php:228
+#: includes/class-wpstk-http.php:232
 msgid "Reachable (HTTP %d)"
 msgstr ""
 
@@ -1720,7 +1848,7 @@ msgstr ""
 msgid "Recommendations"
 msgstr ""
 
-#: includes/class-wpstk-export.php:72
+#: includes/class-wpstk-export.php:75
 msgid "Recommended action"
 msgstr ""
 
@@ -1728,7 +1856,11 @@ msgstr ""
 msgid "Record requests that end in a 404 page"
 msgstr ""
 
-#: includes/class-wpstk-http.php:230
+#: admin/views/module.php:140
+msgid "Redirect"
+msgstr ""
+
+#: includes/class-wpstk-http.php:234
 msgid "Redirect could not be resolved"
 msgstr ""
 
@@ -1736,15 +1868,35 @@ msgstr ""
 msgid "Redirect loop or unsupported redirect target."
 msgstr ""
 
+#: includes/modules/class-wpstk-module-links.php:359
+msgid "Redirect manager"
+msgstr ""
+
 #: includes/class-wpstk-http.php:144
 msgid "Redirect response without a destination."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:533
+#: admin/views/partials/tab-redirects.php:54
+msgid "Redirect type"
+msgstr ""
+
+#: admin/views/partials/tab-redirects.php:92 admin/views/module.php:73 includes/modules/class-wpstk-module-links.php:375
+msgid "Redirects"
+msgstr ""
+
+#: includes/modules/class-wpstk-module-links.php:603
 msgid "Redirects and redirect chains"
 msgstr ""
 
-#: admin/views/module.php:113
+#: includes/modules/class-wpstk-module-links.php:371
+msgid "Redirects can be created from the 404 monitor or from the Redirects tab in this section."
+msgstr ""
+
+#: includes/modules/class-wpstk-module-links.php:401
+msgid "Redirects send visitors and search engines from an old address to the right page instead of a dead end."
+msgstr ""
+
+#: admin/views/module.php:116
 msgid "Referrer"
 msgstr ""
 
@@ -1756,7 +1908,7 @@ msgstr ""
 msgid "Registration settings and administrator accounts look sensible."
 msgstr ""
 
-#: admin/views/module.php:151
+#: admin/views/module.php:157
 msgid "Remove"
 msgstr ""
 
@@ -1784,7 +1936,7 @@ msgstr ""
 msgid "Reorder the headings on the listed pages so no level is skipped."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:758 includes/modules/class-wpstk-module-links.php:789
+#: includes/modules/class-wpstk-module-links.php:828 includes/modules/class-wpstk-module-links.php:859
 msgid "Repeated 404s usually mean a page moved without a redirect, or something links to an address that never existed."
 msgstr ""
 
@@ -1800,7 +1952,7 @@ msgstr ""
 msgid "Request timeout"
 msgstr ""
 
-#: admin/views/module.php:112
+#: admin/views/module.php:115
 msgid "Requested address"
 msgstr ""
 
@@ -1832,7 +1984,7 @@ msgstr ""
 msgid "Review settings"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:790
+#: includes/modules/class-wpstk-module-links.php:860
 msgid "Review the list under Links → 404 monitor. Redirect the addresses that used to work and ignore the obvious bot noise."
 msgstr ""
 
@@ -1848,11 +2000,15 @@ msgstr ""
 msgid "Run Full Site Audit"
 msgstr ""
 
+#: includes/class-wpstk-post-insights.php:157
+msgid "Run a full site audit for complete results"
+msgstr ""
+
 #: includes/class-wpstk-check.php:258
 msgid "Run a full site audit to see where your site stands."
 msgstr ""
 
-#: admin/views/reports.php:21 admin/views/module.php:202
+#: admin/views/reports.php:21 admin/views/module.php:210
 msgid "Run an audit"
 msgstr ""
 
@@ -1882,6 +2038,10 @@ msgstr ""
 
 #: includes/modules/class-wpstk-module-seo.php:41
 msgid "SEO"
+msgstr ""
+
+#: admin/views/partials/tab-redirects.php:82
+msgid "Save changes"
 msgstr ""
 
 #: admin/views/settings.php:21
@@ -1940,7 +2100,7 @@ msgstr ""
 msgid "Search engines often show the meta description underneath the title. Without one, they pick an arbitrary sentence from the page."
 msgstr ""
 
-#: admin/views/reports.php:138 includes/class-wpstk-export.php:67
+#: admin/views/reports.php:138 includes/class-wpstk-export.php:70
 msgid "Section"
 msgstr ""
 
@@ -1972,7 +2132,11 @@ msgstr ""
 msgid "Send requests to third-party domains linked from your content"
 msgstr ""
 
-#: includes/class-wpstk-http.php:242
+#: admin/views/partials/tab-redirects.php:29
+msgid "Send visitors and search engines from an old address on this site to a new one. Redirects are checked on every front-end request, so keep the list to addresses you actually need."
+msgstr ""
+
+#: includes/class-wpstk-http.php:246
 msgid "Server error (HTTP %d)"
 msgstr ""
 
@@ -1988,7 +2152,7 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: includes/class-wpstk-admin.php:272
+#: includes/class-wpstk-admin.php:281
 msgid "Settings were restored to their defaults."
 msgstr ""
 
@@ -2000,7 +2164,7 @@ msgstr ""
 msgid "Several checks did not pass. Start with the critical items."
 msgstr ""
 
-#: includes/class-wpstk-export.php:69
+#: includes/class-wpstk-export.php:72
 msgid "Severity"
 msgstr ""
 
@@ -2012,7 +2176,7 @@ msgstr ""
 msgid "Site Health"
 msgstr ""
 
-#: includes/class-wpstk-admin.php:95
+#: includes/class-wpstk-post-insights.php:99 includes/class-wpstk-admin.php:95
 msgid "Site Toolkit"
 msgstr ""
 
@@ -2048,6 +2212,10 @@ msgstr ""
 msgid "Starting the audit…"
 msgstr ""
 
+#: admin/views/partials/tab-redirects.php:105
+msgid "Status"
+msgstr ""
+
 #: includes/class-wpstk-admin.php:197
 msgid "Step %1$d of %2$d"
 msgstr ""
@@ -2076,7 +2244,11 @@ msgstr ""
 msgid "Technical"
 msgstr ""
 
-#: includes/class-wpstk-export.php:45 includes/class-wpstk-rest.php:158
+#: includes/class-wpstk-redirects.php:316 includes/class-wpstk-redirects.php:334
+msgid "That redirect could not be found."
+msgstr ""
+
+#: includes/class-wpstk-export.php:48 includes/class-wpstk-rest.php:158
 msgid "That scan could not be found."
 msgstr ""
 
@@ -2090,7 +2262,7 @@ msgid_plural "All %d images in your content have an alt attribute."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-wpstk-admin.php:270
+#: includes/class-wpstk-admin.php:279
 msgid "The 404 log was cleared."
 msgstr ""
 
@@ -2114,11 +2286,11 @@ msgstr ""
 msgid "The WordPress tables use %1$s, of which about %2$s is reclaimable space."
 msgstr ""
 
-#: includes/class-wpstk-http.php:99 includes/class-wpstk-http.php:276
+#: includes/class-wpstk-http.php:99 includes/class-wpstk-http.php:280
 msgid "The address could not be parsed as a web URL."
 msgstr ""
 
-#: includes/class-wpstk-http.php:246
+#: includes/class-wpstk-http.php:250
 msgid "The address could not be reached"
 msgstr ""
 
@@ -2162,11 +2334,11 @@ msgstr ""
 msgid "The connection to WordPress was lost. The audit can be resumed from this screen."
 msgstr ""
 
-#: includes/class-wpstk-admin.php:269
+#: includes/class-wpstk-admin.php:278
 msgid "The entry was removed from the 404 log."
 msgstr ""
 
-#: includes/class-wpstk-export.php:61
+#: includes/class-wpstk-export.php:64
 msgid "The export could not be created."
 msgstr ""
 
@@ -2206,11 +2378,27 @@ msgstr ""
 msgid "The plugin could not load any pages from this site, so the rendered markup was not inspected."
 msgstr ""
 
-#: includes/class-wpstk-http.php:244
+#: includes/class-wpstk-redirects.php:291 includes/class-wpstk-admin.php:272
+msgid "The redirect could not be saved."
+msgstr ""
+
+#: includes/class-wpstk-admin.php:282
+msgid "The redirect was created."
+msgstr ""
+
+#: includes/class-wpstk-admin.php:284
+msgid "The redirect was deleted."
+msgstr ""
+
+#: includes/class-wpstk-admin.php:283
+msgid "The redirect was updated."
+msgstr ""
+
+#: includes/class-wpstk-http.php:248
 msgid "The request timed out"
 msgstr ""
 
-#: admin/views/module.php:99
+#: admin/views/module.php:102
 msgid "The requested address, the referring URL and a hit counter are stored — nothing else. No IP addresses or user agents are recorded. Up to %s distinct addresses are kept."
 msgstr ""
 
@@ -2218,7 +2406,7 @@ msgstr ""
 msgid "The sampled pages all provide og:title, og:description and og:image."
 msgstr ""
 
-#: includes/class-wpstk-admin.php:268
+#: includes/class-wpstk-admin.php:277
 msgid "The scan was deleted."
 msgstr ""
 
@@ -2232,6 +2420,10 @@ msgstr ""
 
 #: includes/modules/class-wpstk-module-security.php:323
 msgid "The site uses HTTPS, but the admin area is not forced onto it."
+msgstr ""
+
+#: includes/class-wpstk-redirects.php:381
+msgid "The target address is the same as the source, which would create a redirect loop."
 msgstr ""
 
 #: includes/modules/class-wpstk-module-seo.php:716
@@ -2286,6 +2478,10 @@ msgstr ""
 msgid "This is a reference figure, not a problem. It counts original files only, not the smaller sizes WordPress generates."
 msgstr ""
 
+#: admin/views/partials/tab-redirects.php:71
+msgid "This redirect is active"
+msgstr ""
+
 #: includes/modules/class-wpstk-module-seo.php:1013
 msgid "This site asks search engines not to index it."
 msgstr ""
@@ -2302,8 +2498,32 @@ msgstr ""
 msgid "Timezone"
 msgstr ""
 
+#: includes/class-wpstk-post-insights.php:349 includes/class-wpstk-post-insights.php:383
+msgid "Title"
+msgstr ""
+
+#: includes/class-wpstk-post-insights.php:227
+msgid "Title is long (%d characters)"
+msgstr ""
+
+#: includes/class-wpstk-post-insights.php:219
+msgid "Title is short (%d characters)"
+msgstr ""
+
+#: includes/class-wpstk-post-insights.php:234
+msgid "Title length is good (%d characters)"
+msgstr ""
+
 #: includes/modules/class-wpstk-module-seo.php:48
 msgid "Titles, meta descriptions, headings, canonical tags, social tags, indexability, sitemap and robots.txt."
+msgstr ""
+
+#: admin/views/partials/tab-redirects.php:102
+msgid "To"
+msgstr ""
+
+#: admin/views/partials/tab-redirects.php:47
+msgid "To this address"
 msgstr ""
 
 #: includes/class-wpstk-http.php:171
@@ -2326,8 +2546,12 @@ msgstr ""
 msgid "Turn WP_DEBUG off in wp-config.php once you have finished troubleshooting."
 msgstr ""
 
-#: admin/views/module.php:91
+#: admin/views/module.php:94
 msgid "Turn it on"
+msgstr ""
+
+#: admin/views/partials/tab-redirects.php:103
+msgid "Type"
 msgstr ""
 
 #: includes/class-wpstk-settings.php:220
@@ -2362,7 +2586,7 @@ msgstr ""
 msgid "Unused files take up storage and make the media library harder to search."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-links.php:603
+#: includes/modules/class-wpstk-module-links.php:673
 msgid "Update the links to point straight at the final address."
 msgstr ""
 
@@ -2380,6 +2604,10 @@ msgstr ""
 
 #: includes/class-wpstk-settings.php:189
 msgid "Upper limit for link checking. Lower this on shared hosting."
+msgstr ""
+
+#: admin/views/partials/tab-redirects.php:62
+msgid "Use 301 when the old address is gone for good. Search engines update their index faster for 301s."
 msgstr ""
 
 #: includes/modules/class-wpstk-module-technical.php:324
@@ -2422,7 +2650,7 @@ msgstr ""
 msgid "View users"
 msgstr ""
 
-#: admin/views/partials/header.php:17 includes/class-wpstk-admin.php:94
+#: admin/views/partials/header.php:17 includes/class-wpstk-post-insights.php:133 includes/class-wpstk-admin.php:94
 msgid "WP Site Toolkit"
 msgstr ""
 
@@ -2492,6 +2720,10 @@ msgstr ""
 msgid "What was found:"
 msgstr ""
 
+#: includes/modules/class-wpstk-module-links.php:370
+msgid "When a page moves or is renamed, a redirect keeps old links and search rankings working instead of leading to a 404."
+msgstr ""
+
 #: includes/modules/class-wpstk-module-seo.php:742
 msgid "When several pages use the same title, search engines and visitors cannot tell them apart in a list of results."
 msgstr ""
@@ -2500,7 +2732,7 @@ msgstr ""
 msgid "While this setting is on, WordPress asks search engines to stay away. That is right for a staging site and wrong for a live one."
 msgstr ""
 
-#: includes/class-wpstk-export.php:71
+#: includes/class-wpstk-export.php:74
 msgid "Why it matters"
 msgstr ""
 

@@ -92,6 +92,7 @@ final class WPSTK_Plugin {
 		add_action( 'plugins_loaded', array( 'WPSTK_Database', 'maybe_upgrade' ), 5 );
 
 		WPSTK_Not_Found_Monitor::init();
+		WPSTK_Redirects::init();
 		WPSTK_Cron::init();
 		WPSTK_Rest::init();
 
@@ -102,6 +103,7 @@ final class WPSTK_Plugin {
 			WPSTK_Ajax::init();
 			WPSTK_Export::init();
 			WPSTK_Settings::init();
+			WPSTK_Post_Insights::init();
 		}
 
 		/**
@@ -131,12 +133,14 @@ final class WPSTK_Plugin {
 			'includes/class-wpstk-scan-store.php',
 			'includes/class-wpstk-audit.php',
 			'includes/class-wpstk-not-found-monitor.php',
+			'includes/class-wpstk-redirects.php',
 			'includes/class-wpstk-cron.php',
 			'includes/class-wpstk-rest.php',
 			'includes/class-wpstk-ajax.php',
 			'includes/class-wpstk-export.php',
 			'includes/class-wpstk-admin.php',
 			'includes/class-wpstk-view.php',
+			'includes/class-wpstk-post-insights.php',
 			'includes/modules/class-wpstk-module.php',
 			'includes/modules/class-wpstk-module-seo.php',
 			'includes/modules/class-wpstk-module-links.php',

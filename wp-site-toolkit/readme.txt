@@ -4,7 +4,7 @@ Tags: seo, broken links, site health, audit, 404
 Requires at least: 5.8
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -39,6 +39,7 @@ Titles and descriptions are read from Yoast SEO, Rank Math, SEOPress and All in 
 * Internal link counts and entries that link to nothing else on the site
 * Orphaned content that nothing else links to
 * A 404 monitor that records the addresses visitors requested and did not find
+* A built-in redirect manager: send an old address straight to its new one in one click from the 404 monitor, or add redirects by hand — 301, 302 or 307, with a hit counter
 
 **Images**
 
@@ -78,6 +79,14 @@ This is a configuration health check. It does not test for vulnerabilities, does
 
 WordPress version, PHP version, MySQL or MariaDB version, web server, both site URLs, HTTPS status, permalink structure, WP-Cron status, REST API availability, debug mode, memory limits, upload limit, maximum execution time, sitemap availability, robots.txt availability, active theme, plugin count, multisite status, language and timezone.
 
+= Where you already work =
+
+A full audit is not the only way findings reach you:
+
+* A "Site Toolkit" column on the Posts and Pages list shows title length, meta description length and missing image alt text for every entry, computed locally with no extra page load
+* A matching panel appears in the block editor sidebar while you write, with a link through to the full audit
+* These signals check the same thresholds as the SEO audit and never make an outbound request
+
 = Built for real sites =
 
 * Audits run in small batches through AJAX, with a progress bar you can watch or walk away from
@@ -98,6 +107,7 @@ WP Site Toolkit is designed to keep everything on your own server.
 * No telemetry, no analytics, no tracking and no advertising
 * No external account, licence server or third-party API
 * The 404 monitor stores the requested address, the referring URL, a hit counter and timestamps — it does not store IP addresses, user agents or any other visitor identifier
+* The redirect manager only checks incoming requests against redirects you created yourself, entirely with local database lookups — it makes no outbound request of any kind, and the check is skipped completely on sites with no redirects configured
 
 During an audit the plugin makes HTTP requests to:
 
@@ -156,6 +166,10 @@ Yes. Each site in the network keeps its own tables, settings and results. Networ
 
 It only runs on requests that have already resulted in a 404 page, and it writes a single row. It stores at most 500 distinct addresses, and you can turn it off entirely in Settings.
 
+= Will the redirect manager slow my site down? =
+
+If you have not created any redirects, the check is skipped entirely — nothing is added to the request. Once you do create one, each front-end request does a single indexed database lookup, the same kind of cost as the 404 monitor.
+
 = Can editors use the toolkit? =
 
 By default only users who can manage options can. The `wpstk_capability` filter lets you grant access to other roles, separately for viewing results, running audits and changing settings.
@@ -171,6 +185,11 @@ By default only users who can manage options can. The `wpstk_capability` filter 
 
 == Changelog ==
 
+= 1.1.0 =
+* Added a redirect manager: create 301, 302 or 307 redirects by hand, or in one click from a 404 monitor entry. Redirects are only checked on the front end when at least one exists.
+* Added a "Site Toolkit" column to the Posts and Pages list and a matching panel in the post editor, showing title length, meta description length and image alt-text status computed locally, with no extra requests.
+* Added a redirect summary check to the Links section of the audit.
+
 = 1.0.0 =
 * Initial release.
 * Full site audit engine with resumable, batched scanning.
@@ -181,6 +200,9 @@ By default only users who can manage options can. The `wpstk_capability` filter 
 * Optional scheduled audits, disabled by default.
 
 == Upgrade Notice ==
+
+= 1.1.0 =
+Adds a redirect manager and post-list SEO signals. Existing scans, settings and 404 data are kept; the new redirects table is created automatically.
 
 = 1.0.0 =
 Initial release.

@@ -34,6 +34,7 @@ function wpstk_uninstall_site() {
 		$wpdb->prefix . 'wpstk_checks',
 		$wpdb->prefix . 'wpstk_scans',
 		$wpdb->prefix . 'wpstk_not_found',
+		$wpdb->prefix . 'wpstk_redirects',
 	);
 
 	foreach ( $tables as $table ) {
@@ -44,6 +45,7 @@ function wpstk_uninstall_site() {
 	delete_option( 'wpstk_settings' );
 	delete_option( 'wpstk_db_version' );
 	delete_option( 'wpstk_scan_state' );
+	delete_option( 'wpstk_redirect_count' );
 }
 
 if ( is_multisite() ) {

@@ -63,11 +63,14 @@ $wpstk_counts = WPSTK_Check::count_by_status( $wpstk_checks );
 
 <?php if ( 'links' === $wpstk_module_id ) : ?>
 	<nav class="nav-tab-wrapper wpstk-tabs">
-		<a class="nav-tab <?php echo '404' === $wpstk_tab ? '' : 'nav-tab-active'; ?>" href="<?php echo esc_url( WPSTK_Admin::page_url( 'wp-site-toolkit-links' ) ); ?>">
+		<a class="nav-tab <?php echo in_array( $wpstk_tab, array( '404', 'redirects' ), true ) ? '' : 'nav-tab-active'; ?>" href="<?php echo esc_url( WPSTK_Admin::page_url( 'wp-site-toolkit-links' ) ); ?>">
 			<?php echo esc_html__( 'Link results', 'wp-site-toolkit' ); ?>
 		</a>
 		<a class="nav-tab <?php echo '404' === $wpstk_tab ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( WPSTK_Admin::page_url( 'wp-site-toolkit-links', array( 'tab' => '404' ) ) ); ?>">
 			<?php echo esc_html__( '404 monitor', 'wp-site-toolkit' ); ?>
+		</a>
+		<a class="nav-tab <?php echo 'redirects' === $wpstk_tab ? 'nav-tab-active' : ''; ?>" href="<?php echo esc_url( WPSTK_Admin::page_url( 'wp-site-toolkit-links', array( 'tab' => 'redirects' ) ) ); ?>">
+			<?php echo esc_html__( 'Redirects', 'wp-site-toolkit' ); ?>
 		</a>
 	</nav>
 <?php endif; ?>
@@ -133,6 +136,9 @@ $wpstk_counts = WPSTK_Check::count_by_status( $wpstk_checks );
 								<td><?php echo esc_html( mysql2date( $wpstk_format, $wpstk_row['last_seen'] ) ); ?></td>
 								<td>
 									<?php if ( WPSTK_Security::can( 'manage' ) ) : ?>
+										<a class="button button-small" href="<?php echo esc_url( WPSTK_Admin::page_url( 'wp-site-toolkit-links', array( 'tab' => 'redirects', 'source' => wp_parse_url( $wpstk_row['url'], PHP_URL_PATH ) ) ) ); ?>">
+											<?php echo esc_html__( 'Redirect', 'wp-site-toolkit' ); ?>
+										</a>
 										<a class="button button-small" href="
 										<?php
 										echo esc_url(
@@ -194,6 +200,8 @@ $wpstk_counts = WPSTK_Check::count_by_status( $wpstk_checks );
 			<?php endif; ?>
 		<?php endif; ?>
 	</div>
+<?php elseif ( 'links' === $wpstk_module_id && 'redirects' === $wpstk_tab ) : ?>
+	<?php include WPSTK_DIR . 'admin/views/partials/tab-redirects.php'; ?>
 <?php else : ?>
 	<?php if ( ! $wpstk_latest ) : ?>
 		<?php

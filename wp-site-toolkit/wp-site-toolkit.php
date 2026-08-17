@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       WP Site Toolkit – Free
  * Description:       A free all-in-one WordPress website health, SEO, link, image, technical and security audit toolkit.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Requires at least: 5.8
  * Requires PHP:      7.4
  * Author:            WP Site Toolkit Contributors
@@ -26,8 +26,8 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WPSTK_VERSION', '1.0.0' );
-define( 'WPSTK_DB_VERSION', '1' );
+define( 'WPSTK_VERSION', '1.1.0' );
+define( 'WPSTK_DB_VERSION', '2' );
 define( 'WPSTK_FILE', __FILE__ );
 define( 'WPSTK_DIR', plugin_dir_path( __FILE__ ) );
 define( 'WPSTK_URL', plugin_dir_url( __FILE__ ) );

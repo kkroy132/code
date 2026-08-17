@@ -8,7 +8,7 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Owns the three plugin tables: scans, checks and the 404 log.
+ * Owns the plugin tables: scans, checks, the 404 log and redirects.
  *
  * @since 1.0.0
  */
@@ -53,6 +53,17 @@ class WPSTK_Database {
 	}
 
 	/**
+	 * Returns the redirects table name.
+	 *
+	 * @return string
+	 */
+	public static function redirects_table() {
+		global $wpdb;
+
+		return $wpdb->prefix . 'wpstk_redirects';
+	}
+
+	/**
 	 * Creates or updates the plugin tables.
 	 *
 	 * @return void
@@ -66,6 +77,7 @@ class WPSTK_Database {
 		$scans           = self::scans_table();
 		$checks          = self::checks_table();
 		$not_found       = self::not_found_table();
+		$redirects       = self::redirects_table();
 
 		$sql = array();
 
@@ -119,6 +131,21 @@ class WPSTK_Database {
 	KEY last_seen (last_seen)
 ) {$charset_collate};";
 
+		$sql[] = "CREATE TABLE {$redirects} (
+	id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+	source_path varchar(255) NOT NULL DEFAULT '',
+	source_hash char(32) NOT NULL DEFAULT '',
+	target_url varchar(500) NOT NULL DEFAULT '',
+	status_code smallint(3) unsigned NOT NULL DEFAULT 301,
+	hits bigint(20) unsigned NOT NULL DEFAULT 0,
+	enabled tinyint(1) unsigned NOT NULL DEFAULT 1,
+	created_at datetime NOT NULL,
+	last_used_at datetime DEFAULT NULL,
+	PRIMARY KEY  (id),
+	UNIQUE KEY source_hash (source_hash),
+	KEY enabled (enabled)
+) {$charset_collate};";
+
 		foreach ( $sql as $statement ) {
 			dbDelta( $statement );
 		}
@@ -151,7 +178,9 @@ class WPSTK_Database {
 	public static function tables_exist() {
 		global $wpdb;
 
-		foreach ( array( self::scans_table(), self::checks_table(), self::not_found_table() ) as $table ) {
+		$tables = array( self::scans_table(), self::checks_table(), self::not_found_table(), self::redirects_table() );
+
+		foreach ( $tables as $table ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Schema check, not cacheable.
 			$found = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table ) ) );
 
@@ -164,7 +193,11 @@ class WPSTK_Database {
 	}
 
 	/**
-	 * Removes every row created by the plugin without dropping the tables.
+	 * Removes every scan, check and 404 log row without dropping the tables.
+	 *
+	 * Redirects are deliberately left untouched: they are active configuration
+	 * a site owner set up on purpose, not a passive log or scan history, so
+	 * "Clear all stored data" must not silently break live URLs.
 	 *
 	 * @return void
 	 */

@@ -338,8 +338,78 @@ class WPSTK_Module_Links extends WPSTK_Module {
 		$checks[] = $this->redirect_check( $results );
 		$checks   = array_merge( $checks, $this->internal_linking_checks( $collect ) );
 		$checks[] = $this->not_found_check( $settings );
+		$checks[] = $this->redirect_manager_check();
 
 		return array_filter( $checks );
+	}
+
+	/**
+	 * Summarises the configured redirects.
+	 *
+	 * Always reports as passed: this is a reference figure about a feature the
+	 * site owner controls directly, not something the audit judges.
+	 *
+	 * @return array
+	 */
+	private function redirect_manager_check() {
+		if ( ! class_exists( 'WPSTK_Redirects' ) ) {
+			return array();
+		}
+
+		$label = __( 'Redirect manager', 'wp-site-toolkit' );
+		$total = WPSTK_Redirects::count_all();
+
+		if ( 0 === $total ) {
+			return $this->check(
+				array(
+					'id'      => 'redirect_manager',
+					'status'  => 'passed',
+					'label'   => $label,
+					'weight'  => 0.3,
+					'summary' => __( 'No redirects have been created yet.', 'wp-site-toolkit' ),
+					'why'     => __( 'When a page moves or is renamed, a redirect keeps old links and search rankings working instead of leading to a 404.', 'wp-site-toolkit' ),
+					'action'  => __( 'Redirects can be created from the 404 monitor or from the Redirects tab in this section.', 'wp-site-toolkit' ),
+					'items'   => array(
+						WPSTK_Check::item(
+							array(
+								'label'      => __( 'Redirects', 'wp-site-toolkit' ),
+								'link'       => admin_url( 'admin.php?page=wp-site-toolkit-links&tab=redirects' ),
+								'link_label' => __( 'Open', 'wp-site-toolkit' ),
+							)
+						),
+					),
+				)
+			);
+		}
+
+		$active = WPSTK_Redirects::count_enabled();
+		$hits   = WPSTK_Redirects::total_hits();
+
+		return $this->check(
+			array(
+				'id'      => 'redirect_manager',
+				'status'  => 'passed',
+				'label'   => $label,
+				'weight'  => 0.3,
+				'summary' => sprintf(
+					/* translators: 1: number of active redirects, 2: total redirects configured, 3: total times used. */
+					__( '%1$d of %2$d redirects are active and have been used %3$s times in total.', 'wp-site-toolkit' ),
+					$active,
+					$total,
+					number_format_i18n( $hits )
+				),
+				'why'     => __( 'Redirects send visitors and search engines from an old address to the right page instead of a dead end.', 'wp-site-toolkit' ),
+				'items'   => array(
+					WPSTK_Check::item(
+						array(
+							'label'      => __( 'Manage redirects', 'wp-site-toolkit' ),
+							'link'       => admin_url( 'admin.php?page=wp-site-toolkit-links&tab=redirects' ),
+							'link_label' => __( 'Open', 'wp-site-toolkit' ),
+						)
+					),
+				),
+			)
+		);
 	}
 
 	/**

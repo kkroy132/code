@@ -264,12 +264,24 @@ class WPSTK_Admin {
 			return null;
 		}
 
+		if ( 'redirect-error' === $code ) {
+			$message = WPSTK_Security::get_query_arg( 'wpstk_error' );
+
+			return array(
+				'type'    => 'error',
+				'message' => '' !== $message ? $message : __( 'The redirect could not be saved.', 'wp-site-toolkit' ),
+			);
+		}
+
 		$messages = array(
-			'scan-deleted'   => array( 'success', __( 'The scan was deleted.', 'wp-site-toolkit' ) ),
-			'entry-deleted'  => array( 'success', __( 'The entry was removed from the 404 log.', 'wp-site-toolkit' ) ),
-			'log-cleared'    => array( 'success', __( 'The 404 log was cleared.', 'wp-site-toolkit' ) ),
-			'data-cleared'   => array( 'success', __( 'All stored audit data was removed.', 'wp-site-toolkit' ) ),
-			'settings-reset' => array( 'success', __( 'Settings were restored to their defaults.', 'wp-site-toolkit' ) ),
+			'scan-deleted'     => array( 'success', __( 'The scan was deleted.', 'wp-site-toolkit' ) ),
+			'entry-deleted'    => array( 'success', __( 'The entry was removed from the 404 log.', 'wp-site-toolkit' ) ),
+			'log-cleared'      => array( 'success', __( 'The 404 log was cleared.', 'wp-site-toolkit' ) ),
+			'data-cleared'     => array( 'success', __( 'All stored audit data was removed.', 'wp-site-toolkit' ) ),
+			'settings-reset'   => array( 'success', __( 'Settings were restored to their defaults.', 'wp-site-toolkit' ) ),
+			'redirect-created' => array( 'success', __( 'The redirect was created.', 'wp-site-toolkit' ) ),
+			'redirect-updated' => array( 'success', __( 'The redirect was updated.', 'wp-site-toolkit' ) ),
+			'redirect-deleted' => array( 'success', __( 'The redirect was deleted.', 'wp-site-toolkit' ) ),
 		);
 
 		if ( ! isset( $messages[ $code ] ) ) {

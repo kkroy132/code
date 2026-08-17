@@ -1,6 +1,6 @@
 <?php
 /**
- * CSV export and the destructive admin-post actions.
+ * CSV export, the redirect manager form, and other admin-post actions.
  *
  * @package WP_Site_Toolkit
  */
@@ -26,6 +26,9 @@ class WPSTK_Export {
 		add_action( 'admin_post_wpstk_clear_404', array( __CLASS__, 'clear_not_found' ) );
 		add_action( 'admin_post_wpstk_clear_data', array( __CLASS__, 'clear_data' ) );
 		add_action( 'admin_post_wpstk_reset_settings', array( __CLASS__, 'reset_settings' ) );
+		add_action( 'admin_post_wpstk_save_redirect', array( __CLASS__, 'save_redirect' ) );
+		add_action( 'admin_post_wpstk_delete_redirect', array( __CLASS__, 'delete_redirect' ) );
+		add_action( 'admin_post_wpstk_toggle_redirect', array( __CLASS__, 'toggle_redirect' ) );
 	}
 
 	/**
@@ -215,6 +218,82 @@ class WPSTK_Export {
 		WPSTK_Cron::schedule_events();
 
 		self::redirect( 'wp-site-toolkit-settings', 'settings-reset' );
+	}
+
+	/**
+	 * Creates or updates a redirect.
+	 *
+	 * @return void
+	 */
+	public static function save_redirect() {
+		check_admin_referer( 'wpstk_save_redirect' );
+		WPSTK_Security::require_cap( 'manage' );
+
+		$redirect_id = isset( $_POST['redirect_id'] ) ? absint( wp_unslash( $_POST['redirect_id'] ) ) : 0;
+		$source      = isset( $_POST['source_path'] ) ? sanitize_text_field( wp_unslash( $_POST['source_path'] ) ) : '';
+		$target      = isset( $_POST['target_url'] ) ? sanitize_text_field( wp_unslash( $_POST['target_url'] ) ) : '';
+		$status_code = isset( $_POST['status_code'] ) ? absint( wp_unslash( $_POST['status_code'] ) ) : 301;
+		$enabled     = ! empty( $_POST['enabled'] );
+
+		if ( $redirect_id > 0 ) {
+			$result = WPSTK_Redirects::update( $redirect_id, $source, $target, $status_code, $enabled );
+		} else {
+			$result = WPSTK_Redirects::create( $source, $target, $status_code );
+		}
+
+		if ( is_wp_error( $result ) ) {
+			self::redirect(
+				'wp-site-toolkit-links',
+				'redirect-error',
+				array(
+					'tab'         => 'redirects',
+					'wpstk_error' => rawurlencode( $result->get_error_message() ),
+				)
+			);
+		}
+
+		self::redirect(
+			'wp-site-toolkit-links',
+			$redirect_id > 0 ? 'redirect-updated' : 'redirect-created',
+			array( 'tab' => 'redirects' )
+		);
+	}
+
+	/**
+	 * Deletes a redirect.
+	 *
+	 * @return void
+	 */
+	public static function delete_redirect() {
+		check_admin_referer( 'wpstk_delete_redirect' );
+		WPSTK_Security::require_cap( 'manage' );
+
+		$redirect_id = isset( $_GET['redirect_id'] ) ? absint( wp_unslash( $_GET['redirect_id'] ) ) : 0;
+
+		if ( $redirect_id > 0 ) {
+			WPSTK_Redirects::delete( $redirect_id );
+		}
+
+		self::redirect( 'wp-site-toolkit-links', 'redirect-deleted', array( 'tab' => 'redirects' ) );
+	}
+
+	/**
+	 * Enables or disables a redirect.
+	 *
+	 * @return void
+	 */
+	public static function toggle_redirect() {
+		check_admin_referer( 'wpstk_toggle_redirect' );
+		WPSTK_Security::require_cap( 'manage' );
+
+		$redirect_id = isset( $_GET['redirect_id'] ) ? absint( wp_unslash( $_GET['redirect_id'] ) ) : 0;
+		$enabled     = isset( $_GET['enabled'] ) ? absint( wp_unslash( $_GET['enabled'] ) ) : 0;
+
+		if ( $redirect_id > 0 ) {
+			WPSTK_Redirects::toggle( $redirect_id, (bool) $enabled );
+		}
+
+		self::redirect( 'wp-site-toolkit-links', 'redirect-updated', array( 'tab' => 'redirects' ) );
 	}
 
 	/**
