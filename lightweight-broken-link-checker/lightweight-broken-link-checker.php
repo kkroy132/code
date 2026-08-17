@@ -1,13 +1,11 @@
 <?php
 /**
  * Plugin Name:       Lightweight Broken Link Checker
- * Plugin URI:        https://example.com/plugins/lightweight-broken-link-checker/
  * Description:       Finds broken links in your content using controlled, resource-friendly background batches instead of continuous scanning.
  * Version:           1.0.0
  * Requires at least: 6.5
  * Requires PHP:      7.4
  * Author:            Lightweight Plugins
- * Author URI:        https://example.com/
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       lwblc
@@ -51,3 +49,16 @@ function lwblc_boot() {
 	LWBLC\Plugin::instance()->boot();
 }
 add_action( 'plugins_loaded', 'lwblc_boot' );
+
+/**
+ * Loads the plugin translations.
+ *
+ * The text domain differs from the plugin slug, so WordPress cannot find the
+ * files on its own and they have to be registered explicitly.
+ *
+ * @return void
+ */
+function lwblc_load_textdomain() {
+	load_plugin_textdomain( 'lwblc', false, dirname( LWBLC_BASENAME ) . '/languages' );
+}
+add_action( 'init', 'lwblc_load_textdomain' );
