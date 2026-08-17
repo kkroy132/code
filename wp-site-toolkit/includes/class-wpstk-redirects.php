@@ -67,10 +67,6 @@ class WPSTK_Redirects {
 			return;
 		}
 
-		if ( empty( $_SERVER['REQUEST_URI'] ) ) {
-			return;
-		}
-
 		$path = self::current_path();
 
 		if ( '' === $path ) {
@@ -98,6 +94,10 @@ class WPSTK_Redirects {
 	 * @return string
 	 */
 	private static function current_path() {
+		if ( empty( $_SERVER['REQUEST_URI'] ) ) {
+			return '';
+		}
+
 		$uri  = sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) );
 		$path = wp_parse_url( $uri, PHP_URL_PATH );
 
@@ -185,9 +185,9 @@ class WPSTK_Redirects {
 			return array() === $cached ? null : $cached;
 		}
 
-		$table = self::table();
+		$table = esc_sql( self::table() );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom plugin table.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is escaped above.
 		$row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table} WHERE source_hash = %s", $hash ), ARRAY_A );
 
 		wp_cache_set( $cache_key, $row ? $row : array(), self::CACHE_GROUP, self::CACHE_TTL );
@@ -233,11 +233,12 @@ class WPSTK_Redirects {
 	public static function record_hit( $id ) {
 		global $wpdb;
 
-		$table = self::table();
+		$table = esc_sql( self::table() );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom plugin table.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom plugin table.
 		$wpdb->query(
 			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is escaped above.
 				"UPDATE {$table} SET hits = hits + 1, last_used_at = %s WHERE id = %d",
 				current_time( 'mysql', true ),
 				(int) $id
@@ -271,7 +272,7 @@ class WPSTK_Redirects {
 			return new WP_Error( 'wpstk_redirect_exists', __( 'A redirect for that address already exists.', 'wp-site-toolkit' ) );
 		}
 
-		$table = self::table();
+		$table = esc_sql( self::table() );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom plugin table.
 		$inserted = $wpdb->insert(
@@ -325,9 +326,9 @@ class WPSTK_Redirects {
 		list( $source, $target, $status_code ) = $validated;
 
 		$hash  = self::hash( $source );
-		$table = self::table();
+		$table = esc_sql( self::table() );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom plugin table.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is escaped above.
 		$existing = $wpdb->get_row( $wpdb->prepare( "SELECT id, source_hash FROM {$table} WHERE id = %d", $id ), ARRAY_A );
 
 		if ( ! $existing ) {
@@ -395,13 +396,13 @@ class WPSTK_Redirects {
 	private static function exists( $hash, $exclude_id = 0 ) {
 		global $wpdb;
 
-		$table = self::table();
+		$table = esc_sql( self::table() );
 
 		if ( $exclude_id > 0 ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom plugin table.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is escaped above.
 			$found = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$table} WHERE source_hash = %s AND id != %d", $hash, (int) $exclude_id ) );
 		} else {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom plugin table.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is escaped above.
 			$found = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$table} WHERE source_hash = %s", $hash ) );
 		}
 
@@ -424,9 +425,9 @@ class WPSTK_Redirects {
 			return false;
 		}
 
-		$table = self::table();
+		$table = esc_sql( self::table() );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom plugin table.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is escaped above.
 		$row = $wpdb->get_row( $wpdb->prepare( "SELECT source_hash FROM {$table} WHERE id = %d", $id ), ARRAY_A );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom plugin table.
@@ -460,9 +461,9 @@ class WPSTK_Redirects {
 			return false;
 		}
 
-		$table = self::table();
+		$table = esc_sql( self::table() );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom plugin table.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is escaped above.
 		$row = $wpdb->get_row( $wpdb->prepare( "SELECT source_hash FROM {$table} WHERE id = %d", $id ), ARRAY_A );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom plugin table.
@@ -491,9 +492,9 @@ class WPSTK_Redirects {
 			return null;
 		}
 
-		$table = self::table();
+		$table = esc_sql( self::table() );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom plugin table.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is escaped above.
 		$row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table} WHERE id = %d", $id ), ARRAY_A );
 
 		return $row ? $row : null;
@@ -510,11 +511,12 @@ class WPSTK_Redirects {
 	public static function get_all( $limit = 50, $offset = 0 ) {
 		global $wpdb;
 
-		$table = self::table();
+		$table = esc_sql( self::table() );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom plugin table.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom plugin table.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is escaped above.
 				"SELECT * FROM {$table} ORDER BY created_at DESC, id DESC LIMIT %d OFFSET %d",
 				max( 1, (int) $limit ),
 				max( 0, (int) $offset )
@@ -533,9 +535,9 @@ class WPSTK_Redirects {
 	public static function count_all() {
 		global $wpdb;
 
-		$table = self::table();
+		$table = esc_sql( self::table() );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom plugin table.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is escaped above.
 		return (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" );
 	}
 
@@ -547,9 +549,9 @@ class WPSTK_Redirects {
 	public static function count_enabled() {
 		global $wpdb;
 
-		$table = self::table();
+		$table = esc_sql( self::table() );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom plugin table.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is escaped above.
 		return (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table} WHERE enabled = 1" );
 	}
 
@@ -561,9 +563,9 @@ class WPSTK_Redirects {
 	public static function total_hits() {
 		global $wpdb;
 
-		$table = self::table();
+		$table = esc_sql( self::table() );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom plugin table.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is escaped above.
 		return (int) $wpdb->get_var( "SELECT SUM(hits) FROM {$table}" );
 	}
 

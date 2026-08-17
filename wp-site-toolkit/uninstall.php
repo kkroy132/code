@@ -38,7 +38,9 @@ function wpstk_uninstall_site() {
 	);
 
 	foreach ( $tables as $table ) {
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table names are built from $wpdb->prefix and cannot be bound as parameters.
+		$table = esc_sql( $table );
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.SchemaChange -- Table names are built from $wpdb->prefix and escaped above; dropping the plugin's own tables is the explicit purpose of this opt-in uninstall routine.
 		$wpdb->query( "DROP TABLE IF EXISTS {$table}" );
 	}
 

@@ -487,7 +487,6 @@ class WPSTK_Module_SEO extends WPSTK_Module {
 				'numberposts'         => $limit * 2,
 				'orderby'             => 'modified',
 				'order'               => 'DESC',
-				'suppress_filters'    => true,
 				'ignore_sticky_posts' => true,
 				'no_found_rows'       => true,
 			)

@@ -128,6 +128,7 @@ class WPSTK_Module_Security extends WPSTK_Module {
 			'debug_display'    => defined( 'WP_DEBUG_DISPLAY' ) ? (bool) WP_DEBUG_DISPLAY : null,
 			'debug_log'        => defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG,
 			'script_debug'     => defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG,
+			// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Reads the existing WordPress core filter's current value; this does not declare a new hook.
 			'xmlrpc_enabled'   => (bool) apply_filters( 'xmlrpc_enabled', true ),
 			'disallow_edit'    => defined( 'DISALLOW_FILE_EDIT' ) && DISALLOW_FILE_EDIT,
 			'disallow_mods'    => defined( 'DISALLOW_FILE_MODS' ) && DISALLOW_FILE_MODS,

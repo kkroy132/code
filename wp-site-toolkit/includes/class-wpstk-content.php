@@ -116,7 +116,10 @@ class WPSTK_Content {
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Aggregate over the posts table.
 		return (int) $wpdb->get_var(
-			"SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = 'attachment' AND post_mime_type LIKE 'image/%'"
+			$wpdb->prepare(
+				"SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = 'attachment' AND post_mime_type LIKE %s",
+				$wpdb->esc_like( 'image/' ) . '%'
+			)
 		);
 	}
 
@@ -136,9 +139,10 @@ class WPSTK_Content {
 			$wpdb->prepare(
 				"SELECT ID, post_title, post_parent, post_mime_type
 				FROM {$wpdb->posts}
-				WHERE post_type = 'attachment' AND post_mime_type LIKE 'image/%%'
+				WHERE post_type = 'attachment' AND post_mime_type LIKE %s
 				ORDER BY ID ASC
 				LIMIT %d OFFSET %d",
+				$wpdb->esc_like( 'image/' ) . '%',
 				(int) $limit,
 				(int) $offset
 			),

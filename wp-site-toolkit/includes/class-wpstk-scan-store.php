@@ -154,9 +154,9 @@ class WPSTK_Scan_Store {
 			return null;
 		}
 
-		$table = WPSTK_Database::scans_table();
+		$table = esc_sql( WPSTK_Database::scans_table() );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom plugin table.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is escaped above.
 		$row = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table} WHERE id = %d", $scan_id ), ARRAY_A );
 
 		return $row ? self::hydrate( $row ) : null;
@@ -170,9 +170,9 @@ class WPSTK_Scan_Store {
 	public static function get_latest() {
 		global $wpdb;
 
-		$table = WPSTK_Database::scans_table();
+		$table = esc_sql( WPSTK_Database::scans_table() );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom plugin table.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is escaped above; no other user input in this query.
 		$row = $wpdb->get_row( "SELECT * FROM {$table} WHERE status = 'completed' ORDER BY finished_at DESC, id DESC LIMIT 1", ARRAY_A );
 
 		return $row ? self::hydrate( $row ) : null;
@@ -189,11 +189,12 @@ class WPSTK_Scan_Store {
 	public static function get_recent( $limit = 20, $offset = 0 ) {
 		global $wpdb;
 
-		$table = WPSTK_Database::scans_table();
+		$table = esc_sql( WPSTK_Database::scans_table() );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom plugin table.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom plugin table.
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is escaped above.
 				"SELECT * FROM {$table} WHERE status = 'completed' ORDER BY finished_at DESC, id DESC LIMIT %d OFFSET %d",
 				max( 1, (int) $limit ),
 				max( 0, (int) $offset )
@@ -218,9 +219,9 @@ class WPSTK_Scan_Store {
 	public static function count_completed() {
 		global $wpdb;
 
-		$table = WPSTK_Database::scans_table();
+		$table = esc_sql( WPSTK_Database::scans_table() );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom plugin table.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is escaped above.
 		return (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table} WHERE status = 'completed'" );
 	}
 
@@ -241,17 +242,19 @@ class WPSTK_Scan_Store {
 			return array();
 		}
 
-		$table = WPSTK_Database::checks_table();
+		$table = esc_sql( WPSTK_Database::checks_table() );
 
 		if ( '' !== $module ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom plugin table.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom plugin table.
 			$rows = $wpdb->get_results(
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is escaped above.
 				$wpdb->prepare( "SELECT * FROM {$table} WHERE scan_id = %d AND module = %s ORDER BY id ASC", $scan_id, $module ),
 				ARRAY_A
 			);
 		} else {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom plugin table.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom plugin table.
 			$rows = $wpdb->get_results(
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is escaped above.
 				$wpdb->prepare( "SELECT * FROM {$table} WHERE scan_id = %d ORDER BY module ASC, id ASC", $scan_id ),
 				ARRAY_A
 			);
@@ -343,21 +346,22 @@ class WPSTK_Scan_Store {
 		global $wpdb;
 
 		$settings = WPSTK_Settings::get_all();
-		$table    = WPSTK_Database::scans_table();
+		$table    = esc_sql( WPSTK_Database::scans_table() );
 		$removed  = array();
 
 		$cutoff = gmdate( 'Y-m-d H:i:s', time() - ( (int) $settings['retention_days'] * DAY_IN_SECONDS ) );
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom plugin table.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is escaped above.
 		$old = $wpdb->get_col( $wpdb->prepare( "SELECT id FROM {$table} WHERE started_at < %s", $cutoff ) );
 
 		foreach ( (array) $old as $id ) {
 			$removed[] = (int) $id;
 		}
 
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom plugin table.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom plugin table.
 		$surplus = $wpdb->get_col(
 			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is escaped above.
 				"SELECT id FROM {$table} ORDER BY started_at DESC, id DESC LIMIT %d OFFSET %d",
 				1000,
 				max( 2, (int) $settings['max_scans'] )

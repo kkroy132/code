@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-17T17:20:33+00:00\n"
+"POT-Creation-Date: 2026-08-17T17:33:01+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Domain: wp-site-toolkit\n"
@@ -38,11 +38,11 @@ msgstr ""
 msgid "%1$d of %2$d entries are not linked from any other scanned entry."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:793
+#: includes/modules/class-wpstk-module-seo.php:792
 msgid "%1$d of %2$d entries could use a better description: %3$d with none, %4$d under 70 characters, %5$d over 160 characters."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:709
+#: includes/modules/class-wpstk-module-seo.php:708
 msgid "%1$d of %2$d entries have a title worth revisiting: %3$d empty, %4$d over 60 characters, %5$d under 30 characters."
 msgstr ""
 
@@ -66,7 +66,7 @@ msgstr ""
 msgid "%1$d of %2$d internal links did not respond normally (%3$s)."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:615
+#: includes/modules/class-wpstk-module-security.php:616
 msgid "%1$d of %2$d recommended response headers are missing."
 msgstr ""
 
@@ -74,7 +74,7 @@ msgstr ""
 msgid "%1$d of %2$d redirects are active and have been used %3$s times in total."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:502
+#: includes/modules/class-wpstk-module-security.php:503
 msgid "%1$d plugin updates and %2$d theme updates are waiting."
 msgstr ""
 
@@ -126,13 +126,13 @@ msgid_plural "%d access denied"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/modules/class-wpstk-module-security.php:772
+#: includes/modules/class-wpstk-module-security.php:773
 msgid "%d account setting is worth reviewing."
 msgid_plural "%d account settings are worth reviewing."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/modules/class-wpstk-module-security.php:746
+#: includes/modules/class-wpstk-module-security.php:747
 msgid "%d administrator account"
 msgid_plural "%d administrator accounts"
 msgstr[0] ""
@@ -156,13 +156,13 @@ msgid_plural "%d distinct addresses returned a 404 in the last 30 days."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/modules/class-wpstk-module-seo.php:704
+#: includes/modules/class-wpstk-module-seo.php:703
 msgid "%d entry has a usable title."
 msgid_plural "All %d entries have a usable title."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/modules/class-wpstk-module-seo.php:739
+#: includes/modules/class-wpstk-module-seo.php:738
 msgid "%d entry shares its title with another entry."
 msgid_plural "%d entries share a title with another entry."
 msgstr[0] ""
@@ -240,7 +240,7 @@ msgid_plural "%d redirect problems"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/modules/class-wpstk-module-seo.php:979
+#: includes/modules/class-wpstk-module-seo.php:978
 msgid "%d sampled page needs attention."
 msgid_plural "%d sampled pages need attention."
 msgstr[0] ""
@@ -298,7 +298,7 @@ msgstr ""
 msgid "%s version"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:515 includes/modules/class-wpstk-module-links.php:447 includes/modules/class-wpstk-module-links.php:549 includes/class-wpstk-check.php:169
+#: includes/modules/class-wpstk-module-seo.php:514 includes/modules/class-wpstk-module-links.php:447 includes/modules/class-wpstk-module-links.php:549 includes/class-wpstk-check.php:169
 msgid "(no title)"
 msgstr ""
 
@@ -346,11 +346,11 @@ msgstr ""
 msgid "404 requests: the requested address, the referring URL, a hit counter and timestamps."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:1107
+#: includes/modules/class-wpstk-module-seo.php:1106
 msgid "A \"Disallow: /\" rule asks well behaved crawlers to skip every page on the site."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:862
+#: includes/modules/class-wpstk-module-seo.php:861
 msgid "A canonical URL tells search engines which address is the official one for a page."
 msgstr ""
 
@@ -362,7 +362,7 @@ msgstr ""
 msgid "A large database is not a problem on its own, but reclaimable space suggests tables that would benefit from being optimised."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:1033
+#: includes/modules/class-wpstk-module-seo.php:1032
 msgid "A live site should let search engines in."
 msgstr ""
 
@@ -370,7 +370,7 @@ msgstr ""
 msgid "A low limit makes uploading ordinary photos awkward, and the failure message is not always clear."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:911
+#: includes/modules/class-wpstk-module-seo.php:910
 msgid "A noindex directive asks search engines to leave the page out of their results. That is sometimes intentional, but it is worth confirming."
 msgstr ""
 
@@ -390,7 +390,7 @@ msgstr ""
 msgid "A persistent object cache saves repeating the same database queries on every request."
 msgstr ""
 
-#: includes/class-wpstk-redirects.php:271 includes/class-wpstk-redirects.php:338
+#: includes/class-wpstk-redirects.php:272 includes/class-wpstk-redirects.php:339
 msgid "A redirect for that address already exists."
 msgstr ""
 
@@ -402,15 +402,15 @@ msgstr ""
 msgid "A reference list of what this site is running on."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:1128
+#: includes/modules/class-wpstk-module-seo.php:1127
 msgid "A robots.txt file is served from the site root."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:1048
+#: includes/modules/class-wpstk-module-seo.php:1047
 msgid "A sitemap gives search engines a complete list of the pages you want them to find."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:1047
+#: includes/modules/class-wpstk-module-seo.php:1046
 msgid "A sitemap is reachable."
 msgstr ""
 
@@ -418,7 +418,7 @@ msgstr ""
 msgid "A slow first byte delays everything that follows, however well optimised the rest of the page is."
 msgstr ""
 
-#: includes/class-wpstk-redirects.php:377
+#: includes/class-wpstk-redirects.php:378
 msgid "A source path and a target address are both required."
 msgstr ""
 
@@ -426,7 +426,7 @@ msgstr ""
 msgid "Access denied (HTTP %d)"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:700
+#: includes/modules/class-wpstk-module-security.php:701
 msgid "Account configuration"
 msgstr ""
 
@@ -450,7 +450,7 @@ msgstr ""
 msgid "Active theme"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:901
+#: includes/modules/class-wpstk-module-seo.php:900
 msgid "Add Open Graph tags through your theme or an SEO plugin. At minimum set og:title, og:description and og:image."
 msgstr ""
 
@@ -466,11 +466,11 @@ msgstr ""
 msgid "Add alt text in the media library so it is filled in automatically the next time you insert those images."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:687
+#: includes/modules/class-wpstk-module-security.php:688
 msgid "Add define( 'DISALLOW_FILE_EDIT', true ); to wp-config.php. You can still edit files over SFTP or through your host."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:325
+#: includes/modules/class-wpstk-module-security.php:326
 msgid "Add define( 'FORCE_SSL_ADMIN', true ); to wp-config.php."
 msgstr ""
 
@@ -482,7 +482,7 @@ msgstr ""
 msgid "Add redirect"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:1076
+#: includes/modules/class-wpstk-module-seo.php:1075
 msgid "Addresses checked: /wp-sitemap.xml, /sitemap_index.xml, /sitemap.xml"
 msgstr ""
 
@@ -502,11 +502,11 @@ msgstr ""
 msgid "All findings"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:603
+#: includes/modules/class-wpstk-module-security.php:604
 msgid "All of the response headers this check looks for are present."
 msgstr ""
 
-#: includes/class-wpstk-admin.php:280
+#: includes/class-wpstk-admin.php:281
 msgid "All stored audit data was removed."
 msgstr ""
 
@@ -522,7 +522,7 @@ msgstr ""
 msgid "Alt text, oversized files, unusual dimensions, total media usage and potentially unused attachments."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:731
+#: includes/modules/class-wpstk-module-security.php:732
 msgid "An account named \"admin\" exists"
 msgstr ""
 
@@ -534,19 +534,19 @@ msgstr ""
 msgid "An audit is currently running."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:660
+#: includes/modules/class-wpstk-module-seo.php:659
 msgid "Analysed the first %1$d of %2$d published entries. Raise the \"Maximum posts per scan\" setting to cover more."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:686
+#: includes/modules/class-wpstk-module-security.php:687
 msgid "Anyone who gains access to an administrator account can use these editors to run arbitrary PHP on your server."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:709
+#: includes/modules/class-wpstk-module-security.php:710
 msgid "Anyone who registers becomes an administrator"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:457
+#: includes/modules/class-wpstk-module-security.php:458
 msgid "Ask your host to move the site to a supported PHP version. Test on a staging copy first if you can."
 msgstr ""
 
@@ -590,7 +590,7 @@ msgstr ""
 msgid "Autoloaded options are read from the database on every single page load. Once this grows past roughly 800 KB it starts adding measurable time to every request."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:732
+#: includes/modules/class-wpstk-module-security.php:733
 msgid "Automated login attempts try this username first"
 msgstr ""
 
@@ -602,15 +602,15 @@ msgstr ""
 msgid "Available"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:507
+#: includes/modules/class-wpstk-module-security.php:508
 msgid "Back up the site and install the updates. Enabling automatic updates for trusted plugins keeps this from piling up."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:374
+#: includes/modules/class-wpstk-module-security.php:375
 msgid "Back up the site and run the update from Dashboard → Updates."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:851
+#: includes/modules/class-wpstk-module-seo.php:850
 msgid "Based on %d page loaded from this site."
 msgid_plural "Based on %d pages loaded from this site."
 msgstr[0] ""
@@ -656,7 +656,7 @@ msgstr ""
 msgid "Canonical URL is not an absolute http(s) address"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:820
+#: includes/modules/class-wpstk-module-seo.php:819
 msgid "Canonical URLs"
 msgstr ""
 
@@ -756,7 +756,7 @@ msgstr ""
 msgid "Content that nothing links to is harder for both visitors and search engines to discover."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:210
+#: includes/modules/class-wpstk-module-security.php:211
 msgid "Content-Security-Policy"
 msgstr ""
 
@@ -764,11 +764,11 @@ msgstr ""
 msgid "Control what happens to stored audit data."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:1130
+#: includes/modules/class-wpstk-module-seo.php:1129
 msgid "Crawlers read robots.txt before requesting anything else."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:1095
+#: includes/modules/class-wpstk-module-seo.php:1094
 msgid "Crawlers request robots.txt before anything else. A server error there can slow down or block crawling."
 msgstr ""
 
@@ -784,7 +784,7 @@ msgstr ""
 msgid "Current limits: up to %1$s published entries, %2$s links and %3$s rendered pages per audit."
 msgstr ""
 
-#: includes/class-wpstk-admin.php:51 includes/class-wpstk-admin.php:130 includes/class-wpstk-admin.php:225
+#: includes/class-wpstk-admin.php:51 includes/class-wpstk-admin.php:130 includes/class-wpstk-admin.php:226
 msgid "Dashboard"
 msgstr ""
 
@@ -804,15 +804,15 @@ msgstr ""
 msgid "Database size, revisions, autoloaded options, media weight and a basic response time reading. Basic local check only."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-technical.php:272 includes/modules/class-wpstk-module-security.php:529
+#: includes/modules/class-wpstk-module-technical.php:272 includes/modules/class-wpstk-module-security.php:530
 msgid "Debug mode"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:551
+#: includes/modules/class-wpstk-module-security.php:552
 msgid "Debug output can expose absolute file paths, database table names and plugin internals to anyone who triggers a warning."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:536
+#: includes/modules/class-wpstk-module-security.php:537
 msgid "Debug output can reveal file paths and database details to visitors."
 msgstr ""
 
@@ -880,11 +880,11 @@ msgstr ""
 msgid "Disabled by default. Automatic audits run through WP-Cron in small batches."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:1020
+#: includes/modules/class-wpstk-module-seo.php:1019
 msgid "Discourage search engines is enabled"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:736 includes/modules/class-wpstk-module-seo.php:752
+#: includes/modules/class-wpstk-module-seo.php:735 includes/modules/class-wpstk-module-seo.php:751
 msgid "Duplicate titles"
 msgstr ""
 
@@ -904,7 +904,7 @@ msgstr ""
 msgid "Each section runs a fixed set of checks. A check that passes scores full marks, a recommendation scores most of them, a warning scores half, and a critical finding scores none. Checks that could not run are excluded."
 msgstr ""
 
-#: admin/views/partials/tab-redirects.php:128 includes/modules/class-wpstk-module-seo.php:962 includes/class-wpstk-check.php:177
+#: admin/views/partials/tab-redirects.php:128 includes/modules/class-wpstk-module-seo.php:961 includes/class-wpstk-check.php:177
 msgid "Edit"
 msgstr ""
 
@@ -928,7 +928,7 @@ msgstr ""
 msgid "Enabled"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:656
+#: includes/modules/class-wpstk-module-security.php:657
 msgid "Enabled is not the same as unsafe. This is listed so you can make a deliberate choice."
 msgstr ""
 
@@ -940,7 +940,7 @@ msgstr ""
 msgid "Every analysed entry is linked from at least one other entry."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:790
+#: includes/modules/class-wpstk-module-seo.php:789
 msgid "Every entry analysed has a description of a reasonable length."
 msgstr ""
 
@@ -952,19 +952,19 @@ msgstr ""
 msgid "Every revision is a row in the posts table. Large numbers make backups bigger and some queries slower."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:864
+#: includes/modules/class-wpstk-module-seo.php:863
 msgid "Every sampled page has a single, valid canonical URL."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:928
+#: includes/modules/class-wpstk-module-seo.php:927
 msgid "Every sampled page outputs a title tag and a meta description."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:879
+#: includes/modules/class-wpstk-module-seo.php:878
 msgid "Every sampled page renders exactly one H1."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:753
+#: includes/modules/class-wpstk-module-seo.php:752
 msgid "Every title analysed is unique."
 msgstr ""
 
@@ -1036,7 +1036,7 @@ msgstr ""
 msgid "First seen"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:324
+#: includes/modules/class-wpstk-module-security.php:325
 msgid "Forcing HTTPS in the admin area makes sure login details are never sent unencrypted, even if someone types the http address."
 msgstr ""
 
@@ -1060,7 +1060,7 @@ msgstr ""
 msgid "Full site audit"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:300
+#: includes/modules/class-wpstk-module-security.php:301
 msgid "General settings"
 msgstr ""
 
@@ -1068,15 +1068,15 @@ msgstr ""
 msgid "Getting started"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:743
+#: includes/modules/class-wpstk-module-seo.php:742
 msgid "Give each page a title that describes what makes it different."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:776
+#: includes/modules/class-wpstk-module-security.php:777
 msgid "Give each person the lowest role that lets them do their job, avoid the username \"admin\", and keep the default role for new registrations at subscriber."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:717
+#: includes/modules/class-wpstk-module-seo.php:716
 msgid "Give every entry a descriptive title of roughly 30 to 60 characters. If you use an SEO plugin, set the SEO title there; otherwise the post title is used."
 msgstr ""
 
@@ -1088,27 +1088,27 @@ msgstr ""
 msgid "Good — but some issues need attention."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:821
+#: includes/modules/class-wpstk-module-seo.php:820
 msgid "H1 headings"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-technical.php:482 includes/modules/class-wpstk-module-seo.php:306 includes/modules/class-wpstk-module-seo.php:1055
+#: includes/modules/class-wpstk-module-technical.php:482 includes/modules/class-wpstk-module-seo.php:306 includes/modules/class-wpstk-module-seo.php:1054
 msgid "HTTP %d"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-technical.php:256 includes/modules/class-wpstk-module-security.php:285
+#: includes/modules/class-wpstk-module-technical.php:256 includes/modules/class-wpstk-module-security.php:286
 msgid "HTTPS"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:334
+#: includes/modules/class-wpstk-module-security.php:335
 msgid "HTTPS keeps traffic between your visitors and the server private."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:822
+#: includes/modules/class-wpstk-module-seo.php:821
 msgid "Heading structure"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:889
+#: includes/modules/class-wpstk-module-seo.php:888
 msgid "Headings work best as an outline: H2 under H1, H3 under H2. Skipping a level makes the structure harder to follow with a screen reader."
 msgstr ""
 
@@ -1128,7 +1128,7 @@ msgstr ""
 msgid "Home page"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:303
+#: includes/modules/class-wpstk-module-security.php:304
 msgid "Home: %1$s, WordPress: %2$s"
 msgstr ""
 
@@ -1148,15 +1148,15 @@ msgstr ""
 msgid "How scoring works"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:927
+#: includes/modules/class-wpstk-module-seo.php:926
 msgid "If a title tag is missing entirely, check that your theme calls wp_head() and that no plugin is removing it."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:655
+#: includes/modules/class-wpstk-module-security.php:656
 msgid "If nothing on your site uses XML-RPC, ask your host to block /xmlrpc.php or disable it with the xmlrpc_enabled filter. Leave it on if you use the mobile app or Jetpack."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:1015
+#: includes/modules/class-wpstk-module-seo.php:1014
 msgid "If this site is live, turn off \"Discourage search engines from indexing this site\" in Settings → Reading."
 msgstr ""
 
@@ -1184,7 +1184,7 @@ msgstr ""
 msgid "Images wider or taller than this are reported."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:1136
+#: includes/modules/class-wpstk-module-seo.php:1135
 msgid "Includes a Sitemap directive"
 msgstr ""
 
@@ -1244,7 +1244,7 @@ msgstr ""
 msgid "Last audit: %s ago"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:834
+#: includes/modules/class-wpstk-module-seo.php:833
 msgid "Last error: %s"
 msgstr ""
 
@@ -1288,7 +1288,7 @@ msgstr ""
 msgid "Look at the largest entries below. They usually belong to a plugin — often one that was removed without cleaning up. Check with the plugin author before deleting anything."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:878
+#: includes/modules/class-wpstk-module-seo.php:877
 msgid "Make sure each page renders exactly one H1, usually the page title supplied by your theme."
 msgstr ""
 
@@ -1352,15 +1352,15 @@ msgstr ""
 msgid "Meta description"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:649 includes/modules/class-wpstk-module-seo.php:787
+#: includes/modules/class-wpstk-module-seo.php:648 includes/modules/class-wpstk-module-seo.php:786
 msgid "Meta descriptions"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:648 includes/modules/class-wpstk-module-seo.php:699
+#: includes/modules/class-wpstk-module-seo.php:647 includes/modules/class-wpstk-module-seo.php:698
 msgid "Meta titles"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:621
+#: includes/modules/class-wpstk-module-security.php:622
 msgid "Missing headers are not a vulnerability on their own. They are defence in depth."
 msgstr ""
 
@@ -1380,15 +1380,15 @@ msgstr ""
 msgid "More than one canonical tag"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:775
+#: includes/modules/class-wpstk-module-security.php:776
 msgid "Most break-ins start with an account rather than a code vulnerability. Predictable usernames and generous default roles make that easier."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:760
+#: includes/modules/class-wpstk-module-security.php:761
 msgid "Most break-ins start with an account, not with a code vulnerability."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:296
+#: includes/modules/class-wpstk-module-security.php:297
 msgid "Most hosts offer a free certificate. Once it is installed, update the WordPress Address and Site Address in Settings → General."
 msgstr ""
 
@@ -1412,7 +1412,7 @@ msgstr ""
 msgid "Network requests"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:720
+#: includes/modules/class-wpstk-module-security.php:721
 msgid "New accounts are created as %s"
 msgstr ""
 
@@ -1432,7 +1432,7 @@ msgstr ""
 msgid "No IP addresses, user agents, visitor identifiers or page content are stored."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:1137
+#: includes/modules/class-wpstk-module-seo.php:1136
 msgid "No Sitemap directive"
 msgstr ""
 
@@ -1464,7 +1464,7 @@ msgstr ""
 msgid "No critical issues or warnings were found in the latest audit. Recommendations are listed in each section."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:762
+#: includes/modules/class-wpstk-module-seo.php:761
 msgid "No description or excerpt"
 msgstr ""
 
@@ -1520,7 +1520,7 @@ msgstr ""
 msgid "No persistent object cache was detected."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:489
+#: includes/modules/class-wpstk-module-security.php:490
 msgid "No plugin or theme updates are waiting."
 msgstr ""
 
@@ -1528,7 +1528,7 @@ msgstr ""
 msgid "No published content was available to analyse."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:648 includes/modules/class-wpstk-module-seo.php:649
+#: includes/modules/class-wpstk-module-seo.php:647 includes/modules/class-wpstk-module-seo.php:648
 msgid "No published content was found to analyse."
 msgstr ""
 
@@ -1540,19 +1540,19 @@ msgstr ""
 msgid "No redirects have been created yet."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:1073
+#: includes/modules/class-wpstk-module-seo.php:1072
 msgid "No sitemap was found at the usual addresses."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:891
+#: includes/modules/class-wpstk-module-seo.php:890
 msgid "No skipped heading levels were found on the sampled pages."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:672
+#: includes/modules/class-wpstk-module-seo.php:671
 msgid "No title"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:913
+#: includes/modules/class-wpstk-module-seo.php:912
 msgid "None of the sampled pages asks search engines to skip it."
 msgstr ""
 
@@ -1580,7 +1580,7 @@ msgstr ""
 msgid "Not reachable"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:581
+#: includes/modules/class-wpstk-module-security.php:582
 msgid "Not sent"
 msgstr ""
 
@@ -1612,7 +1612,7 @@ msgstr ""
 msgid "On"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:456
+#: includes/modules/class-wpstk-module-security.php:457
 msgid "Once a PHP branch reaches end of life, security issues found in it are not fixed. Newer versions are also noticeably faster."
 msgstr ""
 
@@ -1628,7 +1628,7 @@ msgstr ""
 msgid "Once a week"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:877
+#: includes/modules/class-wpstk-module-seo.php:876
 msgid "One clear H1 describes what a page is about, for both readers and assistive technology."
 msgstr ""
 
@@ -1644,7 +1644,7 @@ msgstr ""
 msgid "Open %s results"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:1096
+#: includes/modules/class-wpstk-module-seo.php:1095
 msgid "Open /robots.txt in a browser. WordPress generates one automatically unless a real file or a redirect gets in the way."
 msgstr ""
 
@@ -1652,19 +1652,19 @@ msgstr ""
 msgid "Open Full Audit"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:823
+#: includes/modules/class-wpstk-module-seo.php:822
 msgid "Open Graph tags"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:900
+#: includes/modules/class-wpstk-module-seo.php:899
 msgid "Open Graph tags control the title, description and image used when a page is shared on social networks and chat apps."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-technical.php:505 includes/modules/class-wpstk-module-security.php:464
+#: includes/modules/class-wpstk-module-technical.php:505 includes/modules/class-wpstk-module-security.php:465
 msgid "Open Site Health"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:912
+#: includes/modules/class-wpstk-module-seo.php:911
 msgid "Open each listed page and remove the noindex setting if the page should be findable."
 msgstr ""
 
@@ -1676,15 +1676,15 @@ msgstr ""
 msgid "Open media library"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:708
+#: includes/modules/class-wpstk-module-security.php:709
 msgid "Open registration creates administrators"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:718
+#: includes/modules/class-wpstk-module-security.php:719
 msgid "Open registration grants publishing rights"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-technical.php:387 includes/modules/class-wpstk-module-seo.php:1022 includes/modules/class-wpstk-module-security.php:308 includes/modules/class-wpstk-module-security.php:711 includes/modules/class-wpstk-module-security.php:722
+#: includes/modules/class-wpstk-module-technical.php:387 includes/modules/class-wpstk-module-seo.php:1021 includes/modules/class-wpstk-module-security.php:309 includes/modules/class-wpstk-module-security.php:712 includes/modules/class-wpstk-module-security.php:723
 msgid "Open settings"
 msgstr ""
 
@@ -1692,7 +1692,7 @@ msgstr ""
 msgid "Open the listed entries and describe each image in a short sentence. Leave the alt empty only when the image is decorative."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:380 includes/modules/class-wpstk-module-security.php:513
+#: includes/modules/class-wpstk-module-security.php:381 includes/modules/class-wpstk-module-security.php:514
 msgid "Open updates"
 msgstr ""
 
@@ -1704,11 +1704,11 @@ msgstr ""
 msgid "Orphaned content"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:490
+#: includes/modules/class-wpstk-module-security.php:491
 msgid "Out-of-date plugins are the most common way WordPress sites are compromised."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:506
+#: includes/modules/class-wpstk-module-security.php:507
 msgid "Out-of-date plugins are the most common way WordPress sites are compromised. Update details are public, which makes old versions easy to target."
 msgstr ""
 
@@ -1716,11 +1716,11 @@ msgstr ""
 msgid "PHP memory limit"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-technical.php:246 includes/modules/class-wpstk-module-security.php:396
+#: includes/modules/class-wpstk-module-technical.php:246 includes/modules/class-wpstk-module-security.php:397
 msgid "PHP version"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:824
+#: includes/modules/class-wpstk-module-seo.php:823
 msgid "Page level indexability"
 msgstr ""
 
@@ -1748,7 +1748,7 @@ msgstr ""
 msgid "Permission denied"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:211
+#: includes/modules/class-wpstk-module-security.php:212
 msgid "Permissions-Policy"
 msgstr ""
 
@@ -1764,7 +1764,7 @@ msgstr ""
 msgid "Plain permalinks say nothing about the page. Readable addresses are easier to share, easier to understand and slightly better understood by search engines."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:480
+#: includes/modules/class-wpstk-module-security.php:481
 msgid "Plugin and theme updates"
 msgstr ""
 
@@ -1828,7 +1828,7 @@ msgstr ""
 msgid "Reading security configuration"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:1019
+#: includes/modules/class-wpstk-module-seo.php:1018
 msgid "Reading settings"
 msgstr ""
 
@@ -1900,11 +1900,11 @@ msgstr ""
 msgid "Referrer"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:208
+#: includes/modules/class-wpstk-module-security.php:209
 msgid "Referrer-Policy"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:759
+#: includes/modules/class-wpstk-module-security.php:760
 msgid "Registration settings and administrator accounts look sensible."
 msgstr ""
 
@@ -1920,7 +1920,7 @@ msgstr ""
 msgid "Remove every stored scan, finding and 404 log entry? This cannot be undone."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:1108
+#: includes/modules/class-wpstk-module-seo.php:1107
 msgid "Remove the site-wide Disallow rule unless this site is meant to stay out of search results."
 msgstr ""
 
@@ -1928,11 +1928,11 @@ msgstr ""
 msgid "Rendered pages sampled"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:825
+#: includes/modules/class-wpstk-module-seo.php:824
 msgid "Rendered title and description tags"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:890
+#: includes/modules/class-wpstk-module-seo.php:889
 msgid "Reorder the headings on the listed pages so no level is skipped."
 msgstr ""
 
@@ -1964,7 +1964,7 @@ msgstr ""
 msgid "Resize the originals before uploading them next time. Existing files can stay as they are if the generated sizes are what your theme uses."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:620
+#: includes/modules/class-wpstk-module-security.php:621
 msgid "Response headers are added by your web server or hosting panel. Ask your host, or add them in your server configuration. Content-Security-Policy in particular needs testing before you rely on it."
 msgstr ""
 
@@ -1972,7 +1972,7 @@ msgstr ""
 msgid "Restore every setting to its default value?"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:592
+#: includes/modules/class-wpstk-module-security.php:593
 msgid "Reveals software version: %s"
 msgstr ""
 
@@ -2016,19 +2016,19 @@ msgstr ""
 msgid "Running"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:437
+#: includes/modules/class-wpstk-module-security.php:438
 msgid "Running PHP %1$s, which receives security fixes until %2$s."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:421
+#: includes/modules/class-wpstk-module-security.php:422
 msgid "Running PHP %s, which is a currently supported release."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:453
+#: includes/modules/class-wpstk-module-security.php:454
 msgid "Running PHP %s, which no longer receives security fixes from the PHP project."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:354
+#: includes/modules/class-wpstk-module-security.php:355
 msgid "Running WordPress %s, which is up to date as far as this site knows."
 msgstr ""
 
@@ -2088,15 +2088,15 @@ msgstr ""
 msgid "Scores are a guide to where to spend your time. They are not a guarantee of search rankings or of security."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:1011 includes/modules/class-wpstk-module-seo.php:1031
+#: includes/modules/class-wpstk-module-seo.php:1010 includes/modules/class-wpstk-module-seo.php:1030
 msgid "Search engine visibility"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:1032
+#: includes/modules/class-wpstk-module-seo.php:1031
 msgid "Search engines are allowed to index this site."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:800
+#: includes/modules/class-wpstk-module-seo.php:799
 msgid "Search engines often show the meta description underneath the title. Without one, they pick an arbitrary sentence from the page."
 msgstr ""
 
@@ -2116,11 +2116,11 @@ msgstr ""
 msgid "Security"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:357
+#: includes/modules/class-wpstk-module-security.php:358
 msgid "Security fixes reach your site through WordPress updates."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:567
+#: includes/modules/class-wpstk-module-security.php:568
 msgid "Security response headers"
 msgstr ""
 
@@ -2144,7 +2144,7 @@ msgstr ""
 msgid "Server response time"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:553
+#: includes/modules/class-wpstk-module-security.php:554
 msgid "Set WP_DEBUG to false in wp-config.php on a live site. If you need the log, keep WP_DEBUG_LOG on and set WP_DEBUG_DISPLAY to false."
 msgstr ""
 
@@ -2152,11 +2152,11 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: includes/class-wpstk-admin.php:281
+#: includes/class-wpstk-admin.php:282
 msgid "Settings were restored to their defaults."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:743
+#: includes/modules/class-wpstk-module-security.php:744
 msgid "Several administrator accounts"
 msgstr ""
 
@@ -2172,7 +2172,7 @@ msgstr ""
 msgid "Showing %1$s of %2$s affected items."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:461
+#: includes/modules/class-wpstk-module-security.php:462
 msgid "Site Health"
 msgstr ""
 
@@ -2216,7 +2216,7 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
-#: includes/class-wpstk-admin.php:197
+#: includes/class-wpstk-admin.php:198
 msgid "Step %1$d of %2$d"
 msgstr ""
 
@@ -2232,11 +2232,11 @@ msgstr ""
 msgid "Stores the requested path, the referring URL and a hit counter. No IP addresses, user agents or other visitor details are stored."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:215
+#: includes/modules/class-wpstk-module-security.php:216
 msgid "Strict-Transport-Security"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:424 includes/modules/class-wpstk-module-security.php:441
+#: includes/modules/class-wpstk-module-security.php:425 includes/modules/class-wpstk-module-security.php:442
 msgid "Supported PHP branches still receive security fixes."
 msgstr ""
 
@@ -2244,7 +2244,7 @@ msgstr ""
 msgid "Technical"
 msgstr ""
 
-#: includes/class-wpstk-redirects.php:316 includes/class-wpstk-redirects.php:334
+#: includes/class-wpstk-redirects.php:317 includes/class-wpstk-redirects.php:335
 msgid "That redirect could not be found."
 msgstr ""
 
@@ -2262,7 +2262,7 @@ msgid_plural "All %d images in your content have an alt attribute."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-wpstk-admin.php:279
+#: includes/class-wpstk-admin.php:280
 msgid "The 404 log was cleared."
 msgstr ""
 
@@ -2322,11 +2322,11 @@ msgstr ""
 msgid "The block editor, Site Health and many plugins stop working when the REST API is unreachable."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:675
+#: includes/modules/class-wpstk-module-security.php:676
 msgid "The built-in file editors are disabled."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:685
+#: includes/modules/class-wpstk-module-security.php:686
 msgid "The built-in theme and plugin file editors are available."
 msgstr ""
 
@@ -2334,7 +2334,7 @@ msgstr ""
 msgid "The connection to WordPress was lost. The audit can be resumed from this screen."
 msgstr ""
 
-#: includes/class-wpstk-admin.php:278
+#: includes/class-wpstk-admin.php:279
 msgid "The entry was removed from the 404 log."
 msgstr ""
 
@@ -2346,7 +2346,7 @@ msgstr ""
 msgid "The front page could not be loaded from the server, so no timing was recorded."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:570
+#: includes/modules/class-wpstk-module-security.php:571
 msgid "The front page could not be loaded, so its response headers were not read."
 msgstr ""
 
@@ -2374,23 +2374,23 @@ msgstr ""
 msgid "The media library contains no images."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:829
+#: includes/modules/class-wpstk-module-seo.php:828
 msgid "The plugin could not load any pages from this site, so the rendered markup was not inspected."
 msgstr ""
 
-#: includes/class-wpstk-redirects.php:291 includes/class-wpstk-admin.php:272
+#: includes/class-wpstk-redirects.php:292 includes/class-wpstk-admin.php:273
 msgid "The redirect could not be saved."
 msgstr ""
 
-#: includes/class-wpstk-admin.php:282
+#: includes/class-wpstk-admin.php:283
 msgid "The redirect was created."
 msgstr ""
 
-#: includes/class-wpstk-admin.php:284
+#: includes/class-wpstk-admin.php:285
 msgid "The redirect was deleted."
 msgstr ""
 
-#: includes/class-wpstk-admin.php:283
+#: includes/class-wpstk-admin.php:284
 msgid "The redirect was updated."
 msgstr ""
 
@@ -2402,11 +2402,11 @@ msgstr ""
 msgid "The requested address, the referring URL and a hit counter are stored — nothing else. No IP addresses or user agents are recorded. Up to %s distinct addresses are kept."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:902
+#: includes/modules/class-wpstk-module-seo.php:901
 msgid "The sampled pages all provide og:title, og:description and og:image."
 msgstr ""
 
-#: includes/class-wpstk-admin.php:277
+#: includes/class-wpstk-admin.php:278
 msgid "The scan was deleted."
 msgstr ""
 
@@ -2414,19 +2414,19 @@ msgstr ""
 msgid "The settings on this page."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:333
+#: includes/modules/class-wpstk-module-security.php:334
 msgid "The site and the admin area are both served over HTTPS."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:323
+#: includes/modules/class-wpstk-module-security.php:324
 msgid "The site uses HTTPS, but the admin area is not forced onto it."
 msgstr ""
 
-#: includes/class-wpstk-redirects.php:381
+#: includes/class-wpstk-redirects.php:382
 msgid "The target address is the same as the source, which would create a redirect loop."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:716
+#: includes/modules/class-wpstk-module-seo.php:715
 msgid "The title is usually the first thing people read in search results and browser tabs. Empty titles give search engines nothing to work with, and very long ones are shortened before they are shown."
 msgstr ""
 
@@ -2434,7 +2434,7 @@ msgstr ""
 msgid "The upload limit decides how large an image or video you can add through the media library."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:669
+#: includes/modules/class-wpstk-module-security.php:670
 msgid "Theme and plugin file editing"
 msgstr ""
 
@@ -2450,11 +2450,11 @@ msgstr ""
 msgid "These actions affect only data created by WP Site Toolkit. Your posts, pages, media, users and settings from other plugins are never touched."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:604
+#: includes/modules/class-wpstk-module-security.php:605
 msgid "These headers tell the browser to be stricter about how your pages may be used."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:619
+#: includes/modules/class-wpstk-module-security.php:620
 msgid "These headers tell the browser to be stricter: not to guess content types, not to allow your pages inside frames on other sites, and not to leak the full referring URL."
 msgstr ""
 
@@ -2466,7 +2466,7 @@ msgstr ""
 msgid "These rows accumulate quietly and are safe to clear once you no longer need them."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:926
+#: includes/modules/class-wpstk-module-seo.php:925
 msgid "This confirms what actually reaches the browser, which can differ from what is stored in the database."
 msgstr ""
 
@@ -2482,11 +2482,11 @@ msgstr ""
 msgid "This redirect is active"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:1013
+#: includes/modules/class-wpstk-module-seo.php:1012
 msgid "This site asks search engines not to index it."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:294
+#: includes/modules/class-wpstk-module-security.php:295
 msgid "This site is not served over HTTPS."
 msgstr ""
 
@@ -2542,7 +2542,7 @@ msgstr ""
 msgid "Trashed posts and pages"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:554
+#: includes/modules/class-wpstk-module-security.php:555
 msgid "Turn WP_DEBUG off in wp-config.php once you have finished troubleshooting."
 msgstr ""
 
@@ -2566,7 +2566,7 @@ msgstr ""
 msgid "Uninstalling"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:754
+#: includes/modules/class-wpstk-module-seo.php:753
 msgid "Unique titles help search engines and visitors tell your pages apart."
 msgstr ""
 
@@ -2590,11 +2590,11 @@ msgstr ""
 msgid "Update the links to point straight at the final address."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:373
+#: includes/modules/class-wpstk-module-security.php:374
 msgid "Updates carry security fixes. Details of the fixed issues are public once a release is out, so out-of-date sites are the easiest targets."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:511
+#: includes/modules/class-wpstk-module-security.php:512
 msgid "Updates screen"
 msgstr ""
 
@@ -2638,15 +2638,15 @@ msgstr ""
 msgid "View progress"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:1115 includes/modules/class-wpstk-module-seo.php:1140
+#: includes/modules/class-wpstk-module-seo.php:1114 includes/modules/class-wpstk-module-seo.php:1139
 msgid "View robots.txt"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:1060
+#: includes/modules/class-wpstk-module-seo.php:1059
 msgid "View sitemap"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:734 includes/modules/class-wpstk-module-security.php:750
+#: includes/modules/class-wpstk-module-security.php:735 includes/modules/class-wpstk-module-security.php:751
 msgid "View users"
 msgstr ""
 
@@ -2672,15 +2672,15 @@ msgstr ""
 msgid "WP-Cron runs when someone visits the site. On a quiet site, or when something blocks loopback requests, scheduled tasks fall behind."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:535
+#: includes/modules/class-wpstk-module-security.php:536
 msgid "WP_DEBUG is off."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:549
+#: includes/modules/class-wpstk-module-security.php:550
 msgid "WP_DEBUG is on and errors may be printed into your pages."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:550
+#: includes/modules/class-wpstk-module-security.php:551
 msgid "WP_DEBUG is on, but display of errors is turned off."
 msgstr ""
 
@@ -2724,11 +2724,11 @@ msgstr ""
 msgid "When a page moves or is renamed, a redirect keeps old links and search rankings working instead of leading to a 404."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:742
+#: includes/modules/class-wpstk-module-seo.php:741
 msgid "When several pages use the same title, search engines and visitors cannot tell them apart in a list of results."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:1014
+#: includes/modules/class-wpstk-module-seo.php:1013
 msgid "While this setting is on, WordPress asks search engines to stay away. That is right for a staging site and wrong for a live one."
 msgstr ""
 
@@ -2740,15 +2740,15 @@ msgstr ""
 msgid "Why it matters:"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:676
+#: includes/modules/class-wpstk-module-security.php:677
 msgid "With the editors disabled, an attacker who gets into an administrator account cannot rewrite your PHP files from the browser."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:295
+#: includes/modules/class-wpstk-module-security.php:296
 msgid "Without HTTPS, anything sent between your visitors and the server — including login details — travels in plain text, and browsers mark the site as not secure."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:1074
+#: includes/modules/class-wpstk-module-seo.php:1073
 msgid "Without a sitemap, search engines have to discover your pages by following links, which is slower and less complete."
 msgstr ""
 
@@ -2756,7 +2756,7 @@ msgstr ""
 msgid "Without one, WordPress repeats the same database queries on every request. Most sites work fine without it; busy sites benefit noticeably."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:369
+#: includes/modules/class-wpstk-module-security.php:370
 msgid "WordPress %1$s is installed and %2$s is available."
 msgstr ""
 
@@ -2764,15 +2764,15 @@ msgstr ""
 msgid "WordPress address"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:863
+#: includes/modules/class-wpstk-module-seo.php:862
 msgid "WordPress adds canonical tags automatically on most sites. If they are missing, check your theme header and any SEO plugin settings."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:1129
+#: includes/modules/class-wpstk-module-seo.php:1128
 msgid "WordPress is serving a generated robots.txt."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:462
+#: includes/modules/class-wpstk-module-security.php:463
 msgid "WordPress lists plugin compatibility information here"
 msgstr ""
 
@@ -2784,51 +2784,51 @@ msgstr ""
 msgid "WordPress memory limit"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:1075
+#: includes/modules/class-wpstk-module-seo.php:1074
 msgid "WordPress publishes /wp-sitemap.xml by default. If it is missing, check whether a plugin or theme disabled it, or enable the sitemap feature in your SEO plugin."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:378
+#: includes/modules/class-wpstk-module-security.php:379
 msgid "WordPress updates"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-technical.php:245 includes/modules/class-wpstk-module-security.php:346
+#: includes/modules/class-wpstk-module-technical.php:245 includes/modules/class-wpstk-module-security.php:347
 msgid "WordPress version"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:801
+#: includes/modules/class-wpstk-module-seo.php:800
 msgid "Write a description of roughly 70 to 160 characters for your most important pages. An excerpt is used when no SEO description is set."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:207
+#: includes/modules/class-wpstk-module-security.php:208
 msgid "X-Content-Type-Options"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:209
+#: includes/modules/class-wpstk-module-security.php:210
 msgid "X-Frame-Options"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-technical.php:292 includes/modules/class-wpstk-module-seo.php:1045 includes/modules/class-wpstk-module-seo.php:1071
+#: includes/modules/class-wpstk-module-technical.php:292 includes/modules/class-wpstk-module-seo.php:1044 includes/modules/class-wpstk-module-seo.php:1070
 msgid "XML sitemap"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:636
+#: includes/modules/class-wpstk-module-security.php:637
 msgid "XML-RPC"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:654
+#: includes/modules/class-wpstk-module-security.php:655
 msgid "XML-RPC is an older remote interface used by the WordPress mobile apps, Jetpack and some publishing tools. It is also a common target for automated login attempts."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:643
+#: includes/modules/class-wpstk-module-security.php:644
 msgid "XML-RPC is an older remote interface. Sites that do not use it are usually better off with it disabled."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:642
+#: includes/modules/class-wpstk-module-security.php:643
 msgid "XML-RPC is disabled on this site."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:653
+#: includes/modules/class-wpstk-module-security.php:654
 msgid "XML-RPC is enabled, which is the WordPress default."
 msgstr ""
 
@@ -2860,7 +2860,7 @@ msgstr ""
 msgid "Your session has expired. Please reload the page and try again."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-security.php:371
+#: includes/modules/class-wpstk-module-security.php:372
 msgid "a newer version"
 msgstr ""
 
@@ -2880,15 +2880,15 @@ msgstr ""
 msgid "pixels"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-technical.php:296 includes/modules/class-wpstk-module-seo.php:1089 includes/modules/class-wpstk-module-seo.php:1104 includes/modules/class-wpstk-module-seo.php:1126
+#: includes/modules/class-wpstk-module-technical.php:296 includes/modules/class-wpstk-module-seo.php:1088 includes/modules/class-wpstk-module-seo.php:1103 includes/modules/class-wpstk-module-seo.php:1125
 msgid "robots.txt"
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:1106
+#: includes/modules/class-wpstk-module-seo.php:1105
 msgid "robots.txt contains a rule that blocks the whole site."
 msgstr ""
 
-#: includes/modules/class-wpstk-module-seo.php:1092
+#: includes/modules/class-wpstk-module-seo.php:1091
 msgid "robots.txt could not be read (HTTP %d)."
 msgstr ""
 

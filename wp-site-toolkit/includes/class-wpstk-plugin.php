@@ -88,7 +88,6 @@ final class WPSTK_Plugin {
 
 		$this->load_files();
 
-		add_action( 'init', array( $this, 'load_textdomain' ) );
 		add_action( 'plugins_loaded', array( 'WPSTK_Database', 'maybe_upgrade' ), 5 );
 
 		WPSTK_Not_Found_Monitor::init();
@@ -153,15 +152,6 @@ final class WPSTK_Plugin {
 		foreach ( $includes as $file ) {
 			require_once WPSTK_DIR . $file;
 		}
-	}
-
-	/**
-	 * Loads the plugin translations.
-	 *
-	 * @return void
-	 */
-	public function load_textdomain() {
-		load_plugin_textdomain( 'wp-site-toolkit', false, dirname( WPSTK_BASENAME ) . '/languages' );
 	}
 
 	/**

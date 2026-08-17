@@ -205,7 +205,9 @@ class WPSTK_Database {
 		global $wpdb;
 
 		foreach ( array( self::checks_table(), self::scans_table(), self::not_found_table() ) as $table ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is built from $wpdb->prefix.
+			$table = esc_sql( $table );
+
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is built from $wpdb->prefix and escaped above; TRUNCATE cannot use a placeholder.
 			$wpdb->query( "TRUNCATE TABLE {$table}" );
 		}
 	}

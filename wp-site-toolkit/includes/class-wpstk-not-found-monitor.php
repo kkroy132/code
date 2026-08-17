@@ -81,7 +81,7 @@ class WPSTK_Not_Found_Monitor {
 	public static function record( $url, $referrer = '' ) {
 		global $wpdb;
 
-		$table = WPSTK_Database::not_found_table();
+		$table = esc_sql( WPSTK_Database::not_found_table() );
 		$hash  = md5( $url );
 		$now   = current_time( 'mysql', true );
 
@@ -89,8 +89,9 @@ class WPSTK_Not_Found_Monitor {
 		$existing = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$table} WHERE url_hash = %s", $hash ) );
 
 		if ( $existing ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom plugin table.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom plugin table.
 			$wpdb->query(
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is escaped above.
 				$wpdb->prepare( "UPDATE {$table} SET hits = hits + 1, last_seen = %s WHERE id = %d", $now, (int) $existing )
 			);
 
@@ -125,7 +126,7 @@ class WPSTK_Not_Found_Monitor {
 	public static function count_all() {
 		global $wpdb;
 
-		$table = WPSTK_Database::not_found_table();
+		$table = esc_sql( WPSTK_Database::not_found_table() );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom plugin table.
 		return (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" );
@@ -141,7 +142,7 @@ class WPSTK_Not_Found_Monitor {
 	public static function count_recent( $days = 30 ) {
 		global $wpdb;
 
-		$table  = WPSTK_Database::not_found_table();
+		$table  = esc_sql( WPSTK_Database::not_found_table() );
 		$cutoff = gmdate( 'Y-m-d H:i:s', time() - ( max( 1, (int) $days ) * DAY_IN_SECONDS ) );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom plugin table.
@@ -160,16 +161,17 @@ class WPSTK_Not_Found_Monitor {
 	public static function get_recent( $limit = 50, $offset = 0, $days = 0 ) {
 		global $wpdb;
 
-		$table  = WPSTK_Database::not_found_table();
+		$table  = esc_sql( WPSTK_Database::not_found_table() );
 		$limit  = max( 1, (int) $limit );
 		$offset = max( 0, (int) $offset );
 
 		if ( $days > 0 ) {
 			$cutoff = gmdate( 'Y-m-d H:i:s', time() - ( (int) $days * DAY_IN_SECONDS ) );
 
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom plugin table.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom plugin table.
 			$rows = $wpdb->get_results(
 				$wpdb->prepare(
+					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is escaped above.
 					"SELECT * FROM {$table} WHERE last_seen >= %s ORDER BY hits DESC, last_seen DESC LIMIT %d OFFSET %d",
 					$cutoff,
 					$limit,
@@ -178,8 +180,9 @@ class WPSTK_Not_Found_Monitor {
 				ARRAY_A
 			);
 		} else {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom plugin table.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom plugin table.
 			$rows = $wpdb->get_results(
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is escaped above.
 				$wpdb->prepare( "SELECT * FROM {$table} ORDER BY hits DESC, last_seen DESC LIMIT %d OFFSET %d", $limit, $offset ),
 				ARRAY_A
 			);
@@ -210,7 +213,7 @@ class WPSTK_Not_Found_Monitor {
 	public static function clear() {
 		global $wpdb;
 
-		$table = WPSTK_Database::not_found_table();
+		$table = esc_sql( WPSTK_Database::not_found_table() );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom plugin table.
 		$wpdb->query( "DELETE FROM {$table}" );
@@ -225,7 +228,7 @@ class WPSTK_Not_Found_Monitor {
 		global $wpdb;
 
 		$days   = (int) WPSTK_Settings::get( 'retention_days', 90 );
-		$table  = WPSTK_Database::not_found_table();
+		$table  = esc_sql( WPSTK_Database::not_found_table() );
 		$cutoff = gmdate( 'Y-m-d H:i:s', time() - ( max( 1, $days ) * DAY_IN_SECONDS ) );
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom plugin table.

@@ -194,6 +194,7 @@ class WPSTK_Admin {
 					'failed'      => __( 'The audit stopped unexpectedly.', 'wp-site-toolkit' ),
 					'confirm'     => __( 'Cancel the running audit?', 'wp-site-toolkit' ),
 					'networkFail' => __( 'The connection to WordPress was lost. The audit can be resumed from this screen.', 'wp-site-toolkit' ),
+					/* translators: 1: current step number, 2: total number of steps. Filled in by JavaScript, not PHP. */
 					'step'        => __( 'Step %1$d of %2$d', 'wp-site-toolkit' ),
 				),
 			)
