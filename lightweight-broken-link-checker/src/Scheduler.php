@@ -31,6 +31,11 @@ class Scheduler {
 	const HOOK_SCAN_BATCH = 'lwblc_scan_batch';
 
 	/**
+	 * Hook that rescans a single post after it was saved.
+	 */
+	const HOOK_SCAN_POST = 'lwblc_scan_post';
+
+	/**
 	 * Hook that checks one batch of links.
 	 */
 	const HOOK_CHECK_BATCH = 'lwblc_check_batch';
@@ -69,14 +74,15 @@ class Scheduler {
 	 * @param int    $timestamp Unix timestamp (UTC) to run at.
 	 * @param string $hook      Hook name.
 	 * @param array  $args      Callback arguments.
+	 * @param bool   $unique    Skip scheduling when the same action is already pending.
 	 * @return int Action ID, or 0 on failure.
 	 */
-	public static function schedule_single( $timestamp, $hook, $args = array() ) {
+	public static function schedule_single( $timestamp, $hook, $args = array(), $unique = false ) {
 		if ( ! self::is_available() ) {
 			return 0;
 		}
 
-		return (int) as_schedule_single_action( $timestamp, $hook, $args, self::GROUP );
+		return (int) as_schedule_single_action( $timestamp, $hook, $args, self::GROUP, (bool) $unique );
 	}
 
 	/**
@@ -148,6 +154,7 @@ class Scheduler {
 	 */
 	public static function unschedule_all() {
 		self::unschedule( self::HOOK_SCAN_BATCH );
+		self::unschedule( self::HOOK_SCAN_POST );
 		self::unschedule( self::HOOK_CHECK_BATCH );
 	}
 }

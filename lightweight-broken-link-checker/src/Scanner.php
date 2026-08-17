@@ -44,9 +44,119 @@ class Scanner {
 	 */
 	public static function init() {
 		add_action( Scheduler::HOOK_SCAN_BATCH, array( __CLASS__, 'run_batch' ), 10, 1 );
+		add_action( Scheduler::HOOK_SCAN_POST, array( __CLASS__, 'scan_post' ), 10, 1 );
+
+		/*
+		 * Covers publishing, editing, unpublishing and trashing in one place:
+		 * wp_trash_post() goes through wp_update_post(), which fires this hook
+		 * with the new status and the previous post object.
+		 */
+		add_action( 'wp_after_insert_post', array( __CLASS__, 'queue_post_scan' ), 10, 4 );
 
 		// Keep the table from collecting links whose source post is gone.
 		add_action( 'deleted_post', array( __CLASS__, 'delete_post_links' ), 10, 1 );
+	}
+
+	/**
+	 * Whether saved posts are rescanned automatically.
+	 *
+	 * @return bool
+	 */
+	public static function auto_scan_enabled() {
+		/**
+		 * Filters whether saving a post queues a rescan of that post.
+		 *
+		 * @param bool $enabled Enabled by default.
+		 */
+		return (bool) apply_filters( 'lwblc_auto_scan_on_save', true );
+	}
+
+	/**
+	 * Queues a rescan of a single post after it was saved.
+	 *
+	 * The work itself is deferred to Action Scheduler so the editor never waits
+	 * for link extraction.
+	 *
+	 * @param int           $post_id     Saved post ID.
+	 * @param \WP_Post      $post        Saved post object.
+	 * @param bool          $update      Whether this was an update.
+	 * @param \WP_Post|null $post_before Post before the update, null on insert.
+	 * @return void
+	 */
+	public static function queue_post_scan( $post_id, $post, $update = false, $post_before = null ) {
+		$post_id = (int) $post_id;
+
+		if ( ! self::auto_scan_enabled() || ! $post instanceof \WP_Post ) {
+			return;
+		}
+
+		if ( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) {
+			return;
+		}
+
+		if ( ! in_array( $post->post_type, self::post_types(), true ) ) {
+			return;
+		}
+
+		if ( 'publish' !== $post->post_status ) {
+			/*
+			 * Unpublished, trashed or scheduled again: its links must not stay
+			 * on the list. Only worth a query if the post used to be published.
+			 */
+			if ( $post_before instanceof \WP_Post && 'publish' === $post_before->post_status ) {
+				self::delete_post_links( $post_id );
+			}
+
+			return;
+		}
+
+		// `unique` keeps repeated saves of the same post to a single queued job.
+		Scheduler::schedule_single( time(), Scheduler::HOOK_SCAN_POST, array( $post_id ), true );
+	}
+
+	/**
+	 * Rescans one post and syncs its stored links.
+	 *
+	 * @param int $post_id Post to scan.
+	 * @return int Number of links newly stored.
+	 */
+	public static function scan_post( $post_id ) {
+		$post_id = (int) $post_id;
+		$post    = $post_id > 0 ? get_post( $post_id ) : null;
+
+		if ( ! $post instanceof \WP_Post ) {
+			return 0;
+		}
+
+		if ( 'publish' !== $post->post_status || ! in_array( $post->post_type, self::post_types(), true ) ) {
+			self::delete_post_links( $post_id );
+
+			return 0;
+		}
+
+		$links = self::extract_links( (string) $post->post_content );
+		$urls  = array();
+		$found = 0;
+
+		foreach ( $links as $link ) {
+			$urls[] = $link['url'];
+
+			$stored = self::store_link(
+				$link['url'],
+				$link['text'],
+				$post_id,
+				(string) $post->post_title,
+				(string) $post->post_modified_gmt
+			);
+
+			if ( $stored ) {
+				++$found;
+			}
+		}
+
+		self::prune_post_links( $post_id, $urls );
+
+		return $found;
 	}
 
 	/**

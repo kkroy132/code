@@ -4,7 +4,7 @@ Tags: broken links, link checker, seo, 404, maintenance
 Requires at least: 6.5
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -24,7 +24,8 @@ Most broken link checkers scan continuously, store enormous amounts of data and 
 * Each link is checked with a lightweight `HEAD` request first. If that fails or is refused, the plugin retries with `GET`, because many servers answer `HEAD` with 403, 405 or 500 while the page is perfectly fine.
 * `403` and `429` responses, timeouts and DNS errors do not immediately mark a link broken. The failure is counted, and only three consecutive failures confirm it.
 * When several links in one batch point at the same host, requests are spaced out so the target server is not hammered.
-* Links that never had a check are always verified first. After that, working links are re-verified once a week, oldest content first.
+* Links that never had a check are always verified first. After that, working links are re-verified once a week, oldest content first, and links already settled as broken or redirecting are revisited once a month so a link that gets fixed returns to the healthy list on its own.
+* Publishing or editing a post queues a rescan of just that post, so new links are picked up without running a full scan.
 
 = Dashboard =
 
@@ -67,7 +68,15 @@ Every published post, page and public custom post type, minus attachments. Adjus
 
 = What happens to links I remove from a post? =
 
-They are removed from the list the next time that post is scanned, and all links of a post are dropped when the post itself is deleted.
+They are removed from the list as soon as that post is saved. All links of a post are dropped when the post is deleted, trashed or switched back to draft.
+
+= Do I have to run a scan after publishing a post? =
+
+No. Saving a published post queues a rescan of that one post, so its links are collected within a minute or so. The full **Scan Now** button is only needed for the first run, or after importing content in bulk. Switch the behaviour off with the `lwblc_auto_scan_on_save` filter.
+
+= A broken link got fixed. Do I have to recheck it by hand? =
+
+No. Links settled as broken or redirecting are revisited automatically once a month, at the lowest priority, and return to the healthy list when they answer normally again. **Recheck now** on the row is only there for when you do not want to wait.
 
 = Does it modify my content? =
 
@@ -88,6 +97,13 @@ The link table, the plugin options and any queued background jobs. Deactivating 
 
 == Changelog ==
 
+= 1.1.0 =
+* Saving a published post now queues a rescan of that post, so new and edited links are picked up without a full scan. Unpublishing, trashing or drafting a post removes its links.
+* Broken and redirecting links are rechecked once a month at the lowest priority, so a link that gets fixed returns to the healthy list without a manual recheck.
+* The priority queue now runs one query per tier instead of a single sorted query, which keeps it index driven on large sites.
+* Added a `(status, post_modified_date)` index. The schema updates itself on load, no reactivation needed.
+* Fixed: the uninstall routine cancelled queued jobs using the wrong Action Scheduler group, leaving them behind.
+
 = 1.0.0 =
 * Initial release.
 * Batched content scanner (50 posts per batch) chained through Action Scheduler.
@@ -96,6 +112,9 @@ The link table, the plugin options and any queued background jobs. Deactivating 
 * Broken Links dashboard with status filters, search, sorting, per link recheck and a summary box.
 
 == Upgrade Notice ==
+
+= 1.1.0 =
+Posts are now rescanned as you save them, and broken links are rechecked monthly so fixed links clear themselves. Adds a database index; the update runs automatically.
 
 = 1.0.0 =
 Initial release.

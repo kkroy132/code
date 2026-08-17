@@ -9,10 +9,14 @@ defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
 global $wpdb;
 
-// Cancel anything still queued in Action Scheduler.
+/*
+ * Cancel anything still queued in Action Scheduler. The third argument is the
+ * action group, which stays `lwblc` — it is not the text domain.
+ */
 if ( function_exists( 'as_unschedule_all_actions' ) ) {
-	as_unschedule_all_actions( 'lwblc_scan_batch', null, 'lightweight-broken-link-checker' );
-	as_unschedule_all_actions( 'lwblc_check_batch', null, 'lightweight-broken-link-checker' );
+	as_unschedule_all_actions( 'lwblc_scan_batch', null, 'lwblc' );
+	as_unschedule_all_actions( 'lwblc_scan_post', null, 'lwblc' );
+	as_unschedule_all_actions( 'lwblc_check_batch', null, 'lwblc' );
 }
 
 // Matches the name chosen at activation (see LWBLC\Database::resolve_table_name()).

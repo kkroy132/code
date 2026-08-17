@@ -34,6 +34,15 @@ class Checker {
 	const RECHECK_AFTER = 604800;
 
 	/**
+	 * Age after which a settled `broken` or `redirect` link is verified again.
+	 *
+	 * Dead domains come back and servers get fixed, so a link must be able to
+	 * leave the broken list without someone pressing a button. This runs at the
+	 * lowest priority, well behind links that were never checked.
+	 */
+	const RECHECK_SETTLED_AFTER = 2592000;
+
+	/**
 	 * Request timeout in seconds.
 	 */
 	const TIMEOUT = 10;
@@ -115,50 +124,107 @@ class Checker {
 	/**
 	 * Selects the links to verify next.
 	 *
-	 * Priority:
-	 *   1. `pending` links, oldest row first — they have never been checked.
-	 *   2. `ok` links whose last check is older than a week, oldest
-	 *      `post_modified_date` first, so stale content is revisited first.
+	 * Priority, highest first:
+	 *   1. `pending` links — they have never been checked, or a check is in
+	 *      progress after a failure.
+	 *   2. `ok` links whose last check is older than a week.
+	 *   3. `broken` and `redirect` links that have been settled for a month, so
+	 *      a link that got fixed can find its way back to `ok` on its own.
 	 *
-	 * @param int $limit Maximum rows to return.
+	 * Within tiers 1 and 2 the oldest `post_modified_date` comes first, so
+	 * stale content is revisited before freshly edited content; tier 3 goes by
+	 * how long ago the link was last checked.
+	 *
+	 * Each tier is its own query on purpose. A single query would need
+	 * `ORDER BY CASE ...`, which no index can satisfy, forcing MySQL to sort
+	 * the whole table on every run.
+	 *
+	 * @param int $limit Maximum rows to return in total.
 	 * @return array<int,array<string,mixed>>
 	 */
 	public static function get_due_links( $limit ) {
-		global $wpdb;
-
 		$limit = max( 1, (int) $limit );
 
 		if ( ! Database::table_exists() ) {
 			return array();
 		}
 
-		$table  = Database::table();
-		$cutoff = gmdate( 'Y-m-d H:i:s', time() - self::RECHECK_AFTER );
+		$now = time();
+
+		$tiers = array(
+			// Never checked yet: no age condition.
+			array(
+				'statuses' => array( Database::STATUS_PENDING ),
+				'cutoff'   => '',
+				'order_by' => 'post_modified_date',
+			),
+			array(
+				'statuses' => array( Database::STATUS_OK ),
+				'cutoff'   => gmdate( 'Y-m-d H:i:s', $now - self::RECHECK_AFTER ),
+				'order_by' => 'post_modified_date',
+			),
+			array(
+				'statuses' => array( Database::STATUS_BROKEN, Database::STATUS_REDIRECT ),
+				'cutoff'   => gmdate( 'Y-m-d H:i:s', $now - self::RECHECK_SETTLED_AFTER ),
+				'order_by' => 'last_checked_at',
+			),
+		);
+
+		$links = array();
+
+		foreach ( $tiers as $tier ) {
+			$remaining = $limit - count( $links );
+
+			if ( $remaining < 1 ) {
+				break;
+			}
+
+			$links = array_merge( $links, self::query_tier( $tier, $remaining ) );
+		}
+
+		return $links;
+	}
+
+	/**
+	 * Runs the query for one priority tier.
+	 *
+	 * @param array{statuses:string[],cutoff:string,order_by:string} $tier  Tier definition.
+	 * @param int                                                    $limit Maximum rows.
+	 * @return array<int,array<string,mixed>>
+	 */
+	private static function query_tier( array $tier, $limit ) {
+		global $wpdb;
+
+		$table        = Database::table();
+		$placeholders = implode( ', ', array_fill( 0, count( $tier['statuses'] ), '%s' ) );
+		$params       = $tier['statuses'];
+
+		$age_clause = '';
+
+		if ( '' !== $tier['cutoff'] ) {
+			$age_clause = ' AND ( last_checked_at IS NULL OR last_checked_at < %s )';
+			$params[]   = $tier['cutoff'];
+		}
 
 		/*
-		 * The CASE keeps the two groups apart, then each group gets its own
-		 * ordering: pending links by id, stale ones by how old the source post
-		 * is (NULL dates last).
+		 * Only ever one of two hard coded column names. Plain `ORDER BY col
+		 * ASC` keeps the (status, col) index usable; MySQL sorts NULLs first,
+		 * which is what we want anyway — an unknown date counts as the oldest.
 		 */
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is built from $wpdb->prefix; every value is a placeholder.
+		$order_by = 'last_checked_at' === $tier['order_by'] ? 'last_checked_at' : 'post_modified_date';
+
+		$params[] = (int) $limit;
+
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- $table comes from $wpdb->prefix, the other fragments are placeholders and hard coded column names.
 		$sql = $wpdb->prepare(
 			"SELECT id, link_url, status, fail_count, http_code
 			FROM {$table}
-			WHERE status = %s
-				OR ( status = %s AND ( last_checked_at IS NULL OR last_checked_at < %s ) )
-			ORDER BY
-				CASE WHEN status = %s THEN 0 ELSE 1 END ASC,
-				CASE WHEN post_modified_date IS NULL THEN 1 ELSE 0 END ASC,
-				post_modified_date ASC,
-				id ASC
+			WHERE status IN ({$placeholders}){$age_clause}
+			ORDER BY {$order_by} ASC, id ASC
 			LIMIT %d",
-			Database::STATUS_PENDING,
-			Database::STATUS_OK,
-			$cutoff,
-			Database::STATUS_PENDING,
-			$limit
+			$params
 		);
-		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- Custom table, prepared above.
 		$rows = $wpdb->get_results( $sql, ARRAY_A );
@@ -365,7 +431,8 @@ class Checker {
 			array(
 				'status'          => Database::sanitize_status( $status ),
 				'http_code'       => max( 0, (int) $code ),
-				'fail_count'      => max( 0, (int) $fail_count ),
+				// The column is a tinyint; a link rechecked for years must not overflow it.
+				'fail_count'      => min( 255, max( 0, (int) $fail_count ) ),
 				'last_checked_at' => $now,
 				'updated_at'      => $now,
 			),

@@ -215,6 +215,7 @@ class Database {
 			PRIMARY KEY  (id),
 			UNIQUE KEY link_source (link_url({$url_len}),source_post_id),
 			KEY status_checked (status,last_checked_at),
+			KEY status_modified (status,post_modified_date),
 			KEY source_post_id (source_post_id),
 			KEY post_modified_date (post_modified_date)
 		) {$collate};";
