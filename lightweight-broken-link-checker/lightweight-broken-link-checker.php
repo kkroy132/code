@@ -8,7 +8,7 @@
  * Author:            Lightweight Plugins
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       lwblc
+ * Text Domain:       lightweight-broken-link-checker
  * Domain Path:       /languages
  *
  * @package LWBLC
@@ -50,15 +50,8 @@ function lwblc_boot() {
 }
 add_action( 'plugins_loaded', 'lwblc_boot' );
 
-/**
- * Loads the plugin translations.
- *
- * The text domain differs from the plugin slug, so WordPress cannot find the
- * files on its own and they have to be registered explicitly.
- *
- * @return void
+/*
+ * Translations are not registered explicitly: the text domain matches the
+ * plugin slug, so WordPress loads them from `languages/` (and from
+ * wp-content/languages/plugins/) on its own, only when a string is used.
  */
-function lwblc_load_textdomain() {
-	load_plugin_textdomain( 'lwblc', false, dirname( LWBLC_BASENAME ) . '/languages' );
-}
-add_action( 'init', 'lwblc_load_textdomain' );

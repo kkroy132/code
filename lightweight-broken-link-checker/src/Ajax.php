@@ -41,7 +41,7 @@ class Ajax {
 
 		if ( ! current_user_can( Plugin::capability() ) ) {
 			wp_send_json_error(
-				array( 'message' => __( 'You are not allowed to do this.', 'lwblc' ) ),
+				array( 'message' => __( 'You are not allowed to do this.', 'lightweight-broken-link-checker' ) ),
 				403
 			);
 		}
@@ -86,7 +86,7 @@ class Ajax {
 
 		wp_send_json_success(
 			array(
-				'message'  => __( 'Scan cancelled.', 'lwblc' ),
+				'message'  => __( 'Scan cancelled.', 'lightweight-broken-link-checker' ),
 				'progress' => self::progress_payload(),
 			)
 		);
@@ -104,18 +104,18 @@ class Ajax {
 		$link_id = isset( $_POST['link_id'] ) ? absint( wp_unslash( $_POST['link_id'] ) ) : 0;
 
 		if ( $link_id < 1 ) {
-			wp_send_json_error( array( 'message' => __( 'Invalid link.', 'lwblc' ) ) );
+			wp_send_json_error( array( 'message' => __( 'Invalid link.', 'lightweight-broken-link-checker' ) ) );
 		}
 
 		$result = Checker::recheck( $link_id );
 
 		if ( null === $result ) {
-			wp_send_json_error( array( 'message' => __( 'That link no longer exists.', 'lwblc' ) ) );
+			wp_send_json_error( array( 'message' => __( 'That link no longer exists.', 'lightweight-broken-link-checker' ) ) );
 		}
 
 		wp_send_json_success(
 			array(
-				'message' => __( 'Link rechecked.', 'lwblc' ),
+				'message' => __( 'Link rechecked.', 'lightweight-broken-link-checker' ),
 				'result'  => $result,
 			)
 		);
@@ -154,18 +154,18 @@ class Ajax {
 		if ( $running ) {
 			$text = sprintf(
 				/* translators: 1: number of posts scanned, 2: total number of posts. */
-				__( 'Scanning %1$s of %2$s posts…', 'lwblc' ),
+				__( 'Scanning %1$s of %2$s posts…', 'lightweight-broken-link-checker' ),
 				number_format_i18n( $scanned ),
 				number_format_i18n( $total )
 			);
 		} elseif ( $scanned > 0 ) {
 			$text = sprintf(
 				/* translators: %s: number of posts covered by the last scan. */
-				__( 'Last scan covered %s posts.', 'lwblc' ),
+				__( 'Last scan covered %s posts.', 'lightweight-broken-link-checker' ),
 				number_format_i18n( $scanned )
 			);
 		} else {
-			$text = __( 'No scan has run yet.', 'lwblc' );
+			$text = __( 'No scan has run yet.', 'lightweight-broken-link-checker' );
 		}
 
 		return array(

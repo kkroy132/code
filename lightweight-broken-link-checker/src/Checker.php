@@ -101,15 +101,15 @@ class Checker {
 		$next = Scheduler::next_run( Scheduler::HOOK_CHECK_BATCH );
 
 		if ( $next <= 0 ) {
-			return __( 'Not scheduled', 'lwblc' );
+			return __( 'Not scheduled', 'lightweight-broken-link-checker' );
 		}
 
 		if ( $next <= time() ) {
-			return __( 'Due now', 'lwblc' );
+			return __( 'Due now', 'lightweight-broken-link-checker' );
 		}
 
 		/* translators: %s: human readable time difference, e.g. "5 mins". */
-		return sprintf( __( 'in %s', 'lwblc' ), human_time_diff( time(), $next ) );
+		return sprintf( __( 'in %s', 'lightweight-broken-link-checker' ), human_time_diff( time(), $next ) );
 	}
 
 	/**

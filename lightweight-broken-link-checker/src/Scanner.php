@@ -137,14 +137,14 @@ class Scanner {
 		if ( ! Scheduler::is_available() ) {
 			return array(
 				'success' => false,
-				'message' => __( 'Action Scheduler is not available, so the scan cannot be queued.', 'lwblc' ),
+				'message' => __( 'Action Scheduler is not available, so the scan cannot be queued.', 'lightweight-broken-link-checker' ),
 			);
 		}
 
 		if ( self::is_running() ) {
 			return array(
 				'success' => false,
-				'message' => __( 'A scan is already running.', 'lwblc' ),
+				'message' => __( 'A scan is already running.', 'lightweight-broken-link-checker' ),
 			);
 		}
 
@@ -165,7 +165,7 @@ class Scanner {
 
 		return array(
 			'success' => true,
-			'message' => __( 'Scan started. Progress updates automatically.', 'lwblc' ),
+			'message' => __( 'Scan started. Progress updates automatically.', 'lightweight-broken-link-checker' ),
 		);
 	}
 

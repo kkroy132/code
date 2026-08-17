@@ -11,8 +11,8 @@ global $wpdb;
 
 // Cancel anything still queued in Action Scheduler.
 if ( function_exists( 'as_unschedule_all_actions' ) ) {
-	as_unschedule_all_actions( 'lwblc_scan_batch', null, 'lwblc' );
-	as_unschedule_all_actions( 'lwblc_check_batch', null, 'lwblc' );
+	as_unschedule_all_actions( 'lwblc_scan_batch', null, 'lightweight-broken-link-checker' );
+	as_unschedule_all_actions( 'lwblc_check_batch', null, 'lightweight-broken-link-checker' );
 }
 
 // Matches the name chosen at activation (see LWBLC\Database::resolve_table_name()).

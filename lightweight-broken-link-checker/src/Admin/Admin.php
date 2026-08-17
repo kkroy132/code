@@ -56,8 +56,8 @@ class Admin {
 	 */
 	public static function register_menu() {
 		self::$hook_suffix = add_menu_page(
-			__( 'Broken Links', 'lwblc' ),
-			__( 'Broken Links', 'lwblc' ),
+			__( 'Broken Links', 'lightweight-broken-link-checker' ),
+			__( 'Broken Links', 'lightweight-broken-link-checker' ),
 			Plugin::capability(),
 			self::PAGE_SLUG,
 			array( __CLASS__, 'render_page' ),
@@ -88,7 +88,7 @@ class Admin {
 		add_screen_option(
 			'per_page',
 			array(
-				'label'   => __( 'Links per page', 'lwblc' ),
+				'label'   => __( 'Links per page', 'lightweight-broken-link-checker' ),
 				'default' => 20,
 				'option'  => 'lwblc_links_per_page',
 			)
@@ -161,12 +161,12 @@ class Admin {
 				'pollInterval' => 3000,
 				'progress'     => Ajax::progress_payload(),
 				'i18n'         => array(
-					'scanning'  => __( 'Scanning…', 'lwblc' ),
-					'scanNow'   => __( 'Scan Now', 'lwblc' ),
-					'cancel'    => __( 'Cancel scan', 'lwblc' ),
-					'confirm'   => __( 'Start a new scan of all published content?', 'lwblc' ),
-					'error'     => __( 'Something went wrong. Please try again.', 'lwblc' ),
-					'rechecked' => __( 'Link queued for rechecking.', 'lwblc' ),
+					'scanning'  => __( 'Scanning…', 'lightweight-broken-link-checker' ),
+					'scanNow'   => __( 'Scan Now', 'lightweight-broken-link-checker' ),
+					'cancel'    => __( 'Cancel scan', 'lightweight-broken-link-checker' ),
+					'confirm'   => __( 'Start a new scan of all published content?', 'lightweight-broken-link-checker' ),
+					'error'     => __( 'Something went wrong. Please try again.', 'lightweight-broken-link-checker' ),
+					'rechecked' => __( 'Link queued for rechecking.', 'lightweight-broken-link-checker' ),
 				),
 			)
 		);
@@ -179,7 +179,7 @@ class Admin {
 	 */
 	public static function render_page() {
 		if ( ! current_user_can( Plugin::capability() ) ) {
-			wp_die( esc_html__( 'You do not have permission to view this page.', 'lwblc' ) );
+			wp_die( esc_html__( 'You do not have permission to view this page.', 'lightweight-broken-link-checker' ) );
 		}
 
 		$table = self::get_list_table();
@@ -191,17 +191,17 @@ class Admin {
 
 		?>
 		<div class="wrap lwblc-wrap">
-			<h1 class="wp-heading-inline"><?php esc_html_e( 'Broken Links', 'lwblc' ); ?></h1>
+			<h1 class="wp-heading-inline"><?php esc_html_e( 'Broken Links', 'lightweight-broken-link-checker' ); ?></h1>
 			<hr class="wp-header-end" />
 
 			<?php if ( ! $scheduler ) : ?>
 				<div class="notice notice-error lwblc-notice">
-					<p><?php esc_html_e( 'Action Scheduler could not be loaded, so scanning and checking are disabled. Reinstall the plugin to restore the bundled library.', 'lwblc' ); ?></p>
+					<p><?php esc_html_e( 'Action Scheduler could not be loaded, so scanning and checking are disabled. Reinstall the plugin to restore the bundled library.', 'lightweight-broken-link-checker' ); ?></p>
 				</div>
 			<?php endif; ?>
 
 			<div class="lwblc-summary" id="lwblc-summary">
-				<h2><?php esc_html_e( 'Overview', 'lwblc' ); ?></h2>
+				<h2><?php esc_html_e( 'Overview', 'lightweight-broken-link-checker' ); ?></h2>
 
 				<div class="lwblc-summary-grid">
 					<?php foreach ( self::summary_items( $progress ) as $item ) : ?>
@@ -224,7 +224,7 @@ class Admin {
 						id="lwblc-scan-button"
 						<?php disabled( ! $scheduler ); ?>
 					>
-						<?php echo $scanning ? esc_html__( 'Scanning…', 'lwblc' ) : esc_html__( 'Scan Now', 'lwblc' ); ?>
+						<?php echo $scanning ? esc_html__( 'Scanning…', 'lightweight-broken-link-checker' ) : esc_html__( 'Scan Now', 'lightweight-broken-link-checker' ); ?>
 					</button>
 					<button
 						type="button"
@@ -232,7 +232,7 @@ class Admin {
 						id="lwblc-cancel-button"
 						<?php echo $scanning ? '' : 'style="display:none"'; ?>
 					>
-						<?php esc_html_e( 'Cancel scan', 'lwblc' ); ?>
+						<?php esc_html_e( 'Cancel scan', 'lightweight-broken-link-checker' ); ?>
 					</button>
 					<span class="spinner" id="lwblc-spinner"></span>
 				</p>
@@ -252,7 +252,7 @@ class Admin {
 					);
 				}
 
-				$table->search_box( __( 'Search links', 'lwblc' ), 'lwblc-search' );
+				$table->search_box( __( 'Search links', 'lightweight-broken-link-checker' ), 'lwblc-search' );
 				$table->display();
 				?>
 			</form>
@@ -284,27 +284,27 @@ class Admin {
 		$items = array(
 			array(
 				'id'    => 'lwblc-count-total',
-				'label' => __( 'Links tracked', 'lwblc' ),
+				'label' => __( 'Links tracked', 'lightweight-broken-link-checker' ),
 				'value' => number_format_i18n( (int) $progress['total_links'] ),
 			),
 			array(
 				'id'    => 'lwblc-count-broken',
-				'label' => __( 'Broken', 'lwblc' ),
+				'label' => __( 'Broken', 'lightweight-broken-link-checker' ),
 				'value' => number_format_i18n( (int) ( $counts[ Database::STATUS_BROKEN ] ?? 0 ) ),
 			),
 			array(
 				'id'    => 'lwblc-count-redirect',
-				'label' => __( 'Redirects', 'lwblc' ),
+				'label' => __( 'Redirects', 'lightweight-broken-link-checker' ),
 				'value' => number_format_i18n( (int) ( $counts[ Database::STATUS_REDIRECT ] ?? 0 ) ),
 			),
 			array(
 				'id'    => 'lwblc-count-pending',
-				'label' => __( 'Waiting to be checked', 'lwblc' ),
+				'label' => __( 'Waiting to be checked', 'lightweight-broken-link-checker' ),
 				'value' => number_format_i18n( (int) ( $counts[ Database::STATUS_PENDING ] ?? 0 ) ),
 			),
 			array(
 				'id'    => 'lwblc-next-check',
-				'label' => __( 'Next link check', 'lwblc' ),
+				'label' => __( 'Next link check', 'lightweight-broken-link-checker' ),
 				'value' => (string) $progress['next_check'],
 			),
 		);

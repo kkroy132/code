@@ -56,11 +56,11 @@ class Links_List_Table extends WP_List_Table {
 	 */
 	public function get_columns() {
 		return array(
-			'link_url'     => __( 'URL', 'lwblc' ),
-			'source'       => __( 'Source', 'lwblc' ),
-			'status'       => __( 'Status', 'lwblc' ),
-			'http_code'    => __( 'HTTP code', 'lwblc' ),
-			'last_checked' => __( 'Last checked', 'lwblc' ),
+			'link_url'     => __( 'URL', 'lightweight-broken-link-checker' ),
+			'source'       => __( 'Source', 'lightweight-broken-link-checker' ),
+			'status'       => __( 'Status', 'lightweight-broken-link-checker' ),
+			'http_code'    => __( 'HTTP code', 'lightweight-broken-link-checker' ),
+			'last_checked' => __( 'Last checked', 'lightweight-broken-link-checker' ),
 		);
 	}
 
@@ -98,11 +98,11 @@ class Links_List_Table extends WP_List_Table {
 		$base   = admin_url( 'admin.php?page=' . Admin::PAGE_SLUG );
 
 		$labels = array(
-			'all'                     => __( 'All', 'lwblc' ),
-			Database::STATUS_BROKEN   => __( 'Broken', 'lwblc' ),
-			Database::STATUS_REDIRECT => __( 'Redirect', 'lwblc' ),
-			Database::STATUS_PENDING  => __( 'Pending', 'lwblc' ),
-			Database::STATUS_OK       => __( 'OK', 'lwblc' ),
+			'all'                     => __( 'All', 'lightweight-broken-link-checker' ),
+			Database::STATUS_BROKEN   => __( 'Broken', 'lightweight-broken-link-checker' ),
+			Database::STATUS_REDIRECT => __( 'Redirect', 'lightweight-broken-link-checker' ),
+			Database::STATUS_PENDING  => __( 'Pending', 'lightweight-broken-link-checker' ),
+			Database::STATUS_OK       => __( 'OK', 'lightweight-broken-link-checker' ),
 		);
 
 		$views = array();
@@ -289,18 +289,18 @@ class Links_List_Table extends WP_List_Table {
 
 		$title = '' !== trim( (string) $item['link_text'] )
 			? $item['link_text']
-			: __( '(no anchor text)', 'lwblc' );
+			: __( '(no anchor text)', 'lightweight-broken-link-checker' );
 
 		$actions = array(
 			'recheck' => sprintf(
 				'<a href="#" class="lwblc-recheck" data-link-id="%1$d">%2$s</a>',
 				(int) $item['id'],
-				esc_html__( 'Recheck now', 'lwblc' )
+				esc_html__( 'Recheck now', 'lightweight-broken-link-checker' )
 			),
 			'visit'   => sprintf(
 				'<a href="%1$s" target="_blank" rel="noopener noreferrer nofollow">%2$s</a>',
 				esc_url( $url ),
-				esc_html__( 'Open link', 'lwblc' )
+				esc_html__( 'Open link', 'lightweight-broken-link-checker' )
 			),
 		);
 
@@ -310,7 +310,7 @@ class Links_List_Table extends WP_List_Table {
 			$actions['edit'] = sprintf(
 				'<a href="%1$s">%2$s</a>',
 				esc_url( $edit_link ),
-				esc_html__( 'Edit source post', 'lwblc' )
+				esc_html__( 'Edit source post', 'lightweight-broken-link-checker' )
 			);
 		}
 
@@ -335,7 +335,7 @@ class Links_List_Table extends WP_List_Table {
 		$title = '' !== trim( (string) $item['source_post_title'] )
 			? (string) $item['source_post_title']
 			/* translators: %d: post ID. */
-			: sprintf( __( 'Post #%d', 'lwblc' ), $post_id );
+			: sprintf( __( 'Post #%d', 'lightweight-broken-link-checker' ), $post_id );
 
 		$edit_link = get_edit_post_link( $post_id );
 
@@ -349,7 +349,7 @@ class Links_List_Table extends WP_List_Table {
 				esc_html(
 					sprintf(
 						/* translators: %s: formatted date. */
-						__( 'Modified %s', 'lwblc' ),
+						__( 'Modified %s', 'lightweight-broken-link-checker' ),
 						$this->format_date( (string) $item['post_modified_date'] )
 					)
 				)
@@ -369,10 +369,10 @@ class Links_List_Table extends WP_List_Table {
 		$status = Database::sanitize_status( $item['status'] );
 
 		$labels = array(
-			Database::STATUS_OK       => __( 'OK', 'lwblc' ),
-			Database::STATUS_BROKEN   => __( 'Broken', 'lwblc' ),
-			Database::STATUS_REDIRECT => __( 'Redirect', 'lwblc' ),
-			Database::STATUS_PENDING  => __( 'Pending', 'lwblc' ),
+			Database::STATUS_OK       => __( 'OK', 'lightweight-broken-link-checker' ),
+			Database::STATUS_BROKEN   => __( 'Broken', 'lightweight-broken-link-checker' ),
+			Database::STATUS_REDIRECT => __( 'Redirect', 'lightweight-broken-link-checker' ),
+			Database::STATUS_PENDING  => __( 'Pending', 'lightweight-broken-link-checker' ),
 		);
 
 		$badge = sprintf(
@@ -389,7 +389,7 @@ class Links_List_Table extends WP_List_Table {
 				esc_html(
 					sprintf(
 						/* translators: %d: number of consecutive failures. */
-						_n( '%d failed attempt', '%d failed attempts', $fail_count, 'lwblc' ),
+						_n( '%d failed attempt', '%d failed attempts', $fail_count, 'lightweight-broken-link-checker' ),
 						$fail_count
 					)
 				)
@@ -409,7 +409,7 @@ class Links_List_Table extends WP_List_Table {
 		$code = (int) $item['http_code'];
 
 		if ( $code < 1 ) {
-			return '<span class="lwblc-muted">' . esc_html__( 'n/a', 'lwblc' ) . '</span>';
+			return '<span class="lwblc-muted">' . esc_html__( 'n/a', 'lightweight-broken-link-checker' ) . '</span>';
 		}
 
 		return esc_html( (string) $code );
@@ -423,13 +423,13 @@ class Links_List_Table extends WP_List_Table {
 	 */
 	public function column_last_checked( $item ) {
 		if ( empty( $item['last_checked_at'] ) ) {
-			return '<span class="lwblc-muted">' . esc_html__( 'Never', 'lwblc' ) . '</span>';
+			return '<span class="lwblc-muted">' . esc_html__( 'Never', 'lightweight-broken-link-checker' ) . '</span>';
 		}
 
 		$timestamp = strtotime( $item['last_checked_at'] . ' UTC' );
 
 		if ( ! $timestamp ) {
-			return '<span class="lwblc-muted">' . esc_html__( 'Never', 'lwblc' ) . '</span>';
+			return '<span class="lwblc-muted">' . esc_html__( 'Never', 'lightweight-broken-link-checker' ) . '</span>';
 		}
 
 		return sprintf(
@@ -438,7 +438,7 @@ class Links_List_Table extends WP_List_Table {
 			esc_html(
 				sprintf(
 					/* translators: %s: human readable time difference. */
-					__( '%s ago', 'lwblc' ),
+					__( '%s ago', 'lightweight-broken-link-checker' ),
 					human_time_diff( $timestamp, time() )
 				)
 			)
@@ -479,6 +479,6 @@ class Links_List_Table extends WP_List_Table {
 	 * @return void
 	 */
 	public function no_items() {
-		esc_html_e( 'No links found. Run a scan to collect the links in your content.', 'lwblc' );
+		esc_html_e( 'No links found. Run a scan to collect the links in your content.', 'lightweight-broken-link-checker' );
 	}
 }
