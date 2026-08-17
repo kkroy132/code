@@ -93,4 +93,4 @@ $wpstk_modules = $wpstk_audit->get_modules();
 	<?php WPSTK_View::check_list( $wpstk_checks, true ); ?>
 <?php else : ?>
 	<?php WPSTK_View::empty_state( __( 'No audit has been completed yet. Use the button above to run the first one.', 'wp-site-toolkit' ) ); ?>
-<?php endif; ?>
+<?php endif; 

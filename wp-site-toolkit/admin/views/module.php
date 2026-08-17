@@ -216,4 +216,4 @@ $wpstk_counts = WPSTK_Check::count_by_status( $wpstk_checks );
 
 		<?php WPSTK_View::check_list( $wpstk_checks ); ?>
 	<?php endif; ?>
-<?php endif; ?>
+<?php endif; 

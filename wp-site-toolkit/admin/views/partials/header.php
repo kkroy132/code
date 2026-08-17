@@ -33,4 +33,4 @@ $wpstk_notice = $view['notice'];
 			</a>
 		</p>
 	</div>
-<?php endif; ?>
+<?php endif; 
