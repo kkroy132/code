@@ -143,6 +143,7 @@ foreach ( $wpstk_history as $wpstk_row ) {
 				<?php endif; ?>
 				<th scope="col"><?php echo esc_html__( 'Critical', 'site-toolkit' ); ?></th>
 				<th scope="col"><?php echo esc_html__( 'Warnings', 'site-toolkit' ); ?></th>
+				<th scope="col"><?php echo esc_html__( 'Recommendations', 'site-toolkit' ); ?></th>
 				<th scope="col"><?php echo esc_html__( 'Passed', 'site-toolkit' ); ?></th>
 				<th scope="col"><?php echo esc_html__( 'Not checked', 'site-toolkit' ); ?></th>
 			</tr>
@@ -189,6 +190,7 @@ foreach ( $wpstk_history as $wpstk_row ) {
 					<?php endif; ?>
 					<td><?php echo esc_html( number_format_i18n( isset( $wpstk_module_counts['critical'] ) ? (int) $wpstk_module_counts['critical'] : 0 ) ); ?></td>
 					<td><?php echo esc_html( number_format_i18n( isset( $wpstk_module_counts['warning'] ) ? (int) $wpstk_module_counts['warning'] : 0 ) ); ?></td>
+					<td><?php echo esc_html( number_format_i18n( isset( $wpstk_module_counts['recommendation'] ) ? (int) $wpstk_module_counts['recommendation'] : 0 ) ); ?></td>
 					<td><?php echo esc_html( number_format_i18n( isset( $wpstk_module_counts['passed'] ) ? (int) $wpstk_module_counts['passed'] : 0 ) ); ?></td>
 					<td><?php echo esc_html( number_format_i18n( isset( $wpstk_module_counts['skipped'] ) ? (int) $wpstk_module_counts['skipped'] : 0 ) ); ?></td>
 				</tr>
@@ -211,6 +213,7 @@ foreach ( $wpstk_history as $wpstk_row ) {
 				<th scope="col"><?php echo esc_html__( 'Health', 'site-toolkit' ); ?></th>
 				<th scope="col"><?php echo esc_html__( 'Critical', 'site-toolkit' ); ?></th>
 				<th scope="col"><?php echo esc_html__( 'Warnings', 'site-toolkit' ); ?></th>
+				<th scope="col"><?php echo esc_html__( 'Recommendations', 'site-toolkit' ); ?></th>
 				<th scope="col"><?php echo esc_html__( 'Passed', 'site-toolkit' ); ?></th>
 				<th scope="col"><?php echo esc_html__( 'Checks', 'site-toolkit' ); ?></th>
 				<th scope="col"><?php echo esc_html__( 'Actions', 'site-toolkit' ); ?></th>
@@ -231,6 +234,7 @@ foreach ( $wpstk_history as $wpstk_row ) {
 					</td>
 					<td><?php echo esc_html( number_format_i18n( (int) $wpstk_row['critical_count'] ) ); ?></td>
 					<td><?php echo esc_html( number_format_i18n( (int) $wpstk_row['warning_count'] ) ); ?></td>
+					<td><?php echo esc_html( number_format_i18n( (int) $wpstk_row['recommendation_count'] ) ); ?></td>
 					<td><?php echo esc_html( number_format_i18n( (int) $wpstk_row['passed_count'] ) ); ?></td>
 					<td><?php echo esc_html( number_format_i18n( (int) $wpstk_row['total_checks'] ) ); ?></td>
 					<td>
