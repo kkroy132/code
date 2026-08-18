@@ -190,7 +190,6 @@ function delete_transient($k) {
 function current_time($type = 'mysql') { return $type === 'timestamp' ? time() : gmdate('Y-m-d H:i:s'); }
 function get_post_types($args = [], $output = 'names') { return ['post' => 'post', 'page' => 'page']; }
 function post_type_exists($t) { return in_array($t, ['post', 'page'], true); }
-function class_exists_stub() { return false; }
 
 class WP_Error {
     private $code;
@@ -235,3 +234,48 @@ function wp_remote_retrieve_header($r, $h) {
 function wp_remote_retrieve_headers($r) {
     return is_array($r) ? (array) ($r['headers'] ?? []) : [];
 }
+
+// ── Admin, AJAX and nonce surface ────────────────────────────────────────
+//
+// These exist so the admin and AJAX code paths can be loaded and, in time,
+// tested. Every one of them is inert, and every one is listed in
+// fidelity.php's ACKNOWLEDGED_INERT with the reason — that list is the record
+// of what these suites do not verify.
+
+function add_menu_page() { return 'toplevel_page_wp-seo-doctor'; }
+function add_submenu_page() { return 'wp-seo-doctor_page_sub'; }
+function get_current_screen() { return null; }
+function plugin_basename($file) { return basename(dirname($file)) . '/' . basename($file); }
+
+function current_user_can($capability) { return true; }
+function wp_verify_nonce($nonce, $action = -1) { return 1; }
+function check_ajax_referer($action = -1, $query_arg = false, $stop = true) { return 1; }
+function check_admin_referer($action = -1, $query_arg = '_wpnonce') { return 1; }
+function wp_nonce_field($action = -1, $name = '_wpnonce', $referer = true, $display = true) { return ''; }
+function wp_nonce_url($url, $action = -1, $name = '_wpnonce') { return $url; }
+
+function wp_send_json_success($data = null, $status = null) { return true; }
+function wp_send_json_error($data = null, $status = null) { return true; }
+function wp_die($message = '', $title = '', $args = []) { return true; }
+function status_header($code, $description = '') { return true; }
+function nocache_headers() { return true; }
+function wp_redirect($location, $status = 302, $by = '') { return true; }
+function wp_safe_redirect($location, $status = 302, $by = '') { return true; }
+
+function add_query_arg(...$args) { return is_string($args[0] ?? null) ? ($args[2] ?? $args[1] ?? '') : ($args[1] ?? ''); }
+function paginate_links($args = []) { return ''; }
+function checked($checked, $current = true, $display = true) { return ''; }
+function selected($selected, $current = true, $display = true) { return ''; }
+function number_format_i18n($number, $decimals = 0) { return number_format((float) $number, (int) $decimals); }
+
+function add_settings_error($setting, $code, $message, $type = 'error') { return true; }
+function get_settings_errors($setting = '', $sanitize = false) { return []; }
+function settings_errors($setting = '', $sanitize = false, $hide_on_update = false) { return true; }
+
+function esc_html__($text, $domain = 'default') { return $text; }
+function esc_html_e($text, $domain = 'default') { return true; }
+function esc_attr_e($text, $domain = 'default') { return true; }
+function wp_kses_post($content) { return $content; }
+
+function wp_doing_ajax() { return false; }
+function wp_doing_cron() { return false; }

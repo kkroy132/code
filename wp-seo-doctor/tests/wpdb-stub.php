@@ -383,4 +383,3 @@ function wp_cache_set($k, $v, $g = '', $e = 0) { return true; }
 function wp_cache_delete($k, $g = '') { return true; }
 function human_time_diff($from, $to = null) { return '2 days'; }
 function wp_mail() { return true; }
-function do_action_stub() {}
