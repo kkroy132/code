@@ -1,0 +1,11 @@
+DejaVuSans-Bold.ttf
+====================
+
+Bundled for rendering optional QR caption text (Helpers\QrCodeGenerator).
+
+The DejaVu fonts are based on the Bitstream Vera fonts and are distributed
+under a permissive license (a mix of the Bitstream Vera License and public
+domain contributions) that allows unlimited redistribution and use,
+including in commercial software, without royalty.
+
+Full license text and font sources: https://dejavu-fonts.github.io/License.html
