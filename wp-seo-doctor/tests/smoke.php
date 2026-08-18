@@ -6,7 +6,16 @@
 error_reporting(E_ALL);
 require __DIR__ . '/wp-stubs.php';
 
-$plugin = '' . dirname(__DIR__) . '/includes/';
+// Logic-only suite: no database, so the modules it exercises are loaded
+// directly rather than through bootstrap.php. That means supplying the
+// constants the plugin's main file would otherwise define.
+define('WPSD_VERSION', '1.0.1');
+define('WPSD_FILE', dirname(__DIR__) . '/wp-seo-doctor.php');
+define('WPSD_DIR', dirname(__DIR__) . '/');
+define('WPSD_URL', 'https://example.test/wp-content/plugins/wp-seo-doctor/');
+define('WPSD_SLUG', 'wp-seo-doctor');
+
+$plugin = dirname(__DIR__) . '/includes/';
 foreach (['helpers', 'settings', 'score', 'redirects', 'export'] as $module) {
     require_once $plugin . $module . '.php';
 }

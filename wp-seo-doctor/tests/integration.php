@@ -9,25 +9,9 @@
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
-$SCRATCH = __DIR__;
-require $SCRATCH . '/wp-stubs.php';
-require $SCRATCH . '/wpdb-stub.php';
+require __DIR__ . '/bootstrap.php';
 
 global $wpdb;
-$socket   = getenv('WPSD_TEST_SOCKET') ?: '/tmp/wpsd-run/m.sock';
-$database = getenv('WPSD_TEST_DB') ?: 'wpsd_test';
-$wpdb = new WPSD_Test_WPDB($socket, $database);
-
-$plugin = dirname(__DIR__) . '/includes/';
-foreach ([
-    'helpers', 'db', 'settings', 'issues', 'score',
-    'checks/registry', 'checks/on-page', 'checks/technical', 'checks/content',
-    'checks/links', 'checks/affiliate', 'checks/woocommerce',
-    'scanner', 'internal-links', 'broken-links', 'monitor-404', 'redirects',
-    'content-seo', 'gsc', 'ai', 'affiliate', 'woocommerce', 'reports', 'export', 'cron',
-] as $module) {
-    require_once $plugin . $module . '.php';
-}
 
 $pass = 0;
 $fail = 0;

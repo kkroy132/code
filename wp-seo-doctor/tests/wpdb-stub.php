@@ -148,6 +148,19 @@ class WPSD_Test_WPDB {
         return $result;
     }
 
+    public function replace($table, $data, $format = null) {
+        $columns = [];
+        $values = [];
+        foreach ($data as $column => $value) {
+            $columns[] = "`{$column}`";
+            $values[] = $value === null ? 'NULL' : "'" . $this->link->real_escape_string((string) $value) . "'";
+        }
+        $sql = "REPLACE INTO {$table} (" . implode(',', $columns) . ') VALUES (' . implode(',', $values) . ')';
+        $result = $this->query($sql);
+        $this->insert_id = $this->link->insert_id;
+        return $result;
+    }
+
     public function update($table, $data, $where, $format = null, $where_format = null) {
         $set = [];
         foreach ($data as $column => $value) {
@@ -206,13 +219,28 @@ class WP_Post {
     }
 }
 
+/**
+ * Cached like core: WP_Post::get_instance() consults the object cache before
+ * querying, so repeated get_post() calls in one request are free. Querying
+ * every time would inflate any measurement of per-post query cost.
+ */
+$GLOBALS['wpsd_post_cache'] = [];
+
 function get_post($id) {
     global $wpdb;
     if ($id instanceof WP_Post) {
         return $id;
     }
-    $row = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->posts} WHERE ID = %d", (int) $id), ARRAY_A);
-    return $row ? new WP_Post($row) : null;
+    $id = (int) $id;
+    if (array_key_exists($id, $GLOBALS['wpsd_post_cache'])) {
+        return $GLOBALS['wpsd_post_cache'][$id];
+    }
+    $row = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->posts} WHERE ID = %d", $id), ARRAY_A);
+    return $GLOBALS['wpsd_post_cache'][$id] = ($row ? new WP_Post($row) : null);
+}
+
+function clean_post_cache($id) {
+    unset($GLOBALS['wpsd_post_cache'][(int) $id]);
 }
 
 function get_permalink($post) {
@@ -265,24 +293,42 @@ function get_page_by_path($slug, $output = OBJECT, $types = ['post', 'page']) {
     return $row ? new WP_Post($row) : null;
 }
 
+/**
+ * Mirrors core's meta cache: the first read for a post loads ALL of its meta in
+ * one query and caches it. Querying per key instead would make any measurement
+ * of query counts wrong by roughly the number of keys a caller tries.
+ */
+$GLOBALS['wpsd_meta_cache'] = [];
+
 function get_post_meta($id, $key, $single = false) {
     global $wpdb;
-    $value = $wpdb->get_var($wpdb->prepare(
-        "SELECT meta_value FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_key = %s LIMIT 1",
-        (int) $id,
-        $key
-    ));
-    return $value === null ? '' : $value;
+    $id = (int) $id;
+
+    if (!array_key_exists($id, $GLOBALS['wpsd_meta_cache'])) {
+        $rows = $wpdb->get_results(
+            $wpdb->prepare("SELECT meta_key, meta_value FROM {$wpdb->postmeta} WHERE post_id = %d", $id),
+            ARRAY_A
+        );
+        $cached = [];
+        foreach ((array) $rows as $row) {
+            $cached[$row['meta_key']] = $row['meta_value'];
+        }
+        $GLOBALS['wpsd_meta_cache'][$id] = $cached;
+    }
+
+    return $GLOBALS['wpsd_meta_cache'][$id][$key] ?? '';
 }
 
 function update_post_meta($id, $key, $value) {
     global $wpdb;
+    $id = (int) $id;
     $wpdb->query($wpdb->prepare(
         "DELETE FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_key = %s",
-        (int) $id,
+        $id,
         $key
     ));
-    return $wpdb->insert($wpdb->postmeta, ['post_id' => (int) $id, 'meta_key' => $key, 'meta_value' => $value]);
+    unset($GLOBALS['wpsd_meta_cache'][$id]);
+    return $wpdb->insert($wpdb->postmeta, ['post_id' => $id, 'meta_key' => $key, 'meta_value' => $value]);
 }
 
 function maybe_unserialize($v) { return $v; }
@@ -301,6 +347,7 @@ function wp_update_post($data, $wp_error = false) {
     }
     unset($data['ID']);
     $wpdb->update($wpdb->posts, $data, ['ID' => $id]);
+    clean_post_cache($id);
     return $id;
 }
 

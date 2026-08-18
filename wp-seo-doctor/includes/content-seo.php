@@ -69,55 +69,93 @@ class WPSD_Content_SEO {
      * @return array<int,array{pages:array<int,array<string,mixed>>, similarity:float}>
      */
     public static function duplicate_clusters(int $limit = 50): array {
-        $index     = WPSD_Checks_Content::shingle_index();
-        $threshold = (float) WPSD_Settings::get('duplicate_threshold', 0.75);
+        global $wpdb;
 
-        $ids      = array_keys($index);
+        // Works before the first scan: fill in any missing fingerprints.
+        WPSD_Fingerprints::ensure_built();
+
+        $threshold = (float) WPSD_Settings::get('duplicate_threshold', 0.75);
+        $shingles  = WPSD_DB::table('shingles');
+
+        // Every overlapping pair in one pass. Comparing fingerprints in PHP
+        // was O(n²) over the whole corpus; the join lets the index do the work
+        // and only pairs that already share sketch entries come back.
+        // Shingles that appear on a large share of the site are boilerplate —
+        // a shared header sentence, a standard disclaimer — and carry no
+        // evidence of duplication. Excluding them is not just an optimisation:
+        // without it, a templated corpus turns this self-join into a near
+        // cross-product. Measured on 2,000 templated posts it was the
+        // difference between 113 seconds and well under one.
+        $common_cutoff = WPSD_Fingerprints::common_shingle_cutoff();
+
+        $sql = "SELECT a.post_id AS a_id,
+                       b.post_id AS b_id,
+                       COUNT(*) AS shared,
+                       ta.total AS a_total,
+                       tb.total AS b_total
+                FROM (
+                    SELECT shingle FROM {$shingles} GROUP BY shingle HAVING COUNT(*) <= %d
+                ) AS rare
+                JOIN {$shingles} a ON a.shingle = rare.shingle
+                JOIN {$shingles} b
+                  ON b.shingle = rare.shingle
+                 AND b.post_id > a.post_id
+                JOIN (SELECT post_id, COUNT(*) AS total FROM {$shingles} GROUP BY post_id) ta
+                  ON ta.post_id = a.post_id
+                JOIN (SELECT post_id, COUNT(*) AS total FROM {$shingles} GROUP BY post_id) tb
+                  ON tb.post_id = b.post_id
+                GROUP BY a.post_id, b.post_id, ta.total, tb.total
+                HAVING shared >= %d
+                ORDER BY shared DESC
+                LIMIT %d";
+
+        // Pairs below this cannot reach the threshold whatever their totals.
+        $minimum_shared = max(2, (int) floor(WPSD_Fingerprints::MIN_SHINGLES * $threshold));
+
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        $pairs = $wpdb->get_results($wpdb->prepare($sql, $common_cutoff, $minimum_shared, $limit * 20));
+
         $clusters = [];
         $claimed  = [];
 
-        // O(n²) over fingerprints, but bounded by the 3,000-post cap on the
-        // index and short-circuited as soon as a page joins a cluster.
-        foreach ($ids as $i => $id_a) {
-            if (isset($claimed[$id_a])) {
-                continue;
-            }
-            $group = [];
+        foreach ((array) $pairs as $pair) {
+            $a = (int) $pair->a_id;
+            $b = (int) $pair->b_id;
 
-            for ($j = $i + 1, $count = count($ids); $j < $count; $j++) {
-                $id_b = $ids[$j];
-                if (isset($claimed[$id_b])) {
-                    continue;
-                }
-
-                $intersect = count(array_intersect_key($index[$id_a], $index[$id_b]));
-                if ($intersect === 0) {
-                    continue;
-                }
-                $similarity = $intersect / max(1, count($index[$id_a] + $index[$id_b]));
-                if ($similarity < $threshold) {
-                    continue;
-                }
-
-                $group[]        = ['id' => $id_b, 'similarity' => round($similarity * 100, 1)];
-                $claimed[$id_b] = true;
-            }
-
-            if (!$group) {
+            if (isset($claimed[$b])) {
                 continue;
             }
 
-            $claimed[$id_a] = true;
+            $shared = (int) $pair->shared;
+            $union  = (int) $pair->a_total + (int) $pair->b_total - $shared;
+            if ($union <= 0) {
+                continue;
+            }
 
-            $pages = [self::describe((int) $id_a, 100.0)];
-            foreach ($group as $member) {
-                $pages[] = self::describe((int) $member['id'], (float) $member['similarity']);
+            $similarity = $shared / $union;
+            if ($similarity < $threshold) {
+                continue;
+            }
+
+            $percent = round($similarity * 100, 1);
+
+            if (isset($claimed[$a])) {
+                // Grow the cluster this page already anchors.
+                $index = $claimed[$a];
+                $clusters[$index]['pages'][]    = self::describe($b, $percent);
+                $clusters[$index]['similarity'] = max($clusters[$index]['similarity'], $percent);
+                $claimed[$b] = $index;
+                continue;
             }
 
             $clusters[] = [
-                'pages'      => $pages,
-                'similarity' => (float) max(array_column($group, 'similarity')),
+                'pages'      => [self::describe($a, 100.0), self::describe($b, $percent)],
+                'similarity' => $percent,
             ];
+
+            $index       = count($clusters) - 1;
+            $claimed[$a] = $index;
+            $claimed[$b] = $index;
 
             if (count($clusters) >= $limit) {
                 break;

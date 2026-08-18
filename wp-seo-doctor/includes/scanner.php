@@ -148,6 +148,10 @@ class WPSD_Scanner {
                     WPSD_Internal_Links::index_post($post, $context);
                 }
 
+                // Each post records its own fingerprint as it is scanned, so
+                // duplicate detection never has to load the whole corpus.
+                WPSD_Fingerprints::store($post);
+
                 $result = self::run_groups($context, $groups, $scan_id);
                 $issues = array_merge($issues, $result['issues']);
                 $passed += $result['passed'];
@@ -481,6 +485,7 @@ class WPSD_Scanner {
 
         $context = new WPSD_Context($post);
         WPSD_Internal_Links::index_post($post, $context);
+        WPSD_Fingerprints::store($post);
 
         $result = WPSD_Checks::run_post_checks($context, 0);
         if ($result['issues']) {

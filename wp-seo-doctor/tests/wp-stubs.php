@@ -11,11 +11,6 @@ define('WEEK_IN_SECONDS', 604800);
 define('MINUTE_IN_SECONDS', 60);
 define('ENT_QUOTES_COMPAT', ENT_QUOTES);
 
-define('WPSD_VERSION', '1.0.0');
-define('WPSD_FILE', __DIR__ . '/wp-seo-doctor.php');
-define('WPSD_DIR', __DIR__ . '/');
-define('WPSD_URL', 'https://example.test/wp-content/plugins/wp-seo-doctor/');
-define('WPSD_SLUG', 'wp-seo-doctor');
 
 $GLOBALS['wpsd_stub_options'] = [];
 $GLOBALS['wpsd_stub_filters'] = [];
@@ -170,9 +165,28 @@ function get_option($k, $default = false) { return $GLOBALS['wpsd_stub_options']
 function update_option($k, $v, $autoload = null) { $GLOBALS['wpsd_stub_options'][$k] = $v; return true; }
 function add_option($k, $v, $d = '', $a = null) { $GLOBALS['wpsd_stub_options'][$k] = $v; return true; }
 function delete_option($k) { unset($GLOBALS['wpsd_stub_options'][$k]); return true; }
-function get_transient($k) { return false; }
-function set_transient($k, $v, $t = 0) { return true; }
-function delete_transient($k) { return true; }
+// Transients are real, and stored the way core stores them — in the options
+// table. A no-op here would hide anything the plugin stashes in a single row.
+function get_transient($k) {
+    $entry = $GLOBALS['wpsd_stub_options']['_transient_' . $k] ?? null;
+    if ($entry === null) { return false; }
+    if (!empty($entry['expires']) && $entry['expires'] < time()) {
+        unset($GLOBALS['wpsd_stub_options']['_transient_' . $k]);
+        return false;
+    }
+    return $entry['value'];
+}
+function set_transient($k, $v, $t = 0) {
+    $GLOBALS['wpsd_stub_options']['_transient_' . $k] = [
+        'value'   => $v,
+        'expires' => $t > 0 ? time() + $t : 0,
+    ];
+    return true;
+}
+function delete_transient($k) {
+    unset($GLOBALS['wpsd_stub_options']['_transient_' . $k]);
+    return true;
+}
 function current_time($type = 'mysql') { return $type === 'timestamp' ? time() : gmdate('Y-m-d H:i:s'); }
 function get_post_types($args = [], $output = 'names') { return ['post' => 'post', 'page' => 'page']; }
 function post_type_exists($t) { return in_array($t, ['post', 'page'], true); }

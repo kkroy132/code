@@ -9,8 +9,6 @@ defined('ABSPATH') || exit;
 
 class WPSD_Checks_OnPage {
 
-    const DUPLICATE_TRANSIENT = 'wpsd_duplicate_index';
-
     public static function register(): void {
         $add = ['WPSD_Checks', 'add'];
 
@@ -502,11 +500,7 @@ class WPSD_Checks_OnPage {
             return [];
         }
 
-        $index = self::duplicate_index();
-        $key   = md5(strtolower(trim($c->seo_title)));
-        $ids   = $index['titles'][$key] ?? [];
-
-        $others = array_values(array_diff($ids, [$c->id]));
+        $others = self::duplicates_of($c, 'title');
         if (!$others) {
             return [];
         }
@@ -528,11 +522,7 @@ class WPSD_Checks_OnPage {
             return [];
         }
 
-        $index = self::duplicate_index();
-        $key   = md5(strtolower(trim($c->seo_description)));
-        $ids   = $index['descriptions'][$key] ?? [];
-
-        $others = array_values(array_diff($ids, [$c->id]));
+        $others = self::duplicates_of($c, 'description');
         if (!$others) {
             return [];
         }
@@ -638,66 +628,32 @@ class WPSD_Checks_OnPage {
     // ────────────────────────────────────────────────────────── helpers ──
 
     /**
-     * Map of title-hash => [post ids] and description-hash => [post ids].
+     * Other posts sharing this post's title or description.
      *
-     * Built once and cached; a scan touches every post, so recomputing this
-     * per post would be O(n²).
+     * Reads the fingerprint table, which every scan populates. When a post has
+     * not been fingerprinted yet — a check run outside a scan — its
+     * fingerprint is written on the spot rather than falling back to loading
+     * the whole corpus into memory.
      *
-     * @return array{titles:array<string,array<int,int>>, descriptions:array<string,array<int,int>>}
+     * @param string $field title|description
+     * @return array<int,int>
      */
-    public static function duplicate_index(bool $force = false): array {
-        static $cache = null;
-        if ($cache !== null && !$force) {
-            return $cache;
+    private static function duplicates_of(WPSD_Context $c, string $field): array {
+        if (!WPSD_Fingerprints::has_post($c->id)) {
+            WPSD_Fingerprints::store($c->post);
         }
 
-        if (!$force) {
-            $stored = get_transient(self::DUPLICATE_TRANSIENT);
-            if (is_array($stored) && isset($stored['titles'])) {
-                return $cache = $stored;
-            }
-        }
-
-        global $wpdb;
-        $types        = WPSD_Helpers::auditable_post_types();
-        $placeholders = WPSD_DB::in_placeholders($types, '%s');
-
-        $sql = "SELECT ID FROM {$wpdb->posts}
-                WHERE post_status = 'publish'
-                  AND post_type IN ({$placeholders})
-                ORDER BY ID ASC
-                LIMIT 20000";
-
-        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-        $ids = $wpdb->get_col($wpdb->prepare($sql, $types));
-
-        $index = ['titles' => [], 'descriptions' => []];
-        foreach ((array) $ids as $id) {
-            $id = (int) $id;
-
-            $title = WPSD_Helpers::get_seo_title($id)['value'];
-            if (trim($title) !== '') {
-                $index['titles'][md5(strtolower(trim($title)))][] = $id;
-            }
-
-            $description = WPSD_Helpers::get_seo_description($id);
-            // Excerpt fallbacks are not authored descriptions; do not flag them.
-            if ($description['source'] !== 'excerpt' && trim($description['value']) !== '') {
-                $index['descriptions'][md5(strtolower(trim($description['value'])))][] = $id;
-            }
-        }
-
-        // Only duplicates matter — drop unique entries to keep the cache small.
-        $index['titles']       = array_filter($index['titles'], static fn($v) => count($v) > 1);
-        $index['descriptions'] = array_filter($index['descriptions'], static fn($v) => count($v) > 1);
-
-        set_transient(self::DUPLICATE_TRANSIENT, $index, HOUR_IN_SECONDS);
-
-        return $cache = $index;
+        return $field === 'title'
+            ? WPSD_Fingerprints::posts_sharing_title($c->id)
+            : WPSD_Fingerprints::posts_sharing_description($c->id);
     }
 
+    /**
+     * Discard fingerprints for posts that are gone or unpublished. Kept under
+     * the old name so callers scheduling a rebuild do not need to change.
+     */
     public static function flush_duplicate_index(): void {
-        delete_transient(self::DUPLICATE_TRANSIENT);
+        WPSD_Fingerprints::prune();
     }
 
     /**

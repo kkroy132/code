@@ -31,6 +31,7 @@ foreach ([
     'settings',
     'issues',
     'score',
+    'fingerprints',
     'checks/registry',
     'checks/on-page',
     'checks/technical',

@@ -9,8 +9,6 @@ defined('ABSPATH') || exit;
 
 class WPSD_Checks_Content {
 
-    const SHINGLE_TRANSIENT = 'wpsd_content_shingles';
-
     public static function register(): void {
         $add = ['WPSD_Checks', 'add'];
 
@@ -64,38 +62,26 @@ class WPSD_Checks_Content {
         }
 
         $threshold = (float) WPSD_Settings::get('duplicate_threshold', 0.75);
-        $index     = self::shingle_index();
-        $mine      = WPSD_Helpers::shingles($c->content);
 
-        if (!$mine) {
-            return [];
+        // The comparison happens in SQL against the fingerprint table, so the
+        // corpus is never loaded into PHP.
+        if (!WPSD_Fingerprints::has_post($c->id)) {
+            WPSD_Fingerprints::store($c->post);
         }
 
         $matches = [];
-        foreach ($index as $post_id => $fingerprint) {
-            if ((int) $post_id === $c->id || !$fingerprint) {
-                continue;
-            }
-            $intersect = count(array_intersect_key($mine, $fingerprint));
-            if ($intersect === 0) {
-                continue;
-            }
-            $similarity = $intersect / max(1, count($mine + $fingerprint));
-            if ($similarity >= $threshold) {
-                $matches[] = [
-                    'id'         => (int) $post_id,
-                    'title'      => get_the_title((int) $post_id),
-                    'url'        => get_permalink((int) $post_id),
-                    'similarity' => round($similarity * 100, 1),
-                ];
-            }
+        foreach (WPSD_Fingerprints::similar_to($c->id, $threshold) as $hit) {
+            $matches[] = [
+                'id'         => $hit['post_id'],
+                'title'      => get_the_title($hit['post_id']),
+                'url'        => get_permalink($hit['post_id']),
+                'similarity' => round($hit['similarity'] * 100, 1),
+            ];
         }
 
         if (!$matches) {
             return [];
         }
-
-        usort($matches, static fn($a, $b) => $b['similarity'] <=> $a['similarity']);
 
         return [[
             'severity' => $matches[0]['similarity'] >= 90 ? 'critical' : 'high',
@@ -232,53 +218,10 @@ class WPSD_Checks_Content {
     // ────────────────────────────────────────────────────────── helpers ──
 
     /**
-     * Fingerprint every published post once so duplicate detection is a set
-     * intersection instead of an N×N text comparison.
-     *
-     * @return array<int,array<string,bool>>
+     * Kept under the old name: fingerprints now live in a table, so
+     * "flushing" means dropping rows for posts that no longer qualify.
      */
-    public static function shingle_index(bool $force = false): array {
-        static $cache = null;
-        if ($cache !== null && !$force) {
-            return $cache;
-        }
-
-        if (!$force) {
-            $stored = get_transient(self::SHINGLE_TRANSIENT);
-            if (is_array($stored)) {
-                return $cache = $stored;
-            }
-        }
-
-        global $wpdb;
-        $types        = WPSD_Helpers::auditable_post_types();
-        $placeholders = WPSD_DB::in_placeholders($types, '%s');
-
-        // Cap the corpus: fingerprinting is memory-bound and the long tail of a
-        // very large site adds little to duplicate detection.
-        $sql = "SELECT ID, post_content FROM {$wpdb->posts}
-                WHERE post_status = 'publish'
-                  AND post_type IN ({$placeholders})
-                ORDER BY post_modified DESC
-                LIMIT 3000";
-
-        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-        $rows = $wpdb->get_results($wpdb->prepare($sql, $types));
-
-        $index = [];
-        foreach ((array) $rows as $row) {
-            $shingles = WPSD_Helpers::shingles((string) $row->post_content);
-            if ($shingles) {
-                $index[(int) $row->ID] = $shingles;
-            }
-        }
-
-        set_transient(self::SHINGLE_TRANSIENT, $index, HOUR_IN_SECONDS);
-
-        return $cache = $index;
-    }
-
     public static function flush_shingle_index(): void {
-        delete_transient(self::SHINGLE_TRANSIENT);
+        WPSD_Fingerprints::prune();
     }
 }

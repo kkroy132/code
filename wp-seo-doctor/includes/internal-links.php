@@ -39,6 +39,7 @@ class WPSD_Internal_Links {
         }
 
         self::index_post($post);
+        WPSD_Fingerprints::store($post);
         self::flush_graph_cache();
         WPSD_Checks_OnPage::flush_duplicate_index();
         WPSD_Checks_Content::flush_shingle_index();
@@ -48,6 +49,7 @@ class WPSD_Internal_Links {
         global $wpdb;
         $wpdb->delete(WPSD_DB::table('links'), ['source_id' => $post_id]);
         WPSD_Issues::delete_for_object($post_id);
+        WPSD_Fingerprints::forget($post_id);
         self::flush_graph_cache();
     }
 

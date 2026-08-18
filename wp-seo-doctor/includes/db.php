@@ -19,6 +19,8 @@ class WPSD_DB {
         'redirect_log' => 'wpsd_redirect_log',
         'gsc'          => 'wpsd_gsc',
         'trends'       => 'wpsd_trends',
+        'fingerprints' => 'wpsd_fingerprints',
+        'shingles'     => 'wpsd_shingles',
     ];
 
     public static function table(string $key): string {
@@ -61,6 +63,8 @@ class WPSD_DB {
         $redirect_log = self::table('redirect_log');
         $gsc          = self::table('gsc');
         $trends       = self::table('trends');
+        $fingerprints = self::table('fingerprints');
+        $shingles     = self::table('shingles');
 
         return [
             // Scan history. `queue` holds the remaining object IDs for batching.
@@ -211,6 +215,28 @@ class WPSD_DB {
                 KEY idx_date (data_date),
                 KEY idx_page (page_hash),
                 KEY idx_clicks (clicks)
+            ) {$charset};",
+
+            // One row per post: the hashes duplicate detection compares.
+            "CREATE TABLE {$fingerprints} (
+                post_id BIGINT UNSIGNED NOT NULL,
+                post_type VARCHAR(20) NOT NULL DEFAULT 'post',
+                title_hash CHAR(32) NOT NULL DEFAULT '',
+                desc_hash CHAR(32) NOT NULL DEFAULT '',
+                word_count INT UNSIGNED NOT NULL DEFAULT 0,
+                updated_at DATETIME NOT NULL,
+                PRIMARY KEY (post_id),
+                KEY idx_title (title_hash),
+                KEY idx_desc (desc_hash)
+            ) {$charset};",
+
+            // Sampled content shingles. Roughly 1 in 16 is kept, so a
+            // 300-word post costs about 19 rows rather than 297.
+            "CREATE TABLE {$shingles} (
+                post_id BIGINT UNSIGNED NOT NULL,
+                shingle CHAR(16) NOT NULL,
+                PRIMARY KEY (post_id, shingle),
+                KEY idx_shingle (shingle)
             ) {$charset};",
 
             // Daily snapshot for trend reporting.
