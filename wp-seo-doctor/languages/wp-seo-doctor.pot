@@ -1,0 +1,4244 @@
+# Copyright (C) 2026 WP SEO Doctor
+# This file is distributed under the GPLv2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: WP SEO Doctor 1.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-21T16:30:55+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Domain: wp-seo-doctor\n"
+
+#: includes/admin-menu.php:33
+msgid "SEO Dashboard"
+msgstr ""
+
+#: includes/admin-menu.php:34
+#: includes/admin-menu.php:484
+msgid "Dashboard"
+msgstr ""
+
+#: includes/admin-menu.php:38
+#: includes/admin-menu.php:39
+msgid "SEO Audit"
+msgstr ""
+
+#: includes/admin-menu.php:43
+#: includes/admin-menu.php:44
+#: includes/reports.php:422
+#: templates/audit.php:113
+#: templates/audit.php:139
+#: templates/woocommerce.php:136
+msgid "Issues"
+msgstr ""
+
+#: includes/admin-menu.php:48
+#: includes/checks/registry.php:209
+msgid "Internal Linking"
+msgstr ""
+
+#: includes/admin-menu.php:49
+msgid "Internal Links"
+msgstr ""
+
+#: includes/admin-menu.php:53
+#: includes/admin-menu.php:54
+msgid "Broken Links"
+msgstr ""
+
+#: includes/admin-menu.php:58
+#: includes/admin-menu.php:59
+msgid "404 Monitor"
+msgstr ""
+
+#: includes/admin-menu.php:63
+msgid "Redirect Manager"
+msgstr ""
+
+#: includes/admin-menu.php:64
+#: templates/settings.php:208
+msgid "Redirects"
+msgstr ""
+
+#: includes/admin-menu.php:68
+#: includes/admin-menu.php:69
+#: includes/checks/registry.php:208
+#: templates/settings.php:231
+msgid "Content SEO"
+msgstr ""
+
+#: includes/admin-menu.php:73
+#: templates/settings.php:258
+msgid "Google Search Console"
+msgstr ""
+
+#: includes/admin-menu.php:74
+#: templates/settings.php:20
+msgid "Search Console"
+msgstr ""
+
+#: includes/admin-menu.php:78
+#: includes/admin-menu.php:79
+msgid "AI SEO"
+msgstr ""
+
+#: includes/admin-menu.php:83
+#: includes/admin-menu.php:84
+#: includes/checks/registry.php:211
+msgid "Affiliate SEO"
+msgstr ""
+
+#: includes/admin-menu.php:88
+#: includes/admin-menu.php:89
+#: includes/checks/registry.php:210
+msgid "WooCommerce SEO"
+msgstr ""
+
+#: includes/admin-menu.php:94
+#: includes/admin-menu.php:95
+#: templates/reports.php:20
+#: templates/settings.php:23
+msgid "Reports"
+msgstr ""
+
+#: includes/admin-menu.php:99
+#: includes/admin-menu.php:100
+#: includes/admin-menu.php:479
+msgid "Settings"
+msgstr ""
+
+#: includes/admin-menu.php:110
+msgid "SEO Doctor"
+msgstr ""
+
+#: includes/admin-menu.php:119
+#: includes/admin-menu.php:179
+#: includes/privacy.php:32
+#: includes/privacy.php:74
+#: includes/privacy.php:85
+#: includes/privacy.php:97
+msgid "WP SEO Doctor"
+msgstr ""
+
+#: includes/admin-menu.php:148
+msgid "You do not have permission to view this page."
+msgstr ""
+
+#: includes/admin-menu.php:187
+msgid "Health"
+msgstr ""
+
+#: includes/admin-menu.php:192
+msgid "Scan in progress"
+msgstr ""
+
+#: includes/admin-menu.php:196
+msgid "Run full scan"
+msgstr ""
+
+#: includes/admin-menu.php:214
+msgid "Scanning…"
+msgstr ""
+
+#. translators: 1: processed count, 2: total count
+#: includes/admin-menu.php:219
+msgid "%1$d of %2$d pages"
+msgstr ""
+
+#: includes/admin-menu.php:225
+#: templates/redirects.php:120
+msgid "Cancel"
+msgstr ""
+
+#: includes/admin-menu.php:340
+msgid "Search Console has been disconnected."
+msgstr ""
+
+#: includes/admin-menu.php:359
+msgid "Settings saved."
+msgstr ""
+
+#: includes/admin-menu.php:386
+msgid "Redirect updated."
+msgstr ""
+
+#: includes/admin-menu.php:386
+#: includes/ajax.php:416
+msgid "Redirect created."
+msgstr ""
+
+#. translators: %s: maximum file size
+#: includes/admin-menu.php:406
+msgid "That file is larger than %s. Split the import into smaller files."
+msgstr ""
+
+#: includes/admin-menu.php:422
+msgid "No CSV content was supplied."
+msgstr ""
+
+#. translators: 1: imported count, 2: skipped count
+#: includes/admin-menu.php:430
+msgid "Imported %1$d redirects, skipped %2$d."
+msgstr ""
+
+#: includes/ai.php:34
+msgid "AI features are turned off. Enable them in WP SEO Doctor → Settings → AI."
+msgstr ""
+
+#: includes/ai.php:37
+msgid "No AI API key is configured. Add one in WP SEO Doctor → Settings → AI."
+msgstr ""
+
+#. translators: %d: HTTP status code
+#: includes/ai.php:97
+#: includes/ai.php:150
+msgid "The AI provider returned HTTP %d."
+msgstr ""
+
+#: includes/ai.php:111
+#: includes/ai.php:158
+msgid "The AI provider returned an empty response."
+msgstr ""
+
+#: includes/ai.php:190
+msgid "The AI response could not be parsed as JSON."
+msgstr ""
+
+#: includes/ai.php:221
+msgid "Issue not found."
+msgstr ""
+
+#: includes/ai.php:252
+#: includes/ai.php:284
+#: includes/ai.php:318
+#: includes/ai.php:372
+#: includes/ai.php:426
+#: includes/ai.php:460
+#: includes/ai.php:568
+msgid "Post not found."
+msgstr ""
+
+#: includes/ai.php:265
+#: includes/ai.php:296
+#: includes/ai.php:475
+#: includes/ai.php:581
+msgid "(none set)"
+msgstr ""
+
+#: includes/ai.php:443
+#: includes/ai.php:580
+msgid "(none)"
+msgstr ""
+
+#: includes/ai.php:479
+msgid "(no headings)"
+msgstr ""
+
+#: includes/ai.php:509
+msgid "There are no open issues to plan around. Run a scan first."
+msgstr ""
+
+#: includes/ai.php:585
+msgid "Search Console data: not available"
+msgstr ""
+
+#: includes/ai.php:611
+msgid "Please enter a question."
+msgstr ""
+
+#: includes/ai.php:639
+msgid "(none — no scan has run yet)"
+msgstr ""
+
+#: includes/ajax.php:53
+msgid "Security check failed. Reload the page and try again."
+msgstr ""
+
+#: includes/ajax.php:56
+msgid "You do not have permission to do that."
+msgstr ""
+
+#: includes/ajax.php:102
+msgid "Missing scan ID."
+msgstr ""
+
+#: includes/ajax.php:128
+msgid "Scan cancelled."
+msgstr ""
+
+#: includes/ajax.php:139
+msgid "Scan deleted."
+msgstr ""
+
+#: includes/ajax.php:147
+#: includes/ajax.php:282
+msgid "Missing post ID."
+msgstr ""
+
+#. translators: 1: issue count, 2: passed check count
+#: includes/ajax.php:155
+msgid "Re-checked: %1$d issues, %2$d checks passed."
+msgstr ""
+
+#: includes/ajax.php:194
+msgid "Missing link ID."
+msgstr ""
+
+#. translators: 1: occurrences replaced, 2: posts updated
+#: includes/ajax.php:206
+msgid "Replaced %1$d occurrence(s) across %2$d post(s)."
+msgstr ""
+
+#. translators: 1: links unwrapped, 2: posts updated
+#: includes/ajax.php:221
+msgid "Removed %1$d link(s) from %2$d post(s)."
+msgstr ""
+
+#: includes/ajax.php:230
+msgid "Link ignored."
+msgstr ""
+
+#: includes/ajax.php:235
+msgid "Link restored to the check queue."
+msgstr ""
+
+#. translators: 1: link state, 2: HTTP status code
+#: includes/ajax.php:246
+msgid "Rechecked: %1$s (HTTP %2$d)."
+msgstr ""
+
+#: includes/ajax.php:254
+msgid "Unknown link action."
+msgstr ""
+
+#: includes/ajax.php:300
+msgid "A source, target and anchor text are all required."
+msgstr ""
+
+#: includes/ajax.php:305
+msgid "Could not place the link — the anchor text was not found as plain text in the source post. Edit the post manually to add it."
+msgstr ""
+
+#: includes/ajax.php:309
+msgid "Link inserted."
+msgstr ""
+
+#: includes/ajax.php:327
+msgid "No rows selected."
+msgstr ""
+
+#. translators: %d: number of rows
+#: includes/ajax.php:336
+msgid "%d URL(s) ignored."
+msgstr ""
+
+#. translators: %d: number of rows
+#: includes/ajax.php:347
+msgid "%d URL(s) deleted."
+msgstr ""
+
+#: includes/ajax.php:357
+msgid "A redirect target is required."
+msgstr ""
+
+#. translators: %d: number of redirects created
+#: includes/ajax.php:371
+msgid "%d redirect(s) created."
+msgstr ""
+
+#: includes/ajax.php:378
+#: includes/ajax.php:456
+msgid "Unknown action."
+msgstr ""
+
+#: includes/ajax.php:388
+#: includes/monitor-404.php:280
+msgid "404 record not found."
+msgstr ""
+
+#: includes/ajax.php:427
+msgid "No redirects selected."
+msgstr ""
+
+#. translators: %d: number deleted
+#: includes/ajax.php:436
+msgid "%d redirect(s) deleted."
+msgstr ""
+
+#: includes/ajax.php:450
+msgid "Redirects enabled."
+msgstr ""
+
+#: includes/ajax.php:451
+msgid "Redirects disabled."
+msgstr ""
+
+#. translators: %d: number of chains flattened
+#: includes/ajax.php:480
+msgid "%d redirect chain(s) flattened."
+msgstr ""
+
+#. translators: 1: row count, 2: start date, 3: end date
+#: includes/ajax.php:498
+msgid "Synced %1$d rows (%2$s to %3$s)."
+msgstr ""
+
+#: includes/ajax.php:505
+msgid "Search Console returned more data than one sync can retrieve, so this window is partial. Narrow the lookback period for complete figures."
+msgstr ""
+
+#: includes/ajax.php:564
+msgid "Unknown AI task."
+msgstr ""
+
+#: includes/ajax.php:589
+msgid "Could not apply that suggestion."
+msgstr ""
+
+#: includes/ajax.php:592
+msgid "Applied."
+msgstr ""
+
+#. translators: 1: links changed, 2: links examined
+#: includes/ajax.php:604
+msgid "%1$d of %2$d link(s) retagged."
+msgstr ""
+
+#. translators: 1: links changed, 2: links examined
+#: includes/ajax.php:610
+msgid "%1$d of %2$d link(s) retagged so far — continuing…"
+msgstr ""
+
+#: includes/broken-links.php:309
+#: includes/broken-links.php:366
+#: includes/broken-links.php:452
+msgid "Link not found."
+msgstr ""
+
+#: includes/broken-links.php:314
+msgid "Please supply a valid replacement URL."
+msgstr ""
+
+#: includes/checks/affiliate.php:22
+msgid "Affiliate Link Attribute Check"
+msgstr ""
+
+#: includes/checks/affiliate.php:24
+msgid "Affiliate links are missing rel=\"sponsored\" or rel=\"nofollow\"."
+msgstr ""
+
+#: includes/checks/affiliate.php:25
+msgid "Mark every monetised link rel=\"sponsored\" (or at minimum rel=\"nofollow\") to comply with Google's link guidelines."
+msgstr ""
+
+#: includes/checks/affiliate.php:32
+msgid "Broken Affiliate Link Detection"
+msgstr ""
+
+#: includes/checks/affiliate.php:34
+msgid "An affiliate link on this page is dead or points at a removed product."
+msgstr ""
+
+#: includes/checks/affiliate.php:35
+msgid "Replace the link with a live product, or remove the recommendation."
+msgstr ""
+
+#: includes/checks/affiliate.php:42
+msgid "Affiliate Redirect Chain Detection"
+msgstr ""
+
+#: includes/checks/affiliate.php:44
+msgid "An affiliate link passes through several redirects before landing."
+msgstr ""
+
+#: includes/checks/affiliate.php:45
+msgid "Point the cloaked URL directly at the merchant destination — every extra hop loses conversions and can drop tracking."
+msgstr ""
+
+#: includes/checks/affiliate.php:52
+msgid "Affiliate Link Analysis"
+msgstr ""
+
+#: includes/checks/affiliate.php:54
+msgid "The ratio of affiliate links to content is unusually high."
+msgstr ""
+
+#: includes/checks/affiliate.php:55
+msgid "Add more original analysis between offers so the page reads as a review rather than a link list."
+msgstr ""
+
+#. translators: 1: number of links, 2: required rel values
+#: includes/checks/affiliate.php:92
+msgid "%1$d affiliate link(s) are missing rel=\"%2$s\"."
+msgstr ""
+
+#. translators: %d: number of broken affiliate links
+#: includes/checks/affiliate.php:123
+msgid "%d affiliate link(s) on this page are dead — every click is lost revenue."
+msgstr ""
+
+#. translators: %d: number of links
+#: includes/checks/affiliate.php:153
+msgid "%d affiliate link(s) redirect through multiple hops before reaching the merchant."
+msgstr ""
+
+#. translators: 1: number of affiliate links, 2: word count, 3: links per 100 words
+#: includes/checks/affiliate.php:181
+msgid "%1$d affiliate links in %2$d words (%3$s per 100 words)."
+msgstr ""
+
+#: includes/checks/content.php:18
+msgid "Duplicate Content Signals"
+msgstr ""
+
+#: includes/checks/content.php:20
+msgid "This page substantially overlaps another page on the site."
+msgstr ""
+
+#: includes/checks/content.php:21
+msgid "Merge the pages, rewrite one of them, or canonicalise the weaker version to the stronger one."
+msgstr ""
+
+#: includes/checks/content.php:28
+msgid "Content Decay Detection"
+msgstr ""
+
+#: includes/checks/content.php:30
+msgid "Search traffic to this page is falling."
+msgstr ""
+
+#: includes/checks/content.php:31
+msgid "Refresh the content, update statistics and examples, and re-promote it internally."
+msgstr ""
+
+#: includes/checks/content.php:38
+msgid "Outdated Content Detection"
+msgstr ""
+
+#: includes/checks/content.php:40
+msgid "The page has not been updated in a long time."
+msgstr ""
+
+#: includes/checks/content.php:41
+msgid "Review the page for accuracy and update it — freshness matters most for time-sensitive topics."
+msgstr ""
+
+#: includes/checks/content.php:48
+msgid "Content Optimization Suggestions"
+msgstr ""
+
+#: includes/checks/content.php:50
+msgid "The page is missing structural elements that help readers and crawlers."
+msgstr ""
+
+#: includes/checks/content.php:51
+msgid "Add subheadings, images, lists and internal links; break up very long paragraphs."
+msgstr ""
+
+#. translators: 1: similarity percentage, 2: other page title
+#: includes/checks/content.php:90
+msgid "%1$s%% of this page overlaps \"%2$s\"."
+msgstr ""
+
+#. translators: 1: percentage drop, 2: previous clicks, 3: recent clicks
+#: includes/checks/content.php:119
+msgid "Clicks fell %1$s%% (%2$d → %3$d) versus the previous period."
+msgstr ""
+
+#. translators: 1: age in days, 2: last modified date
+#: includes/checks/content.php:157
+msgid "Last updated %1$d days ago (%2$s)."
+msgstr ""
+
+#: includes/checks/content.php:173
+msgid "add at least one image"
+msgstr ""
+
+#: includes/checks/content.php:176
+msgid "add more internal links"
+msgstr ""
+
+#: includes/checks/content.php:179
+msgid "add a list or table to break up the text"
+msgstr ""
+
+#. translators: %d: number of long paragraphs
+#: includes/checks/content.php:193
+msgid "split %d very long paragraph"
+msgid_plural "split %d very long paragraphs"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/checks/content.php:200
+msgid "cite an authoritative external source"
+msgstr ""
+
+#. translators: %s: comma-separated suggestions
+#: includes/checks/content.php:211
+msgid "Content could be improved: %s."
+msgstr ""
+
+#: includes/checks/links.php:22
+msgid "Weak Internal Link Detection"
+msgstr ""
+
+#: includes/checks/links.php:24
+msgid "The page links out to very few other pages on the site."
+msgstr ""
+
+#: includes/checks/links.php:25
+msgid "Link to related articles so crawlers and readers can move deeper into the site."
+msgstr ""
+
+#: includes/checks/links.php:32
+msgid "Orphan Page Finder"
+msgstr ""
+
+#: includes/checks/links.php:34
+msgid "No other page on the site links to this one."
+msgstr ""
+
+#: includes/checks/links.php:35
+msgid "Add internal links from related, well-linked pages."
+msgstr ""
+
+#: includes/checks/links.php:42
+msgid "Incoming Link Analysis"
+msgstr ""
+
+#: includes/checks/links.php:44
+msgid "The page has fewer incoming internal links than recommended."
+msgstr ""
+
+#: includes/checks/links.php:45
+msgid "Build more internal links to this page from relevant content."
+msgstr ""
+
+#: includes/checks/links.php:52
+msgid "Anchor Text Analysis"
+msgstr ""
+
+#: includes/checks/links.php:54
+msgid "Internal links use uninformative anchor text."
+msgstr ""
+
+#: includes/checks/links.php:55
+msgid "Replace \"click here\" and bare URLs with descriptive anchor text."
+msgstr ""
+
+#: includes/checks/links.php:62
+msgid "Internal Link Analysis"
+msgstr ""
+
+#: includes/checks/links.php:64
+msgid "The page links to itself."
+msgstr ""
+
+#: includes/checks/links.php:65
+msgid "Remove self-referencing links; they add no crawl or ranking value."
+msgstr ""
+
+#: includes/checks/links.php:72
+msgid "Outgoing Link Analysis"
+msgstr ""
+
+#: includes/checks/links.php:74
+msgid "The page links out to an unusually large number of external domains."
+msgstr ""
+
+#: includes/checks/links.php:75
+msgid "Trim external links, or mark commercial ones rel=\"sponsored\" / rel=\"nofollow\"."
+msgstr ""
+
+#: includes/checks/links.php:97
+msgid "This page contains no internal links at all."
+msgstr ""
+
+#. translators: 1: current count, 2: recommended minimum
+#: includes/checks/links.php:100
+msgid "Only %1$d internal link(s); at least %2$d recommended."
+msgstr ""
+
+#: includes/checks/links.php:132
+msgid "No internal links point to this page, so crawlers can only find it via the sitemap."
+msgstr ""
+
+#. translators: 1: incoming link count, 2: recommended minimum
+#: includes/checks/links.php:157
+msgid "Only %1$d incoming internal link(s); at least %2$d recommended."
+msgstr ""
+
+#. translators: 1: number of links, 2: sample anchors
+#: includes/checks/links.php:195
+msgid "%1$d internal link(s) use non-descriptive anchor text (e.g. %2$s)."
+msgstr ""
+
+#. translators: %d: number of self links
+#: includes/checks/links.php:224
+msgid "%d link(s) on this page point back to the same page."
+msgstr ""
+
+#. translators: 1: number of links, 2: number of domains
+#: includes/checks/links.php:253
+msgid "%1$d external links across %2$d domains — review whether they are all editorial."
+msgstr ""
+
+#: includes/checks/on-page.php:18
+msgid "SEO Title Check"
+msgstr ""
+
+#: includes/checks/on-page.php:20
+msgid "The SEO title is missing or outside the recommended length."
+msgstr ""
+
+#: includes/checks/on-page.php:21
+msgid "Write a unique title between the configured minimum and maximum length that leads with the primary topic."
+msgstr ""
+
+#: includes/checks/on-page.php:28
+msgid "Meta Description Check"
+msgstr ""
+
+#: includes/checks/on-page.php:30
+msgid "The meta description is missing or outside the recommended length."
+msgstr ""
+
+#: includes/checks/on-page.php:31
+msgid "Write a compelling description that summarises the page and includes the primary keyword."
+msgstr ""
+
+#: includes/checks/on-page.php:38
+msgid "H1 Check"
+msgstr ""
+
+#: includes/checks/on-page.php:40
+msgid "The page has no H1, or more than one."
+msgstr ""
+
+#: includes/checks/on-page.php:41
+msgid "Use exactly one H1 that describes the page topic."
+msgstr ""
+
+#: includes/checks/on-page.php:48
+msgid "Heading Structure Check"
+msgstr ""
+
+#: includes/checks/on-page.php:50
+msgid "Heading levels are skipped or the page has no subheadings."
+msgstr ""
+
+#: includes/checks/on-page.php:51
+msgid "Nest headings in order (H2 before H3) and break long content into sections."
+msgstr ""
+
+#: includes/checks/on-page.php:58
+msgid "Keyword Usage Check"
+msgstr ""
+
+#: includes/checks/on-page.php:60
+msgid "The focus keyword is missing from key positions, or over-used."
+msgstr ""
+
+#: includes/checks/on-page.php:61
+msgid "Use the focus keyword in the title, meta description, first paragraph and at least one subheading."
+msgstr ""
+
+#: includes/checks/on-page.php:68
+msgid "Content Length Check"
+msgstr ""
+
+#: includes/checks/on-page.php:70
+msgid "The page is shorter than the configured minimum word count."
+msgstr ""
+
+#: includes/checks/on-page.php:71
+msgid "Expand the page so it fully answers the query it targets."
+msgstr ""
+
+#: includes/checks/on-page.php:78
+msgid "Thin Content Detection"
+msgstr ""
+
+#: includes/checks/on-page.php:80
+msgid "The page has very little unique content."
+msgstr ""
+
+#: includes/checks/on-page.php:81
+msgid "Rewrite, expand, merge into a stronger page, or noindex it."
+msgstr ""
+
+#: includes/checks/on-page.php:88
+msgid "Image ALT Check"
+msgstr ""
+
+#: includes/checks/on-page.php:90
+msgid "Images are missing descriptive ALT text."
+msgstr ""
+
+#: includes/checks/on-page.php:91
+msgid "Describe each meaningful image in its ALT attribute; leave it empty only for decorative images."
+msgstr ""
+
+#: includes/checks/on-page.php:98
+msgid "Duplicate Title Detection"
+msgstr ""
+
+#: includes/checks/on-page.php:100
+msgid "Another page uses the same SEO title."
+msgstr ""
+
+#: includes/checks/on-page.php:101
+msgid "Give every indexable page a distinct title so they do not compete in search."
+msgstr ""
+
+#: includes/checks/on-page.php:108
+msgid "Duplicate Meta Description Detection"
+msgstr ""
+
+#: includes/checks/on-page.php:110
+msgid "Another page uses the same meta description."
+msgstr ""
+
+#: includes/checks/on-page.php:111
+msgid "Write a unique description for each page."
+msgstr ""
+
+#: includes/checks/on-page.php:118
+msgid "Canonical Check"
+msgstr ""
+
+#: includes/checks/on-page.php:120
+msgid "The canonical URL is missing, malformed, or points somewhere unexpected."
+msgstr ""
+
+#: includes/checks/on-page.php:121
+msgid "Point the canonical at the preferred version of this page — usually itself."
+msgstr ""
+
+#: includes/checks/on-page.php:128
+msgid "Noindex Check"
+msgstr ""
+
+#: includes/checks/on-page.php:130
+msgid "A published page is set to noindex and cannot rank."
+msgstr ""
+
+#: includes/checks/on-page.php:131
+msgid "Remove the noindex directive if this page should appear in search results."
+msgstr ""
+
+#: includes/checks/on-page.php:138
+msgid "Nofollow Check"
+msgstr ""
+
+#: includes/checks/on-page.php:140
+msgid "Internal links are marked nofollow, wasting internal link equity."
+msgstr ""
+
+#: includes/checks/on-page.php:141
+msgid "Remove rel=\"nofollow\" from internal links unless you deliberately want them uncrawled."
+msgstr ""
+
+#: includes/checks/on-page.php:159
+msgid "This page has no SEO title."
+msgstr ""
+
+#. translators: 1: current length, 2: minimum length
+#: includes/checks/on-page.php:172
+msgid "Title is only %1$d characters (recommended minimum %2$d)."
+msgstr ""
+
+#. translators: 1: current length, 2: maximum length
+#: includes/checks/on-page.php:183
+msgid "Title is %1$d characters and will be truncated in search results (recommended maximum %2$d)."
+msgstr ""
+
+#: includes/checks/on-page.php:205
+msgid "This page has no meta description, so Google will invent one."
+msgstr ""
+
+#. translators: 1: current length, 2: minimum length
+#: includes/checks/on-page.php:216
+msgid "Meta description is only %1$d characters (recommended minimum %2$d)."
+msgstr ""
+
+#. translators: 1: current length, 2: maximum length
+#: includes/checks/on-page.php:228
+msgid "Meta description is %1$d characters and will be cut off (recommended maximum %2$d)."
+msgstr ""
+
+#: includes/checks/on-page.php:241
+msgid "No meta description is set; the excerpt is being used as a fallback."
+msgstr ""
+
+#. translators: %d: number of H1 headings
+#: includes/checks/on-page.php:262
+msgid "The content contains %d H1 headings. Search engines expect one."
+msgstr ""
+
+#: includes/checks/on-page.php:277
+msgid "The H1 does not contain the focus keyword."
+msgstr ""
+
+#. translators: %d: word count
+#: includes/checks/on-page.php:300
+msgid "%d words with no subheadings. Break the content into sections."
+msgstr ""
+
+#. translators: %s: list of skipped heading transitions
+#: includes/checks/on-page.php:320
+msgid "Heading levels are skipped: %s"
+msgstr ""
+
+#. translators: %d: number of empty headings
+#: includes/checks/on-page.php:334
+msgid "%d heading(s) contain no text."
+msgstr ""
+
+#: includes/checks/on-page.php:351
+msgid "No focus keyword is set, so keyword usage cannot be evaluated."
+msgstr ""
+
+#: includes/checks/on-page.php:360
+msgid "SEO title"
+msgstr ""
+
+#: includes/checks/on-page.php:363
+msgid "meta description"
+msgstr ""
+
+#: includes/checks/on-page.php:369
+msgid "opening paragraph"
+msgstr ""
+
+#: includes/checks/on-page.php:380
+msgid "any subheading"
+msgstr ""
+
+#. translators: 1: focus keyword, 2: list of places it is missing
+#: includes/checks/on-page.php:388
+msgid "Focus keyword \"%1$s\" is missing from: %2$s."
+msgstr ""
+
+#. translators: 1: density percentage, 2: maximum percentage
+#: includes/checks/on-page.php:405
+msgid "Keyword density is %1$s%% (above the %2$s%% ceiling) — this reads as keyword stuffing."
+msgstr ""
+
+#. translators: 1: density percentage, 2: minimum percentage
+#: includes/checks/on-page.php:416
+msgid "Keyword density is %1$s%% (below the %2$s%% floor)."
+msgstr ""
+
+#. translators: 1: word count, 2: recommended minimum
+#: includes/checks/on-page.php:443
+msgid "%1$d words — below the recommended %2$d for a competitive page."
+msgstr ""
+
+#. translators: 1: word count, 2: thin-content threshold
+#: includes/checks/on-page.php:465
+msgid "Only %1$d words of content (thin-content threshold is %2$d)."
+msgstr ""
+
+#. translators: 1: images missing alt, 2: total images
+#: includes/checks/on-page.php:487
+msgid "%1$d of %2$d images have no ALT text."
+msgstr ""
+
+#. translators: 1: title, 2: number of other pages
+#: includes/checks/on-page.php:512
+msgid "The title \"%1$s\" is also used by %2$d other page(s)."
+msgstr ""
+
+#. translators: %d: number of other pages
+#: includes/checks/on-page.php:534
+msgid "This meta description is also used by %d other page(s)."
+msgstr ""
+
+#. translators: %s: canonical value
+#: includes/checks/on-page.php:557
+msgid "The canonical URL \"%s\" is not a valid absolute URL."
+msgstr ""
+
+#. translators: %s: canonical URL
+#: includes/checks/on-page.php:575
+msgid "The canonical points to an external domain (%s), which de-indexes this page."
+msgstr ""
+
+#. translators: %s: canonical URL
+#: includes/checks/on-page.php:586
+msgid "The canonical points to a different page (%s). Confirm this is intentional."
+msgstr ""
+
+#: includes/checks/on-page.php:603
+msgid "This published page is set to noindex and cannot appear in search results."
+msgstr ""
+
+#. translators: %d: number of nofollowed internal links
+#: includes/checks/on-page.php:621
+msgid "%d internal link(s) are marked rel=\"nofollow\", blocking internal link equity."
+msgstr ""
+
+#: includes/checks/registry.php:206
+msgid "On-Page SEO"
+msgstr ""
+
+#: includes/checks/registry.php:207
+msgid "Technical SEO"
+msgstr ""
+
+#. translators: 1: check id, 2: error message
+#: includes/checks/registry.php:297
+msgid "Check \"%1$s\" could not run: %2$s"
+msgstr ""
+
+#: includes/checks/technical.php:25
+msgid "XML Sitemap Check"
+msgstr ""
+
+#: includes/checks/technical.php:27
+msgid "No reachable XML sitemap was found."
+msgstr ""
+
+#: includes/checks/technical.php:28
+msgid "Publish an XML sitemap and reference it from robots.txt."
+msgstr ""
+
+#: includes/checks/technical.php:36
+msgid "Robots.txt Check"
+msgstr ""
+
+#: includes/checks/technical.php:38
+msgid "robots.txt is missing, unreachable, or blocking the whole site."
+msgstr ""
+
+#: includes/checks/technical.php:39
+msgid "Serve a robots.txt that allows crawling and points to your sitemap."
+msgstr ""
+
+#: includes/checks/technical.php:47
+msgid "HTTPS Check"
+msgstr ""
+
+#: includes/checks/technical.php:49
+msgid "The site is not served over HTTPS, or HTTP does not redirect to it."
+msgstr ""
+
+#: includes/checks/technical.php:50
+msgid "Install a TLS certificate and 301-redirect all HTTP traffic to HTTPS."
+msgstr ""
+
+#: includes/checks/technical.php:58
+#: includes/checks/technical.php:121
+msgid "Indexability Check"
+msgstr ""
+
+#: includes/checks/technical.php:60
+msgid "WordPress is configured to discourage search engines."
+msgstr ""
+
+#: includes/checks/technical.php:61
+msgid "Uncheck \"Discourage search engines from indexing this site\" in Settings → Reading."
+msgstr ""
+
+#: includes/checks/technical.php:69
+msgid "Pagination Check"
+msgstr ""
+
+#: includes/checks/technical.php:71
+msgid "Paginated archives are misconfigured."
+msgstr ""
+
+#: includes/checks/technical.php:72
+msgid "Make sure page 2+ of archives is crawlable and self-canonicalising."
+msgstr ""
+
+#: includes/checks/technical.php:81
+msgid "HTTP Status Check"
+msgstr ""
+
+#: includes/checks/technical.php:83
+msgid "The URL does not return a healthy 200 response."
+msgstr ""
+
+#: includes/checks/technical.php:84
+msgid "Fix the server error, or redirect the URL to a working page."
+msgstr ""
+
+#: includes/checks/technical.php:91
+msgid "404 Detection"
+msgstr ""
+
+#: includes/checks/technical.php:93
+msgid "A published URL returns 404."
+msgstr ""
+
+#: includes/checks/technical.php:94
+msgid "Restore the content or add a 301 redirect to the closest equivalent page."
+msgstr ""
+
+#: includes/checks/technical.php:101
+msgid "Redirect Chain Detection"
+msgstr ""
+
+#: includes/checks/technical.php:103
+msgid "The URL redirects through more than one hop."
+msgstr ""
+
+#: includes/checks/technical.php:104
+msgid "Point the first redirect straight at the final destination."
+msgstr ""
+
+#: includes/checks/technical.php:111
+msgid "Redirect Loop Detection"
+msgstr ""
+
+#: includes/checks/technical.php:113
+msgid "The URL redirects back to itself."
+msgstr ""
+
+#: includes/checks/technical.php:114
+msgid "Remove the circular redirect rule so the page can be reached."
+msgstr ""
+
+#: includes/checks/technical.php:123
+msgid "The page is blocked from indexing by a robots directive."
+msgstr ""
+
+#: includes/checks/technical.php:124
+msgid "Remove the noindex/X-Robots-Tag directive if this page should rank."
+msgstr ""
+
+#: includes/checks/technical.php:131
+msgid "Canonical URL Check"
+msgstr ""
+
+#: includes/checks/technical.php:133
+msgid "The rendered canonical tag is missing, duplicated, or points at a broken URL."
+msgstr ""
+
+#: includes/checks/technical.php:134
+msgid "Emit exactly one canonical tag pointing at a URL that returns 200."
+msgstr ""
+
+#: includes/checks/technical.php:141
+msgid "Crawl Depth Analysis"
+msgstr ""
+
+#: includes/checks/technical.php:143
+msgid "The page sits too many clicks from the homepage."
+msgstr ""
+
+#: includes/checks/technical.php:144
+msgid "Link to this page from a hub page or the main navigation to lift it closer to the homepage."
+msgstr ""
+
+#: includes/checks/technical.php:151
+msgid "Schema Detection"
+msgstr ""
+
+#: includes/checks/technical.php:153
+msgid "No structured data was found on the page."
+msgstr ""
+
+#: includes/checks/technical.php:154
+msgid "Add JSON-LD structured data matching the page type (Article, Product, FAQ…)."
+msgstr ""
+
+#: includes/checks/technical.php:161
+msgid "Open Graph Check"
+msgstr ""
+
+#: includes/checks/technical.php:163
+msgid "Open Graph tags are missing or incomplete."
+msgstr ""
+
+#: includes/checks/technical.php:164
+msgid "Add og:title, og:description, og:image and og:url so shared links render properly."
+msgstr ""
+
+#: includes/checks/technical.php:194
+msgid "No XML sitemap responded at any of the standard locations (/sitemap.xml, /sitemap_index.xml, /wp-sitemap.xml)."
+msgstr ""
+
+#. translators: %d: HTTP status code
+#: includes/checks/technical.php:209
+msgid "robots.txt returned HTTP %d."
+msgstr ""
+
+#: includes/checks/technical.php:222
+msgid "robots.txt contains \"Disallow: /\" for all user agents — the entire site is blocked from crawling."
+msgstr ""
+
+#: includes/checks/technical.php:230
+msgid "robots.txt does not declare a Sitemap: line."
+msgstr ""
+
+#: includes/checks/technical.php:243
+msgid "The site URL is not HTTPS. HTTPS is a confirmed ranking signal and required for modern browser features."
+msgstr ""
+
+#: includes/checks/technical.php:257
+msgid "The HTTP version of the site returns 200 instead of redirecting to HTTPS, creating duplicate content."
+msgstr ""
+
+#. translators: %d: HTTP status code
+#: includes/checks/technical.php:267
+msgid "HTTP redirects to HTTPS with a %d instead of a permanent 301."
+msgstr ""
+
+#: includes/checks/technical.php:281
+msgid "Settings → Reading has \"Discourage search engines\" enabled. Nothing on this site can be indexed."
+msgstr ""
+
+#: includes/checks/technical.php:301
+msgid "Page 2 of the blog archive returns 404, so older posts are unreachable by crawlers."
+msgstr ""
+
+#. translators: %d: HTTP status code
+#: includes/checks/technical.php:310
+msgid "Page 2 of the blog archive returned HTTP %d."
+msgstr ""
+
+#: includes/checks/technical.php:323
+msgid "Page 2 of the archive canonicalises to page 1, which hides its posts from search engines."
+msgstr ""
+
+#. translators: %s: error message
+#: includes/checks/technical.php:348
+msgid "The URL could not be fetched: %s"
+msgstr ""
+
+#. translators: %d: HTTP status code
+#: includes/checks/technical.php:363
+msgid "The URL returns HTTP %d."
+msgstr ""
+
+#: includes/checks/technical.php:381
+msgid "This published URL returns 404 Not Found."
+msgstr ""
+
+#. translators: 1: number of hops, 2: final URL
+#: includes/checks/technical.php:406
+msgid "This URL redirects through %1$d hops before reaching %2$s."
+msgstr ""
+
+#: includes/checks/technical.php:430
+msgid "This URL is caught in a redirect loop and can never be reached."
+msgstr ""
+
+#. translators: %s: header value
+#: includes/checks/technical.php:460
+msgid "The server sends X-Robots-Tag: %s, blocking this page from search."
+msgstr ""
+
+#. translators: %s: robots meta content
+#: includes/checks/technical.php:473
+msgid "The rendered page emits <meta name=\"robots\" content=\"%s\">, blocking indexing."
+msgstr ""
+
+#: includes/checks/technical.php:498
+msgid "The rendered page has no canonical tag."
+msgstr ""
+
+#. translators: %d: number of canonical tags
+#: includes/checks/technical.php:507
+msgid "The page emits %d canonical tags. Search engines will ignore all of them."
+msgstr ""
+
+#. translators: 1: canonical URL, 2: HTTP status
+#: includes/checks/technical.php:529
+msgid "The canonical points to %1$s which returns HTTP %2$d."
+msgstr ""
+
+#. translators: %s: canonical URL
+#: includes/checks/technical.php:541
+msgid "The canonical points to %s, which itself redirects."
+msgstr ""
+
+#: includes/checks/technical.php:568
+msgid "This page cannot be reached from the homepage by following internal links."
+msgstr ""
+
+#. translators: 1: click depth, 2: configured maximum
+#: includes/checks/technical.php:578
+msgid "This page is %1$d clicks from the homepage (maximum recommended: %2$d)."
+msgstr ""
+
+#: includes/checks/technical.php:620
+msgid "The page contains a JSON-LD block that is not valid JSON, so search engines will discard it."
+msgstr ""
+
+#: includes/checks/technical.php:629
+msgid "No structured data (JSON-LD, microdata or RDFa) was found on this page."
+msgstr ""
+
+#. translators: %s: comma-separated schema types
+#: includes/checks/technical.php:639
+msgid "This product page has no Product schema (found: %s)."
+msgstr ""
+
+#. translators: %s: comma-separated schema types
+#: includes/checks/technical.php:640
+msgid "none"
+msgstr ""
+
+#. translators: %s: comma-separated list of missing tags
+#: includes/checks/technical.php:678
+msgid "Missing Open Graph tags: %s."
+msgstr ""
+
+#: includes/checks/woocommerce.php:30
+msgid "Product Title Check"
+msgstr ""
+
+#: includes/checks/woocommerce.php:32
+msgid "The product title is too short, too long, or duplicated across variants."
+msgstr ""
+
+#: includes/checks/woocommerce.php:33
+msgid "Use a descriptive title with brand, model and a key differentiator."
+msgstr ""
+
+#: includes/checks/woocommerce.php:40
+msgid "Product Meta Check"
+msgstr ""
+
+#: includes/checks/woocommerce.php:42
+msgid "The product is missing a meta description or short description."
+msgstr ""
+
+#: includes/checks/woocommerce.php:43
+msgid "Write a short description that doubles as a compelling SERP snippet."
+msgstr ""
+
+#: includes/checks/woocommerce.php:50
+msgid "Product Image ALT Check"
+msgstr ""
+
+#: includes/checks/woocommerce.php:52
+msgid "Product gallery images have no ALT text."
+msgstr ""
+
+#: includes/checks/woocommerce.php:53
+msgid "Describe each product image; image search is a real traffic source for commerce."
+msgstr ""
+
+#: includes/checks/woocommerce.php:60
+msgid "Thin Product Detection"
+msgstr ""
+
+#: includes/checks/woocommerce.php:62
+msgid "The product page has almost no unique description."
+msgstr ""
+
+#: includes/checks/woocommerce.php:63
+msgid "Replace manufacturer boilerplate with original copy covering use cases, specs and sizing."
+msgstr ""
+
+#: includes/checks/woocommerce.php:70
+msgid "Product Internal Linking"
+msgstr ""
+
+#: includes/checks/woocommerce.php:72
+msgid "The product is weakly linked from the rest of the store."
+msgstr ""
+
+#: includes/checks/woocommerce.php:73
+msgid "Add the product to a category page, related products, or a buying guide."
+msgstr ""
+
+#: includes/checks/woocommerce.php:80
+msgid "Product Canonical Check"
+msgstr ""
+
+#: includes/checks/woocommerce.php:82
+msgid "The product canonical is missing or points at a filtered/variant URL."
+msgstr ""
+
+#: includes/checks/woocommerce.php:83
+msgid "Canonicalise variants to the parent product URL."
+msgstr ""
+
+#: includes/checks/woocommerce.php:90
+msgid "Product Schema Check"
+msgstr ""
+
+#: includes/checks/woocommerce.php:92
+msgid "Product structured data is missing required fields."
+msgstr ""
+
+#: includes/checks/woocommerce.php:93
+msgid "Ensure Product schema includes name, image, price, availability and (where possible) reviews."
+msgstr ""
+
+#. translators: %d: title length
+#: includes/checks/woocommerce.php:113
+msgid "Product title is only %d characters — add brand, model or a key attribute."
+msgstr ""
+
+#: includes/checks/woocommerce.php:132
+msgid "This product has no meta description."
+msgstr ""
+
+#: includes/checks/woocommerce.php:140
+msgid "This product has no short description, which many themes show above the add-to-cart button."
+msgstr ""
+
+#: includes/checks/woocommerce.php:172
+msgid "This product has no featured image."
+msgstr ""
+
+#. translators: 1: images missing alt, 2: total product images
+#: includes/checks/woocommerce.php:192
+msgid "%1$d of %2$d product images have no ALT text."
+msgstr ""
+
+#. translators: 1: word count, 2: threshold
+#: includes/checks/woocommerce.php:215
+msgid "Product description is only %1$d words (threshold %2$d)."
+msgstr ""
+
+#: includes/checks/woocommerce.php:239
+msgid "No internal links point to this product."
+msgstr ""
+
+#. translators: %d: number of incoming links
+#: includes/checks/woocommerce.php:242
+msgid "Only %d internal link points to this product."
+msgstr ""
+
+#. translators: %s: canonical URL
+#: includes/checks/woocommerce.php:270
+msgid "The canonical points at a filtered or variant URL (%s)."
+msgstr ""
+
+#. translators: %s: comma-separated field names
+#: includes/checks/woocommerce.php:323
+msgid "Product schema is missing: %s."
+msgstr ""
+
+#: includes/content-seo.php:266
+msgid "Almost page one"
+msgstr ""
+
+#. translators: 1: query, 2: average position, 3: impressions
+#: includes/content-seo.php:272
+msgid "\"%1$s\" ranks at position %2$s with %3$d impressions."
+msgstr ""
+
+#: includes/content-seo.php:277
+msgid "Strengthen this section and add internal links using the query as anchor text."
+msgstr ""
+
+#: includes/content-seo.php:286
+msgid "Low click-through rate"
+msgstr ""
+
+#. translators: 1: CTR, 2: impressions, 3: position
+#: includes/content-seo.php:292
+msgid "%1$s%% CTR across %2$d impressions at position %3$s."
+msgstr ""
+
+#: includes/content-seo.php:297
+msgid "Rewrite the title and meta description to match search intent."
+msgstr ""
+
+#: includes/content-seo.php:306
+#: templates/content-seo.php:15
+#: templates/content-seo.php:48
+msgid "Thin content"
+msgstr ""
+
+#. translators: %d: word count
+#: includes/content-seo.php:312
+msgid "Only %d words."
+msgstr ""
+
+#: includes/content-seo.php:315
+msgid "Expand, merge into a stronger page, or noindex."
+msgstr ""
+
+#: includes/cron.php:39
+msgid "Once weekly"
+msgstr ""
+
+#: includes/cron.php:45
+msgid "Once monthly"
+msgstr ""
+
+#: includes/cron.php:129
+msgid "Timed out: no progress for six hours."
+msgstr ""
+
+#: includes/export.php:39
+msgid "You do not have permission to export reports."
+msgstr ""
+
+#: includes/export.php:69
+msgid "Could not open the output stream."
+msgstr ""
+
+#. translators: %s: site name
+#: includes/export.php:78
+msgid "Site: %s"
+msgstr ""
+
+#. translators: %s: date and time
+#: includes/export.php:83
+msgid "Generated: %s"
+msgstr ""
+
+#. translators: %s: date and time
+#: includes/export.php:156
+msgid "Generated %s"
+msgstr ""
+
+#: includes/export.php:317
+msgid "No data."
+msgstr ""
+
+#: includes/gsc.php:80
+msgid "Search Console authorisation failed: the security token did not match. Please try again."
+msgstr ""
+
+#: includes/gsc.php:125
+msgid "Google did not return an access token."
+msgstr ""
+
+#: includes/gsc.php:146
+#: includes/gsc.php:290
+msgid "Search Console is not connected."
+msgstr ""
+
+#: includes/gsc.php:154
+msgid "The Search Console session expired and there is no refresh token. Please reconnect."
+msgstr ""
+
+#: includes/gsc.php:173
+msgid "Could not refresh the Search Console access token. Please reconnect."
+msgstr ""
+
+#: includes/gsc.php:212
+msgid "Could not read the property list."
+msgstr ""
+
+#: includes/gsc.php:239
+msgid "No Search Console property is selected."
+msgstr ""
+
+#. translators: %d: HTTP status code
+#: includes/gsc.php:272
+msgid "Search Console returned HTTP %d."
+msgstr ""
+
+#: includes/helpers.php:25
+#: includes/reports.php:95
+#: includes/reports.php:423
+#: includes/score.php:101
+#: templates/audit.php:77
+#: templates/dashboard.php:73
+msgid "Critical"
+msgstr ""
+
+#: includes/helpers.php:26
+#: includes/reports.php:96
+#: includes/reports.php:424
+#: templates/audit.php:78
+#: templates/dashboard.php:79
+msgid "High"
+msgstr ""
+
+#: includes/helpers.php:27
+#: includes/reports.php:97
+#: templates/audit.php:79
+#: templates/dashboard.php:85
+msgid "Medium"
+msgstr ""
+
+#: includes/helpers.php:28
+#: includes/reports.php:98
+#: templates/audit.php:80
+#: templates/dashboard.php:91
+msgid "Low"
+msgstr ""
+
+#: includes/helpers.php:265
+msgid "The URL could not be parsed."
+msgstr ""
+
+#. translators: %s: URL scheme
+#: includes/helpers.php:274
+msgid "Refusing to fetch a \"%s\" URL; only http and https are allowed."
+msgstr ""
+
+#: includes/helpers.php:289
+msgid "Refusing to fetch a cloud metadata endpoint."
+msgstr ""
+
+#: includes/helpers.php:293
+msgid "Refusing to fetch a loopback host."
+msgstr ""
+
+#: includes/helpers.php:311
+msgid "The hostname could not be resolved."
+msgstr ""
+
+#: includes/helpers.php:318
+msgid "Refusing to fetch a host that resolves to a private or reserved address."
+msgstr ""
+
+#: includes/monitor-404.php:229
+msgid "Exact slug match"
+msgstr ""
+
+#: includes/monitor-404.php:260
+msgid "Similar slug and content"
+msgstr ""
+
+#. translators: %d: number of hits
+#: includes/monitor-404.php:289
+msgid "Created from the 404 monitor (%d hits)."
+msgstr ""
+
+#: includes/privacy.php:34
+msgid "This site uses WP SEO Doctor to audit its own SEO. Most of what the plugin stores describes the site's own content — page titles, links, and the problems it finds — and contains no visitor data."
+msgstr ""
+
+#: includes/privacy.php:39
+msgid "What may be recorded about visitors"
+msgstr ""
+
+#: includes/privacy.php:41
+msgid "404 monitor: the requested address, the referring page, the browser user-agent string, and the time of the first and most recent request. Enabled by default."
+msgstr ""
+
+#: includes/privacy.php:45
+msgid "Redirect log: the requested address, the destination, the referring page and the user-agent, for requests that matched a redirect rule. Enabled by default."
+msgstr ""
+
+#: includes/privacy.php:49
+msgid "IP addresses: not recorded unless the site owner switches IP logging on. When enabled, addresses are truncated before storage — the final octet of an IPv4 address, or everything after the first four groups of an IPv6 address, is discarded — so a stored address identifies a network rather than a device."
+msgstr ""
+
+#: includes/privacy.php:55
+msgid "How long it is kept"
+msgstr ""
+
+#. translators: 1: 404 retention in days, 2: redirect log retention in days
+#: includes/privacy.php:58
+msgid "404 records are deleted after %1$d days without a further request. Individual redirect hits are deleted after %2$d days. Both periods are configurable, and the totals shown in reports are counters that hold no visitor data."
+msgstr ""
+
+#: includes/privacy.php:63
+msgid "Services contacted"
+msgstr ""
+
+#: includes/privacy.php:64
+msgid "The plugin requests pages from this site, and from external sites it links to, in order to check whether those links still work. It sends no visitor data when it does so."
+msgstr ""
+
+#: includes/privacy.php:68
+msgid "Two optional integrations contact third parties, and only after the site owner supplies credentials for them: Google Search Console (retrieves this site's own search statistics) and an AI provider of the owner's choosing (receives page titles, descriptions and content excerpts in order to suggest improvements). Neither is enabled by default, and neither transmits visitor data."
+msgstr ""
+
+#: includes/privacy.php:131
+msgid "WP SEO Doctor stores no data keyed to an email address. Its 404 and redirect logs are keyed by URL, and any recorded IP address is truncated before storage."
+msgstr ""
+
+#: includes/redirects.php:54
+msgid "This content has been permanently removed."
+msgstr ""
+
+#: includes/redirects.php:55
+#: templates/redirects.php:32
+msgid "410 Gone"
+msgstr ""
+
+#: includes/redirects.php:201
+#: includes/redirects.php:282
+msgid "A source URL or path is required."
+msgstr ""
+
+#: includes/redirects.php:212
+msgid "A target URL is required for this redirect type."
+msgstr ""
+
+#: includes/redirects.php:229
+msgid "The source and target are the same — that would create a redirect loop."
+msgstr ""
+
+#: includes/redirects.php:236
+msgid "A redirect already exists for that source."
+msgstr ""
+
+#: includes/redirects.php:268
+msgid "Redirect not found."
+msgstr ""
+
+#: includes/redirects.php:611
+msgid "Could not open a temporary stream."
+msgstr ""
+
+#. translators: %d: maximum rows
+#: includes/redirects.php:630
+msgid "Stopped after %d rows. Import the rest in a second file."
+msgstr ""
+
+#: includes/redirects.php:677
+msgid "Imported from CSV."
+msgstr ""
+
+#. translators: 1: line number, 2: error message
+#: includes/redirects.php:685
+msgid "Line %1$d: %2$s"
+msgstr ""
+
+#: includes/redirects.php:831
+msgid "The target URL contains control characters."
+msgstr ""
+
+#: includes/redirects.php:835
+msgid "The target URL is too long."
+msgstr ""
+
+#. translators: %s: URL scheme
+#: includes/redirects.php:849
+msgid "A \"%s\" target is not allowed. Use a relative path or an http(s) URL."
+msgstr ""
+
+#: includes/redirects.php:857
+msgid "The target URL is not valid."
+msgstr ""
+
+#: includes/redirects.php:868
+msgid "Protocol-relative targets are not allowed. Use a full https:// URL."
+msgstr ""
+
+#: includes/redirects.php:880
+msgid "A relative target must start with a slash."
+msgstr ""
+
+#: includes/redirects.php:973
+msgid "The pattern is empty."
+msgstr ""
+
+#. translators: %d: maximum characters
+#: includes/redirects.php:981
+msgid "The pattern is longer than %d characters."
+msgstr ""
+
+#: includes/redirects.php:991
+msgid "The pattern nests one quantifier inside another, which can hang the site on a non-matching URL. Simplify it."
+msgstr ""
+
+#: includes/redirects.php:997
+msgid "That regular expression is not valid."
+msgstr ""
+
+#: includes/redirects.php:1055
+msgid "Invalid regular expression."
+msgstr ""
+
+#: includes/reports.php:25
+msgid "SEO Audit Report"
+msgstr ""
+
+#: includes/reports.php:26
+msgid "SEO Health Report"
+msgstr ""
+
+#: includes/reports.php:27
+msgid "Technical SEO Report"
+msgstr ""
+
+#: includes/reports.php:28
+msgid "Broken Link Report"
+msgstr ""
+
+#: includes/reports.php:29
+msgid "Internal Link Report"
+msgstr ""
+
+#: includes/reports.php:30
+msgid "404 Report"
+msgstr ""
+
+#: includes/reports.php:31
+msgid "Redirect Report"
+msgstr ""
+
+#: includes/reports.php:32
+msgid "Content Report"
+msgstr ""
+
+#: includes/reports.php:33
+msgid "SEO Trend Report"
+msgstr ""
+
+#: includes/reports.php:53
+msgid "SEO Report"
+msgstr ""
+
+#: includes/reports.php:91
+#: includes/reports.php:127
+#: templates/dashboard.php:239
+msgid "Health score"
+msgstr ""
+
+#: includes/reports.php:92
+msgid "Pages scanned"
+msgstr ""
+
+#: includes/reports.php:93
+msgid "Last scan"
+msgstr ""
+
+#: includes/reports.php:93
+msgid "Never"
+msgstr ""
+
+#: includes/reports.php:94
+#: includes/reports.php:131
+#: includes/reports.php:136
+#: templates/dashboard.php:240
+#: templates/woocommerce.php:76
+msgid "Open issues"
+msgstr ""
+
+#: includes/reports.php:101
+#: includes/reports.php:167
+msgid "Severity"
+msgstr ""
+
+#: includes/reports.php:102
+#: includes/reports.php:168
+#: templates/dashboard.php:146
+#: templates/issues.php:121
+msgid "Issue"
+msgstr ""
+
+#: includes/reports.php:103
+#: includes/reports.php:169
+#: includes/reports.php:205
+#: includes/reports.php:251
+#: includes/reports.php:287
+#: includes/reports.php:381
+#: templates/affiliate.php:68
+#: templates/affiliate.php:112
+msgid "URL"
+msgstr ""
+
+#: includes/reports.php:104
+#: includes/reports.php:170
+msgid "Detail"
+msgstr ""
+
+#: includes/reports.php:105
+msgid "Recommendation"
+msgstr ""
+
+#: includes/reports.php:128
+msgid "Grade"
+msgstr ""
+
+#: includes/reports.php:129
+msgid "30-day change"
+msgstr ""
+
+#: includes/reports.php:130
+#: templates/dashboard.php:97
+msgid "Passed checks"
+msgstr ""
+
+#: includes/reports.php:134
+msgid "Area"
+msgstr ""
+
+#: includes/reports.php:135
+#: includes/reports.php:421
+#: templates/audit.php:75
+#: templates/audit.php:112
+msgid "Score"
+msgstr ""
+
+#: includes/reports.php:161
+msgid "Technical issues"
+msgstr ""
+
+#: includes/reports.php:162
+msgid "HTTPS"
+msgstr ""
+
+#: includes/reports.php:162
+#: includes/reports.php:164
+#: templates/woocommerce.php:97
+#: templates/woocommerce.php:104
+msgid "Yes"
+msgstr ""
+
+#: includes/reports.php:162
+#: includes/reports.php:164
+msgid "No"
+msgstr ""
+
+#: includes/reports.php:163
+msgid "Sitemap"
+msgstr ""
+
+#: includes/reports.php:163
+msgid "Not detected"
+msgstr ""
+
+#: includes/reports.php:164
+msgid "Indexable"
+msgstr ""
+
+#: includes/reports.php:197
+#: includes/reports.php:425
+#: templates/dashboard.php:189
+msgid "Broken links"
+msgstr ""
+
+#: includes/reports.php:198
+#: templates/broken-links.php:29
+msgid "Broken internal"
+msgstr ""
+
+#: includes/reports.php:199
+#: templates/broken-links.php:30
+msgid "Broken external"
+msgstr ""
+
+#: includes/reports.php:200
+msgid "Broken affiliate"
+msgstr ""
+
+#: includes/reports.php:201
+msgid "Redirecting links"
+msgstr ""
+
+#: includes/reports.php:202
+msgid "Links tracked"
+msgstr ""
+
+#: includes/reports.php:206
+#: includes/reports.php:292
+#: templates/affiliate.php:67
+#: templates/affiliate.php:251
+#: templates/audit.php:110
+#: templates/broken-links.php:91
+msgid "Status"
+msgstr ""
+
+#: includes/reports.php:207
+#: templates/audit.php:108
+#: templates/content-seo.php:58
+#: templates/content-seo.php:229
+#: templates/internal-links.php:65
+#: templates/redirects.php:76
+msgid "Type"
+msgstr ""
+
+#: includes/reports.php:208
+#: templates/broken-links.php:94
+msgid "Found on"
+msgstr ""
+
+#: includes/reports.php:209
+#: templates/affiliate.php:168
+#: templates/broken-links.php:93
+msgid "Anchor"
+msgstr ""
+
+#: includes/reports.php:210
+msgid "Last checked"
+msgstr ""
+
+#: includes/reports.php:224
+#: templates/internal-links.php:159
+msgid "Orphan"
+msgstr ""
+
+#: includes/reports.php:232
+#: templates/internal-links.php:16
+#: templates/internal-links.php:31
+msgid "Weakly linked"
+msgstr ""
+
+#: includes/reports.php:241
+#: templates/ai.php:79
+#: templates/dashboard.php:207
+#: templates/internal-links.php:26
+msgid "Internal links"
+msgstr ""
+
+#: includes/reports.php:242
+#: templates/internal-links.php:27
+#: templates/settings.php:165
+msgid "External links"
+msgstr ""
+
+#: includes/reports.php:243
+msgid "Pages with links"
+msgstr ""
+
+#: includes/reports.php:244
+#: templates/dashboard.php:201
+#: templates/internal-links.php:15
+#: templates/internal-links.php:30
+#: templates/internal-links.php:54
+msgid "Orphan pages"
+msgstr ""
+
+#: includes/reports.php:245
+#: templates/internal-links.php:95
+msgid "Weakly linked pages"
+msgstr ""
+
+#: includes/reports.php:246
+msgid "Average links per page"
+msgstr ""
+
+#: includes/reports.php:249
+#: includes/reports.php:379
+msgid "Problem"
+msgstr ""
+
+#: includes/reports.php:250
+#: includes/reports.php:380
+#: templates/ai.php:55
+#: templates/content-seo.php:57
+#: templates/content-seo.php:144
+#: templates/content-seo.php:187
+#: templates/content-seo.php:230
+#: templates/internal-links.php:64
+msgid "Page"
+msgstr ""
+
+#: includes/reports.php:252
+#: templates/woocommerce.php:75
+msgid "Incoming links"
+msgstr ""
+
+#: includes/reports.php:280
+msgid "Distinct 404 URLs"
+msgstr ""
+
+#: includes/reports.php:281
+#: includes/reports.php:321
+#: templates/monitor-404.php:27
+#: templates/redirects.php:33
+msgid "Total hits"
+msgstr ""
+
+#: includes/reports.php:282
+#: templates/monitor-404.php:28
+msgid "Seen this week"
+msgstr ""
+
+#: includes/reports.php:283
+#: templates/monitor-404.php:29
+#: templates/monitor-404.php:51
+msgid "Unresolved"
+msgstr ""
+
+#: includes/reports.php:284
+#: templates/monitor-404.php:30
+#: templates/monitor-404.php:52
+#: templates/monitor-404.php:98
+msgid "Redirected"
+msgstr ""
+
+#: includes/reports.php:288
+#: includes/reports.php:330
+#: templates/monitor-404.php:84
+#: templates/redirects.php:162
+msgid "Hits"
+msgstr ""
+
+#: includes/reports.php:289
+#: templates/monitor-404.php:85
+msgid "First seen"
+msgstr ""
+
+#: includes/reports.php:290
+#: templates/monitor-404.php:86
+msgid "Last seen"
+msgstr ""
+
+#: includes/reports.php:291
+#: templates/monitor-404.php:87
+#: templates/redirects.php:284
+msgid "Referrer"
+msgstr ""
+
+#: includes/reports.php:311
+#: includes/reports.php:318
+#: templates/redirects.php:30
+#: templates/redirects.php:102
+msgid "Enabled"
+msgstr ""
+
+#: includes/reports.php:311
+#: templates/settings.php:34
+msgid "Disabled"
+msgstr ""
+
+#: includes/reports.php:317
+msgid "Redirect rules"
+msgstr ""
+
+#: includes/reports.php:319
+msgid "Regex rules"
+msgstr ""
+
+#: includes/reports.php:320
+msgid "410 Gone rules"
+msgstr ""
+
+#: includes/reports.php:322
+msgid "Chains detected"
+msgstr ""
+
+#: includes/reports.php:323
+msgid "Loops detected"
+msgstr ""
+
+#: includes/reports.php:326
+#: templates/redirects.php:60
+#: templates/redirects.php:158
+msgid "Source"
+msgstr ""
+
+#: includes/reports.php:327
+#: templates/redirects.php:68
+#: templates/redirects.php:159
+msgid "Target"
+msgstr ""
+
+#: includes/reports.php:328
+#: templates/redirects.php:160
+#: templates/redirects.php:283
+msgid "Code"
+msgstr ""
+
+#: includes/reports.php:329
+#: templates/redirects.php:94
+#: templates/redirects.php:161
+msgid "Match"
+msgstr ""
+
+#: includes/reports.php:331
+#: templates/redirects.php:163
+msgid "Last hit"
+msgstr ""
+
+#: includes/reports.php:332
+msgid "State"
+msgstr ""
+
+#: includes/reports.php:345
+msgid "Thin"
+msgstr ""
+
+#: includes/reports.php:354
+msgid "Outdated"
+msgstr ""
+
+#: includes/reports.php:363
+msgid "Decaying"
+msgstr ""
+
+#: includes/reports.php:373
+#: templates/content-seo.php:25
+msgid "Thin pages"
+msgstr ""
+
+#: includes/reports.php:374
+#: templates/content-seo.php:27
+msgid "Outdated pages"
+msgstr ""
+
+#: includes/reports.php:375
+#: templates/content-seo.php:26
+msgid "Duplicate clusters"
+msgstr ""
+
+#: includes/reports.php:376
+#: templates/content-seo.php:28
+msgid "Decaying pages"
+msgstr ""
+
+#: includes/reports.php:382
+msgid "Words / change"
+msgstr ""
+
+#: includes/reports.php:383
+#: templates/content-seo.php:189
+msgid "Last modified"
+msgstr ""
+
+#: includes/reports.php:410
+msgid "Window"
+msgstr ""
+
+#. translators: %d: number of days
+#: includes/reports.php:412
+msgid "%d day"
+msgid_plural "%d days"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/reports.php:415
+msgid "Snapshots"
+msgstr ""
+
+#: includes/reports.php:416
+msgid "Score change"
+msgstr ""
+
+#: includes/reports.php:417
+msgid "Direction"
+msgstr ""
+
+#: includes/reports.php:420
+msgid "Date"
+msgstr ""
+
+#: includes/reports.php:426
+msgid "404s"
+msgstr ""
+
+#: includes/reports.php:427
+msgid "Orphans"
+msgstr ""
+
+#. translators: %s: site name
+#: includes/reports.php:458
+msgid "SEO health summary for %s"
+msgstr ""
+
+#. translators: 1: score, 2: label, 3: signed 30-day change
+#: includes/reports.php:464
+msgid "Health score: %1$d/100 (%2$s), %3$+d over 30 days"
+msgstr ""
+
+#. translators: 1: critical, 2: high, 3: medium, 4: low
+#: includes/reports.php:471
+msgid "Open issues: %1$d critical, %2$d high, %3$d medium, %4$d low"
+msgstr ""
+
+#. translators: 1: broken links, 2: unresolved 404s
+#: includes/reports.php:479
+msgid "Broken links: %1$d — Unresolved 404s: %2$d"
+msgstr ""
+
+#: includes/reports.php:486
+msgid "Fix these first:"
+msgstr ""
+
+#. translators: 1: site name, 2: score
+#: includes/reports.php:504
+msgid "[%1$s] SEO health: %2$d/100"
+msgstr ""
+
+#: includes/scanner.php:45
+msgid "Unknown scan type."
+msgstr ""
+
+#: includes/scanner.php:54
+msgid "A scan is already running. Wait for it to finish or cancel it first."
+msgstr ""
+
+#: includes/scanner.php:58
+msgid "Abandoned: superseded by a new scan."
+msgstr ""
+
+#: includes/scanner.php:75
+msgid "Could not create the scan record."
+msgstr ""
+
+#: includes/scanner.php:111
+msgid "Scan not found."
+msgstr ""
+
+#: includes/scanner.php:167
+msgid "Page could not be analysed"
+msgstr ""
+
+#: includes/scanner.php:280
+msgid "Cancelled by user."
+msgstr ""
+
+#: includes/score.php:49
+msgid "Not scanned yet"
+msgstr ""
+
+#: includes/score.php:97
+msgid "Excellent"
+msgstr ""
+
+#: includes/score.php:98
+msgid "Good"
+msgstr ""
+
+#: includes/score.php:99
+msgid "Needs work"
+msgstr ""
+
+#: includes/score.php:100
+msgid "Poor"
+msgstr ""
+
+#: templates/affiliate.php:15
+#: templates/affiliate.php:232
+msgid "All affiliate links"
+msgstr ""
+
+#: templates/affiliate.php:16
+#: templates/affiliate.php:57
+msgid "Dead product URLs"
+msgstr ""
+
+#: templates/affiliate.php:17
+msgid "Redirects & chains"
+msgstr ""
+
+#: templates/affiliate.php:18
+msgid "Missing rel attributes"
+msgstr ""
+
+#: templates/affiliate.php:19
+msgid "Outbound domains"
+msgstr ""
+
+#: templates/affiliate.php:26
+msgid "Affiliate URLs"
+msgstr ""
+
+#: templates/affiliate.php:27
+msgid "Pages using them"
+msgstr ""
+
+#: templates/affiliate.php:28
+#: templates/affiliate.php:207
+#: templates/broken-links.php:28
+#: templates/broken-links.php:50
+msgid "Broken"
+msgstr ""
+
+#: templates/affiliate.php:29
+#: templates/broken-links.php:31
+#: templates/broken-links.php:51
+msgid "Redirecting"
+msgstr ""
+
+#: templates/affiliate.php:30
+#: templates/redirects.php:226
+msgid "Redirect chains"
+msgstr ""
+
+#: templates/affiliate.php:31
+msgid "Missing rel"
+msgstr ""
+
+#: templates/affiliate.php:36
+msgid "Re-detect affiliate links"
+msgstr ""
+
+#: templates/affiliate.php:37
+msgid "Check links"
+msgstr ""
+
+#: templates/affiliate.php:39
+msgid "Detection settings"
+msgstr ""
+
+#: templates/affiliate.php:58
+msgid "Affiliate destinations returning an error. Every click on these earns nothing and frustrates readers."
+msgstr ""
+
+#: templates/affiliate.php:62
+msgid "No dead affiliate links."
+msgstr ""
+
+#: templates/affiliate.php:69
+#: templates/affiliate.php:114
+#: templates/affiliate.php:254
+msgid "Used on"
+msgstr ""
+
+#: templates/affiliate.php:70
+#: templates/broken-links.php:96
+#: templates/issues.php:123
+#: templates/monitor-404.php:88
+msgid "Actions"
+msgstr ""
+
+#: templates/affiliate.php:87
+#: templates/affiliate.php:274
+#: templates/broken-links.php:149
+msgid "Recheck"
+msgstr ""
+
+#: templates/affiliate.php:88
+#: templates/broken-links.php:150
+msgid "Replace"
+msgstr ""
+
+#: templates/affiliate.php:89
+#: templates/broken-links.php:151
+msgid "Unlink"
+msgstr ""
+
+#: templates/affiliate.php:102
+msgid "Affiliate redirect chains"
+msgstr ""
+
+#: templates/affiliate.php:103
+msgid "Multiple hops between the click and the merchant lose conversions and can drop tracking parameters."
+msgstr ""
+
+#: templates/affiliate.php:106
+msgid "No multi-hop affiliate redirects."
+msgstr ""
+
+#: templates/affiliate.php:111
+#: templates/redirects.php:241
+msgid "Hops"
+msgstr ""
+
+#: templates/affiliate.php:113
+msgid "Final destination"
+msgstr ""
+
+#: templates/affiliate.php:130
+msgid "Single-hop redirects"
+msgstr ""
+
+#: templates/affiliate.php:132
+msgid "None."
+msgstr ""
+
+#: templates/affiliate.php:149
+msgid "Affiliate links missing rel attributes"
+msgstr ""
+
+#. translators: %s: comma-separated rel values
+#: templates/affiliate.php:154
+msgid "Monetised links should carry rel=\"%s\". Google treats undisclosed paid links as a link-scheme violation."
+msgstr ""
+
+#: templates/affiliate.php:162
+msgid "Every affiliate link is correctly marked."
+msgstr ""
+
+#: templates/affiliate.php:169
+msgid "Current rel"
+msgstr ""
+
+#: templates/affiliate.php:170
+msgid "On page"
+msgstr ""
+
+#: templates/affiliate.php:194
+msgid "Outbound link analysis"
+msgstr ""
+
+#: templates/affiliate.php:198
+msgid "No external links recorded."
+msgstr ""
+
+#: templates/affiliate.php:203
+#: templates/affiliate.php:253
+msgid "Domain"
+msgstr ""
+
+#: templates/affiliate.php:204
+#: templates/settings.php:17
+msgid "Links"
+msgstr ""
+
+#: templates/affiliate.php:205
+#: templates/audit.php:76
+#: templates/audit.php:111
+#: templates/dashboard.php:147
+msgid "Pages"
+msgstr ""
+
+#: templates/affiliate.php:206
+#: templates/broken-links.php:128
+#: templates/settings.php:22
+msgid "Affiliate"
+msgstr ""
+
+#: templates/affiliate.php:244
+msgid "No affiliate links detected."
+msgstr ""
+
+#: templates/affiliate.php:245
+msgid "Add your networks and cloaking prefixes in Settings → Affiliate, then re-detect."
+msgstr ""
+
+#: templates/affiliate.php:255
+#: templates/broken-links.php:95
+msgid "Checked"
+msgstr ""
+
+#: templates/affiliate.php:269
+#: templates/broken-links.php:144
+#: templates/monitor-404.php:103
+#: templates/redirects.php:179
+msgid "ago"
+msgstr ""
+
+#: templates/affiliate.php:270
+#: templates/broken-links.php:145
+msgid "never"
+msgstr ""
+
+#: templates/ai.php:16
+msgid "AI features are not available yet"
+msgstr ""
+
+#: templates/ai.php:18
+msgid "Everything on this page runs against your own API key. Nothing is sent anywhere until you press a button."
+msgstr ""
+
+#: templates/ai.php:21
+msgid "Configure AI"
+msgstr ""
+
+#: templates/ai.php:28
+msgid "AI SEO action plan"
+msgstr ""
+
+#: templates/ai.php:29
+msgid "Turns the current open issues into an ordered plan, sequenced so blocking fixes come first."
+msgstr ""
+
+#: templates/ai.php:32
+msgid "Generate action plan"
+msgstr ""
+
+#: templates/ai.php:39
+msgid "Ask the SEO assistant"
+msgstr ""
+
+#: templates/ai.php:40
+msgid "Questions are answered with your current audit state — score, top issues, link and 404 counts — as context."
+msgstr ""
+
+#: templates/ai.php:44
+msgid "e.g. Which of my current issues is costing me the most traffic?"
+msgstr ""
+
+#: templates/ai.php:46
+msgid "Ask"
+msgstr ""
+
+#: templates/ai.php:51
+msgid "Per-page assistance"
+msgstr ""
+
+#: templates/ai.php:52
+msgid "Pick a page, then run any of the tasks against it. Suggestions can be applied with one click."
+msgstr ""
+
+#: templates/ai.php:57
+msgid "— Select a page —"
+msgstr ""
+
+#: templates/ai.php:76
+msgid "Title suggestions"
+msgstr ""
+
+#: templates/ai.php:77
+msgid "Meta descriptions"
+msgstr ""
+
+#: templates/ai.php:78
+msgid "ALT text"
+msgstr ""
+
+#: templates/ai.php:80
+#: templates/internal-links.php:18
+#: templates/internal-links.php:184
+#: templates/internal-links.php:213
+msgid "Anchor text"
+msgstr ""
+
+#: templates/ai.php:81
+msgid "Content optimisation"
+msgstr ""
+
+#: templates/ai.php:82
+msgid "Search readiness"
+msgstr ""
+
+#: templates/ai.php:89
+#: templates/ai.php:97
+#: templates/settings.php:345
+msgid "Model"
+msgstr ""
+
+#: templates/ai.php:93
+#: templates/settings.php:328
+msgid "Provider"
+msgstr ""
+
+#: templates/ai.php:101
+#: templates/settings.php:352
+msgid "Max tokens"
+msgstr ""
+
+#: templates/audit.php:17
+msgid "Run an audit"
+msgstr ""
+
+#. translators: 1: number of checks, 2: comma-separated post types
+#: templates/audit.php:22
+msgid "%1$d checks run against every published %2$s."
+msgstr ""
+
+#: templates/audit.php:31
+msgid "Complete website audit"
+msgstr ""
+
+#: templates/audit.php:34
+msgid "On-page only"
+msgstr ""
+
+#: templates/audit.php:37
+msgid "Technical only"
+msgstr ""
+
+#: templates/audit.php:40
+msgid "Content only"
+msgstr ""
+
+#: templates/audit.php:43
+msgid "Internal linking only"
+msgstr ""
+
+#: templates/audit.php:47
+msgid "Products only"
+msgstr ""
+
+#. translators: 1: schedule name, 2: next run date
+#: templates/audit.php:58
+msgid "Scheduled scan: %1$s. Next run %2$s."
+msgstr ""
+
+#: templates/audit.php:62
+msgid "not scheduled"
+msgstr ""
+
+#: templates/audit.php:72
+msgid "Latest results"
+msgstr ""
+
+#: templates/audit.php:81
+msgid "Passed"
+msgstr ""
+
+#: templates/audit.php:86
+msgid "Review all issues"
+msgstr ""
+
+#: templates/audit.php:89
+#: templates/broken-links.php:40
+#: templates/content-seo.php:32
+#: templates/internal-links.php:37
+#: templates/issues.php:84
+#: templates/monitor-404.php:41
+msgid "Export CSV"
+msgstr ""
+
+#: templates/audit.php:92
+msgid "Export PDF"
+msgstr ""
+
+#: templates/audit.php:99
+msgid "Scan history"
+msgstr ""
+
+#: templates/audit.php:102
+msgid "No scans recorded yet."
+msgstr ""
+
+#: templates/audit.php:107
+msgid "Started"
+msgstr ""
+
+#: templates/audit.php:109
+msgid "Trigger"
+msgstr ""
+
+#: templates/audit.php:114
+msgid "Duration"
+msgstr ""
+
+#: templates/audit.php:134
+msgid "critical"
+msgstr ""
+
+#: templates/audit.php:142
+#: templates/monitor-404.php:75
+#: templates/redirects.php:150
+msgid "Delete"
+msgstr ""
+
+#: templates/audit.php:153
+msgid "Checks performed"
+msgstr ""
+
+#. translators: %d: number of failing pages
+#: templates/audit.php:177
+msgid "%d failing"
+msgstr ""
+
+#: templates/audit.php:183
+msgid "Passing"
+msgstr ""
+
+#: templates/broken-links.php:32
+#: templates/broken-links.php:53
+msgid "Healthy"
+msgstr ""
+
+#: templates/broken-links.php:33
+msgid "Not yet checked"
+msgstr ""
+
+#: templates/broken-links.php:38
+msgid "Check next batch"
+msgstr ""
+
+#: templates/broken-links.php:39
+msgid "Check everything now"
+msgstr ""
+
+#: templates/broken-links.php:52
+#: templates/issues.php:74
+#: templates/monitor-404.php:53
+msgid "Ignored"
+msgstr ""
+
+#: templates/broken-links.php:54
+msgid "Unchecked"
+msgstr ""
+
+#: templates/broken-links.php:55
+#: templates/issues.php:76
+#: templates/monitor-404.php:54
+msgid "All"
+msgstr ""
+
+#: templates/broken-links.php:59
+msgid "All link types"
+msgstr ""
+
+#: templates/broken-links.php:60
+msgid "Internal"
+msgstr ""
+
+#: templates/broken-links.php:61
+msgid "External"
+msgstr ""
+
+#: templates/broken-links.php:65
+msgid "Search URL or anchor"
+msgstr ""
+
+#: templates/broken-links.php:67
+#: templates/issues.php:82
+#: templates/monitor-404.php:60
+#: templates/woocommerce.php:61
+msgid "Filter"
+msgstr ""
+
+#: templates/broken-links.php:72
+msgid "Nothing here."
+msgstr ""
+
+#: templates/broken-links.php:74
+msgid "Some links have not been checked yet — run a check batch."
+msgstr ""
+
+#: templates/broken-links.php:75
+msgid "No links match these filters."
+msgstr ""
+
+#. translators: %d: number of matching links
+#: templates/broken-links.php:82
+msgid "%d matching links."
+msgstr ""
+
+#: templates/broken-links.php:92
+msgid "Target URL"
+msgstr ""
+
+#. translators: %d: number of redirect hops
+#: templates/broken-links.php:111
+msgid "%d hops"
+msgstr ""
+
+#: templates/broken-links.php:135
+msgid "(untitled)"
+msgstr ""
+
+#: templates/broken-links.php:138
+msgid "—"
+msgstr ""
+
+#: templates/broken-links.php:153
+msgid "Unignore"
+msgstr ""
+
+#: templates/broken-links.php:155
+#: templates/issues.php:110
+#: templates/monitor-404.php:74
+msgid "Ignore"
+msgstr ""
+
+#: templates/content-seo.php:14
+msgid "Opportunities"
+msgstr ""
+
+#: templates/content-seo.php:16
+msgid "Duplicate signals"
+msgstr ""
+
+#: templates/content-seo.php:17
+#: templates/content-seo.php:128
+msgid "Content decay"
+msgstr ""
+
+#: templates/content-seo.php:18
+#: templates/content-seo.php:178
+msgid "Outdated content"
+msgstr ""
+
+#: templates/content-seo.php:52
+msgid "No thin pages found."
+msgstr ""
+
+#: templates/content-seo.php:59
+#: templates/woocommerce.php:71
+msgid "Words"
+msgstr ""
+
+#: templates/content-seo.php:60
+#: templates/internal-links.php:66
+msgid "Modified"
+msgstr ""
+
+#: templates/content-seo.php:74
+msgid "AI suggestions"
+msgstr ""
+
+#: templates/content-seo.php:87
+msgid "Duplicate content signals"
+msgstr ""
+
+#. translators: %s: similarity threshold as a percentage
+#: templates/content-seo.php:92
+msgid "Pages sharing more than %s%% of their wording. Adjust the threshold in Settings → Content."
+msgstr ""
+
+#: templates/content-seo.php:100
+msgid "No duplicate clusters found."
+msgstr ""
+
+#: templates/content-seo.php:108
+msgid "Overlapping pages"
+msgstr ""
+
+#: templates/content-seo.php:115
+msgid "words"
+msgstr ""
+
+#: templates/content-seo.php:117
+#: templates/dashboard.php:162
+#: templates/issues.php:181
+msgid "View"
+msgstr ""
+
+#: templates/content-seo.php:132
+msgid "Search Console data is required to detect decay."
+msgstr ""
+
+#: templates/content-seo.php:133
+msgid "Connect Search Console to compare recent traffic against the previous period."
+msgstr ""
+
+#: templates/content-seo.php:135
+msgid "Connect Search Console"
+msgstr ""
+
+#: templates/content-seo.php:139
+msgid "No pages are losing meaningful traffic."
+msgstr ""
+
+#: templates/content-seo.php:145
+msgid "Previous clicks"
+msgstr ""
+
+#: templates/content-seo.php:146
+msgid "Recent clicks"
+msgstr ""
+
+#: templates/content-seo.php:147
+msgid "Change"
+msgstr ""
+
+#: templates/content-seo.php:148
+msgid "Last updated"
+msgstr ""
+
+#: templates/content-seo.php:182
+msgid "Nothing is past the staleness threshold."
+msgstr ""
+
+#: templates/content-seo.php:188
+msgid "Age"
+msgstr ""
+
+#: templates/content-seo.php:190
+msgid "Clicks (28d)"
+msgstr ""
+
+#. translators: %d: age in days
+#: templates/content-seo.php:201
+msgid "%d days"
+msgstr ""
+
+#: templates/content-seo.php:216
+msgid "SEO content opportunities"
+msgstr ""
+
+#: templates/content-seo.php:221
+msgid "No opportunities identified."
+msgstr ""
+
+#: templates/content-seo.php:222
+msgid "Connect Search Console for query-level opportunities, or run a content scan."
+msgstr ""
+
+#: templates/content-seo.php:228
+#: templates/dashboard.php:145
+#: templates/issues.php:120
+msgid "Priority"
+msgstr ""
+
+#: templates/content-seo.php:231
+msgid "Signal"
+msgstr ""
+
+#: templates/content-seo.php:232
+msgid "Action"
+msgstr ""
+
+#: templates/dashboard.php:24
+msgid "No scan has run yet"
+msgstr ""
+
+#: templates/dashboard.php:25
+msgid "Run a full scan to audit every published page for on-page, technical, content and internal-linking problems."
+msgstr ""
+
+#: templates/dashboard.php:27
+msgid "Run your first scan"
+msgstr ""
+
+#: templates/dashboard.php:35
+msgid "SEO Health Score"
+msgstr ""
+
+#: templates/dashboard.php:40
+msgid "/ 100"
+msgstr ""
+
+#: templates/dashboard.php:49
+msgid "in 30 days"
+msgstr ""
+
+#. translators: 1: page count, 2: date
+#: templates/dashboard.php:59
+msgid "%1$d pages scanned on %2$s"
+msgstr ""
+
+#: templates/dashboard.php:69
+msgid "Issues by priority"
+msgstr ""
+
+#: templates/dashboard.php:104
+msgid "Score by area"
+msgstr ""
+
+#. translators: %d: issue count
+#: templates/dashboard.php:121
+msgid "%d issues"
+msgstr ""
+
+#: templates/dashboard.php:133
+msgid "Fix these first"
+msgstr ""
+
+#: templates/dashboard.php:134
+msgid "Ranked by severity multiplied by the number of pages affected — the highest-leverage work at the top."
+msgstr ""
+
+#: templates/dashboard.php:138
+msgid "Nothing to fix right now."
+msgstr ""
+
+#: templates/dashboard.php:139
+msgid "Every check passed on the last scan."
+msgstr ""
+
+#: templates/dashboard.php:139
+msgid "Run a scan to populate this list."
+msgstr ""
+
+#: templates/dashboard.php:148
+msgid "What to do"
+msgstr ""
+
+#: templates/dashboard.php:173
+msgid "Quick fixes"
+msgstr ""
+
+#: templates/dashboard.php:175
+msgid "Scan on-page SEO"
+msgstr ""
+
+#: templates/dashboard.php:176
+msgid "Scan technical SEO"
+msgstr ""
+
+#: templates/dashboard.php:177
+msgid "Check links now"
+msgstr ""
+
+#: templates/dashboard.php:178
+#: templates/internal-links.php:36
+msgid "Rebuild link graph"
+msgstr ""
+
+#: templates/dashboard.php:180
+msgid "Flatten redirect chains"
+msgstr ""
+
+#: templates/dashboard.php:185
+msgid "Site at a glance"
+msgstr ""
+
+#: templates/dashboard.php:195
+msgid "Unresolved 404s"
+msgstr ""
+
+#: templates/dashboard.php:216
+msgid "SEO trends"
+msgstr ""
+
+#: templates/dashboard.php:219
+msgid "Not enough history to chart yet."
+msgstr ""
+
+#: templates/dashboard.php:220
+msgid "A snapshot is recorded after every completed scan, and daily thereafter."
+msgstr ""
+
+#: templates/dashboard.php:227
+msgid "SEO health score over the last 30 days"
+msgstr ""
+
+#: templates/internal-links.php:14
+msgid "Overview"
+msgstr ""
+
+#: templates/internal-links.php:17
+msgid "Link opportunities"
+msgstr ""
+
+#: templates/internal-links.php:19
+msgid "Link map"
+msgstr ""
+
+#: templates/internal-links.php:28
+msgid "Pages linking out"
+msgstr ""
+
+#: templates/internal-links.php:29
+msgid "Average links / page"
+msgstr ""
+
+#: templates/internal-links.php:55
+msgid "Published pages that no other page links to. Search engines find them only through the sitemap, and they receive no internal link equity."
+msgstr ""
+
+#: templates/internal-links.php:59
+msgid "No orphan pages. Every published page has at least one incoming link."
+msgstr ""
+
+#: templates/internal-links.php:67
+msgid "Suggested link sources"
+msgstr ""
+
+#: templates/internal-links.php:83
+#: templates/internal-links.php:133
+msgid "Find sources"
+msgstr ""
+
+#. translators: %d: configured minimum incoming links
+#: templates/internal-links.php:104
+msgid "Pages with at least one but fewer than %d incoming internal links."
+msgstr ""
+
+#: templates/internal-links.php:111
+msgid "Every linked page meets the incoming-link threshold."
+msgstr ""
+
+#: templates/internal-links.php:117
+msgid "Incoming"
+msgstr ""
+
+#: templates/internal-links.php:118
+msgid "Suggested sources"
+msgstr ""
+
+#: templates/internal-links.php:145
+msgid "Internal link opportunities"
+msgstr ""
+
+#: templates/internal-links.php:146
+msgid "Each row pairs an under-linked page with the most relevant pages that could link to it. Insert adds the link to the source post automatically."
+msgstr ""
+
+#: templates/internal-links.php:151
+msgid "No opportunities found."
+msgstr ""
+
+#: templates/internal-links.php:152
+msgid "Rebuild the link graph if you have added content recently."
+msgstr ""
+
+#: templates/internal-links.php:159
+msgid "Weak"
+msgstr ""
+
+#. translators: %d: incoming link count
+#: templates/internal-links.php:166
+msgid "%d incoming links"
+msgstr ""
+
+#: templates/internal-links.php:191
+msgid "Insert link"
+msgstr ""
+
+#: templates/internal-links.php:204
+msgid "Anchor text analysis"
+msgstr ""
+
+#: templates/internal-links.php:208
+msgid "No anchor text recorded yet."
+msgstr ""
+
+#: templates/internal-links.php:214
+msgid "Uses"
+msgstr ""
+
+#: templates/internal-links.php:215
+msgid "Distinct targets"
+msgstr ""
+
+#: templates/internal-links.php:216
+msgid "Assessment"
+msgstr ""
+
+#: templates/internal-links.php:225
+msgid "Same anchor points at different pages — confusing for crawlers."
+msgstr ""
+
+#: templates/internal-links.php:228
+msgid "Very short anchor."
+msgstr ""
+
+#: templates/internal-links.php:240
+msgid "OK"
+msgstr ""
+
+#: templates/internal-links.php:251
+msgid "Internal link map"
+msgstr ""
+
+#: templates/internal-links.php:252
+msgid "The most connected pages on the site. Node size reflects incoming links; colour reflects click depth from the homepage."
+msgstr ""
+
+#: templates/internal-links.php:254
+msgid "Building map…"
+msgstr ""
+
+#: templates/internal-links.php:258
+msgid "Crawl depth distribution"
+msgstr ""
+
+#: templates/internal-links.php:271
+msgid "The link graph is empty."
+msgstr ""
+
+#: templates/internal-links.php:272
+msgid "Rebuild the link graph to populate this view."
+msgstr ""
+
+#: templates/internal-links.php:283
+msgid "Homepage"
+msgstr ""
+
+#: templates/internal-links.php:285
+msgid "6+ clicks"
+msgstr ""
+
+#. translators: %d: number of clicks from the homepage
+#: templates/internal-links.php:289
+msgid "%d clicks deep"
+msgstr ""
+
+#. translators: %d: configured maximum crawl depth
+#: templates/internal-links.php:310
+msgid "Pages deeper than %d clicks are flagged by the Crawl Depth check."
+msgstr ""
+
+#: templates/issues.php:45
+msgid "All priorities"
+msgstr ""
+
+#: templates/issues.php:55
+msgid "All areas"
+msgstr ""
+
+#: templates/issues.php:64
+msgid "All checks"
+msgstr ""
+
+#: templates/issues.php:73
+msgid "Open"
+msgstr ""
+
+#: templates/issues.php:75
+msgid "Marked fixed"
+msgstr ""
+
+#: templates/issues.php:80
+msgid "Search issues or URLs"
+msgstr ""
+
+#: templates/issues.php:83
+msgid "Reset"
+msgstr ""
+
+#. translators: %d: total matching issues
+#: templates/issues.php:93
+msgid "%d matching issues."
+msgstr ""
+
+#: templates/issues.php:101
+msgid "No issues match these filters."
+msgstr ""
+
+#: templates/issues.php:102
+msgid "Try widening the filters, or run a new scan."
+msgstr ""
+
+#: templates/issues.php:108
+#: templates/monitor-404.php:72
+#: templates/redirects.php:147
+msgid "Select all"
+msgstr ""
+
+#: templates/issues.php:111
+msgid "Mark fixed"
+msgstr ""
+
+#: templates/issues.php:112
+msgid "Reopen"
+msgstr ""
+
+#: templates/issues.php:133
+msgid "Site-wide"
+msgstr ""
+
+#: templates/issues.php:143
+msgid "Fix:"
+msgstr ""
+
+#: templates/issues.php:186
+#: templates/woocommerce.php:133
+msgid "Re-check"
+msgstr ""
+
+#: templates/issues.php:191
+msgid "Explain"
+msgstr ""
+
+#: templates/monitor-404.php:26
+msgid "Distinct URLs"
+msgstr ""
+
+#: templates/monitor-404.php:36
+msgid "404 monitoring is turned off. Enable it in Settings to start logging."
+msgstr ""
+
+#: templates/monitor-404.php:42
+msgid "Manage redirects"
+msgstr ""
+
+#: templates/monitor-404.php:58
+msgid "Search URL or referrer"
+msgstr ""
+
+#: templates/monitor-404.php:65
+msgid "No 404s logged."
+msgstr ""
+
+#: templates/monitor-404.php:66
+msgid "URLs are recorded as visitors and crawlers hit them."
+msgstr ""
+
+#: templates/monitor-404.php:108
+msgid "Suggest redirect"
+msgstr ""
+
+#: templates/redirects.php:19
+#: templates/redirects.php:29
+msgid "Rules"
+msgstr ""
+
+#: templates/redirects.php:20
+msgid "Chains & loops"
+msgstr ""
+
+#: templates/redirects.php:21
+msgid "History"
+msgstr ""
+
+#: templates/redirects.php:22
+msgid "Import / export"
+msgstr ""
+
+#: templates/redirects.php:31
+#: templates/redirects.php:97
+msgid "Regex"
+msgstr ""
+
+#: templates/redirects.php:34
+msgid "Chains"
+msgstr ""
+
+#: templates/redirects.php:35
+msgid "Loops"
+msgstr ""
+
+#: templates/redirects.php:52
+msgid "Edit redirect"
+msgstr ""
+
+#: templates/redirects.php:52
+msgid "Add a redirect"
+msgstr ""
+
+#: templates/redirects.php:64
+msgid "A site-relative path, or a full URL. Trailing slashes are ignored."
+msgstr ""
+
+#: templates/redirects.php:72
+msgid "Leave empty when using 410 Gone. In regex rules, $1, $2… insert capture groups."
+msgstr ""
+
+#: templates/redirects.php:80
+msgid "301 — Moved Permanently"
+msgstr ""
+
+#: templates/redirects.php:81
+msgid "302 — Found (temporary)"
+msgstr ""
+
+#: templates/redirects.php:82
+msgid "307 — Temporary Redirect"
+msgstr ""
+
+#: templates/redirects.php:83
+msgid "308 — Permanent Redirect"
+msgstr ""
+
+#: templates/redirects.php:84
+msgid "410 — Gone"
+msgstr ""
+
+#: templates/redirects.php:96
+msgid "Exact"
+msgstr ""
+
+#: templates/redirects.php:107
+msgid "Notes"
+msgstr ""
+
+#: templates/redirects.php:114
+msgid "Update redirect"
+msgstr ""
+
+#: templates/redirects.php:114
+msgid "Add redirect"
+msgstr ""
+
+#: templates/redirects.php:116
+msgid "Test"
+msgstr ""
+
+#: templates/redirects.php:118
+msgid "Sample URL to test, e.g. /old-page"
+msgstr ""
+
+#: templates/redirects.php:131
+msgid "Search source, target or notes"
+msgstr ""
+
+#: templates/redirects.php:132
+msgid "Search"
+msgstr ""
+
+#: templates/redirects.php:144
+msgid "No redirects yet."
+msgstr ""
+
+#: templates/redirects.php:148
+#: templates/settings.php:319
+msgid "Enable"
+msgstr ""
+
+#: templates/redirects.php:149
+msgid "Disable"
+msgstr ""
+
+#: templates/redirects.php:186
+#: templates/redirects.php:253
+msgid "Edit"
+msgstr ""
+
+#: templates/redirects.php:203
+msgid "Redirect loops"
+msgstr ""
+
+#: templates/redirects.php:205
+msgid "No redirect loops detected."
+msgstr ""
+
+#: templates/redirects.php:211
+msgid "Loop"
+msgstr ""
+
+#: templates/redirects.php:215
+msgid "Fix"
+msgstr ""
+
+#: templates/redirects.php:227
+msgid "Each extra hop loses a little link equity and adds latency. Flattening rewrites every chained rule to point straight at its final destination."
+msgstr ""
+
+#: templates/redirects.php:230
+msgid "No redirect chains detected."
+msgstr ""
+
+#: templates/redirects.php:234
+msgid "Flatten all chains"
+msgstr ""
+
+#: templates/redirects.php:242
+msgid "Chain"
+msgstr ""
+
+#: templates/redirects.php:266
+msgid "Redirect history"
+msgstr ""
+
+#: templates/redirects.php:271
+msgid "No redirects have fired yet."
+msgstr ""
+
+#: templates/redirects.php:274
+msgid "Redirect logging is currently disabled in Settings."
+msgstr ""
+
+#: templates/redirects.php:280
+msgid "When"
+msgstr ""
+
+#: templates/redirects.php:281
+msgid "Requested"
+msgstr ""
+
+#: templates/redirects.php:282
+msgid "Sent to"
+msgstr ""
+
+#: templates/redirects.php:305
+msgid "Import redirects"
+msgstr ""
+
+#: templates/redirects.php:306
+msgid "CSV columns: source, target, code, match_type. A header row is optional, and exports from the Redirection plugin are recognised."
+msgstr ""
+
+#: templates/redirects.php:313
+msgid "CSV file"
+msgstr ""
+
+#: templates/redirects.php:318
+msgid "…or paste CSV"
+msgstr ""
+
+#: templates/redirects.php:322
+msgid "Import"
+msgstr ""
+
+#: templates/redirects.php:327
+msgid "Export redirects"
+msgstr ""
+
+#: templates/redirects.php:329
+msgid "Download CSV"
+msgstr ""
+
+#: templates/redirects.php:330
+#: templates/reports.php:85
+msgid "Download PDF"
+msgstr ""
+
+#: templates/reports.php:21
+msgid "Every report can be previewed here and downloaded as CSV for spreadsheets, or PDF for sharing."
+msgstr ""
+
+#: templates/reports.php:26
+msgid "Report"
+msgstr ""
+
+#: templates/reports.php:27
+#: templates/reports.php:37
+msgid "Preview"
+msgstr ""
+
+#: templates/reports.php:28
+msgid "Download"
+msgstr ""
+
+#: templates/reports.php:41
+msgid "CSV"
+msgstr ""
+
+#: templates/reports.php:42
+msgid "PDF"
+msgstr ""
+
+#. translators: 1: site name, 2: generation timestamp
+#: templates/reports.php:56
+msgid "%1$s — generated %2$s"
+msgstr ""
+
+#: templates/reports.php:76
+msgid "This report has no rows."
+msgstr ""
+
+#: templates/reports.php:77
+msgid "Run a scan, or check links, to populate it."
+msgstr ""
+
+#: templates/reports.php:82
+msgid "Download full CSV"
+msgstr ""
+
+#. translators: %d: number of rows shown in the preview
+#: templates/reports.php:91
+msgid "Showing the first %d rows."
+msgstr ""
+
+#: templates/reports.php:122
+msgid "Emailed summaries"
+msgstr ""
+
+#. translators: 1: schedule, 2: email address
+#: templates/reports.php:129
+msgid "A health summary is emailed %1$s to %2$s."
+msgstr ""
+
+#: templates/reports.php:136
+msgid "Email summaries are turned off."
+msgstr ""
+
+#: templates/reports.php:140
+msgid "Email settings"
+msgstr ""
+
+#: templates/search-console.php:18
+msgid "Search Console connected. Choose a property below, then run a sync."
+msgstr ""
+
+#: templates/search-console.php:23
+msgid "Connection"
+msgstr ""
+
+#: templates/search-console.php:26
+msgid "To connect Search Console you need OAuth credentials from a Google Cloud project with the Search Console API enabled."
+msgstr ""
+
+#: templates/search-console.php:28
+msgid "Create an OAuth 2.0 Client ID of type \"Web application\" in Google Cloud Console."
+msgstr ""
+
+#: templates/search-console.php:30
+msgid "Add this exact redirect URI:"
+msgstr ""
+
+#: templates/search-console.php:33
+msgid "Paste the client ID and secret into Settings → Search Console."
+msgstr ""
+
+#: templates/search-console.php:37
+msgid "Add credentials"
+msgstr ""
+
+#: templates/search-console.php:42
+msgid "Credentials saved. Authorise access to read your Search Console data."
+msgstr ""
+
+#: templates/search-console.php:45
+msgid "Connect to Google Search Console"
+msgstr ""
+
+#: templates/search-console.php:52
+msgid "Connected"
+msgstr ""
+
+#: templates/search-console.php:56
+msgid "No property selected yet."
+msgstr ""
+
+#. translators: %s: relative time
+#: templates/search-console.php:63
+msgid "Last synced %s ago"
+msgstr ""
+
+#: templates/search-console.php:72
+msgid "List properties"
+msgstr ""
+
+#: templates/search-console.php:73
+msgid "Sync now"
+msgstr ""
+
+#: templates/search-console.php:77
+msgid "Disconnect"
+msgstr ""
+
+#. translators: %d: number of days
+#: templates/search-console.php:96
+msgid "Performance — last %d days"
+msgstr ""
+
+#: templates/search-console.php:104
+#: templates/search-console.php:132
+#: templates/search-console.php:158
+#: templates/search-console.php:207
+msgid "Clicks"
+msgstr ""
+
+#: templates/search-console.php:105
+#: templates/search-console.php:206
+msgid "Impressions"
+msgstr ""
+
+#: templates/search-console.php:106
+#: templates/search-console.php:134
+#: templates/search-console.php:160
+msgid "CTR"
+msgstr ""
+
+#: templates/search-console.php:107
+msgid "Average position"
+msgstr ""
+
+#: templates/search-console.php:113
+msgid "Daily clicks over the last 90 days"
+msgstr ""
+
+#: templates/search-console.php:127
+msgid "Top queries"
+msgstr ""
+
+#: templates/search-console.php:131
+#: templates/search-console.php:203
+msgid "Query"
+msgstr ""
+
+#: templates/search-console.php:133
+#: templates/search-console.php:159
+msgid "Impr."
+msgstr ""
+
+#: templates/search-console.php:135
+#: templates/search-console.php:161
+msgid "Pos."
+msgstr ""
+
+#: templates/search-console.php:153
+msgid "Top pages"
+msgstr ""
+
+#: templates/search-console.php:184
+msgid "Ranking opportunities"
+msgstr ""
+
+#. translators: 1: lower position bound, 2: upper position bound
+#: templates/search-console.php:189
+msgid "Queries ranking between position %1$s and %2$s — small gains here move them onto page one."
+msgstr ""
+
+#: templates/search-console.php:198
+msgid "No queries in the striking-distance band."
+msgstr ""
+
+#: templates/search-console.php:205
+msgid "Position"
+msgstr ""
+
+#: templates/search-console.php:231
+msgid "CTR opportunities"
+msgstr ""
+
+#: templates/search-console.php:232
+msgid "Ranking well but not being clicked — usually a title or description problem."
+msgstr ""
+
+#: templates/search-console.php:235
+msgid "No low-CTR pages found."
+msgstr ""
+
+#: templates/search-console.php:248
+msgid "New titles"
+msgstr ""
+
+#: templates/search-console.php:261
+msgid "Declining pages"
+msgstr ""
+
+#: templates/search-console.php:264
+msgid "No significant declines."
+msgstr ""
+
+#: templates/search-console.php:284
+msgid "No Search Console data cached yet."
+msgstr ""
+
+#: templates/search-console.php:285
+msgid "Select a property and run a sync to pull performance data."
+msgstr ""
+
+#: templates/settings.php:15
+#: templates/settings.php:423
+msgid "General"
+msgstr ""
+
+#: templates/settings.php:16
+#: templates/settings.php:76
+msgid "On-page thresholds"
+msgstr ""
+
+#: templates/settings.php:18
+msgid "404 & redirects"
+msgstr ""
+
+#: templates/settings.php:19
+msgid "Content"
+msgstr ""
+
+#: templates/settings.php:21
+#: templates/settings.php:314
+msgid "AI"
+msgstr ""
+
+#: templates/settings.php:35
+msgid "Daily"
+msgstr ""
+
+#: templates/settings.php:36
+msgid "Weekly"
+msgstr ""
+
+#: templates/settings.php:37
+msgid "Monthly"
+msgstr ""
+
+#. translators: %s: date and time of the next scheduled run
+#: templates/settings.php:53
+msgid "Next run: %s"
+msgstr ""
+
+#: templates/settings.php:79
+msgid "Title length"
+msgstr ""
+
+#: templates/settings.php:82
+#: templates/settings.php:91
+#: templates/settings.php:113
+#: templates/settings.php:302
+msgid "to"
+msgstr ""
+
+#: templates/settings.php:84
+msgid "Characters. Google truncates titles at roughly 580 pixels, which is about 60 characters."
+msgstr ""
+
+#: templates/settings.php:88
+msgid "Meta description length"
+msgstr ""
+
+#: templates/settings.php:96
+msgid "Minimum word count"
+msgstr ""
+
+#: templates/settings.php:99
+msgid "Pages below this are flagged as short."
+msgstr ""
+
+#: templates/settings.php:103
+msgid "Thin content threshold"
+msgstr ""
+
+#: templates/settings.php:106
+msgid "Pages below this are flagged as thin content — a stronger signal than \"short\"."
+msgstr ""
+
+#: templates/settings.php:110
+msgid "Keyword density band"
+msgstr ""
+
+#: templates/settings.php:118
+msgid "Maximum crawl depth"
+msgstr ""
+
+#: templates/settings.php:121
+msgid "Clicks from the homepage before a page is flagged as buried."
+msgstr ""
+
+#: templates/settings.php:128
+msgid "Internal linking"
+msgstr ""
+
+#: templates/settings.php:131
+msgid "Minimum outgoing internal links"
+msgstr ""
+
+#: templates/settings.php:135
+msgid "Minimum incoming internal links"
+msgstr ""
+
+#: templates/settings.php:139
+msgid "Suggestions per page"
+msgstr ""
+
+#: templates/settings.php:144
+msgid "Broken link checking"
+msgstr ""
+
+#: templates/settings.php:147
+#: templates/settings.php:408
+msgid "Schedule"
+msgstr ""
+
+#: templates/settings.php:151
+msgid "Links per batch"
+msgstr ""
+
+#: templates/settings.php:154
+msgid "Lower this if your host rate-limits outbound requests."
+msgstr ""
+
+#: templates/settings.php:158
+msgid "Recheck interval"
+msgstr ""
+
+#: templates/settings.php:161
+#: templates/settings.php:244
+#: templates/settings.php:294
+msgid "days"
+msgstr ""
+
+#: templates/settings.php:169
+msgid "Also check links pointing off-site"
+msgstr ""
+
+#: templates/settings.php:177
+msgid "404 monitor"
+msgstr ""
+
+#: templates/settings.php:180
+msgid "Logging"
+msgstr ""
+
+#: templates/settings.php:184
+msgid "Record 404 requests"
+msgstr ""
+
+#: templates/settings.php:188
+msgid "Record the referring URL"
+msgstr ""
+
+#: templates/settings.php:193
+msgid "Retention"
+msgstr ""
+
+#: templates/settings.php:196
+msgid "days (0 keeps everything)"
+msgstr ""
+
+#: templates/settings.php:200
+msgid "Ignore patterns"
+msgstr ""
+
+#: templates/settings.php:203
+msgid "One per line. Plain text matches anywhere in the URL; wrap in slashes for a regular expression."
+msgstr ""
+
+#: templates/settings.php:211
+msgid "Redirect engine"
+msgstr ""
+
+#: templates/settings.php:215
+msgid "Serve redirects from the rules below"
+msgstr ""
+
+#: templates/settings.php:219
+msgid "Log every redirect that fires"
+msgstr ""
+
+#: templates/settings.php:224
+msgid "Log entries to keep"
+msgstr ""
+
+#: templates/settings.php:234
+msgid "Outdated after"
+msgstr ""
+
+#: templates/settings.php:237
+msgid "days without an update"
+msgstr ""
+
+#: templates/settings.php:241
+msgid "Decay comparison window"
+msgstr ""
+
+#: templates/settings.php:248
+msgid "Duplicate threshold"
+msgstr ""
+
+#: templates/settings.php:251
+msgid "Word-overlap ratio, from 0.1 to 1.0. 0.75 catches near-duplicates without flagging pages that merely share a topic."
+msgstr ""
+
+#: templates/settings.php:261
+msgid "OAuth client ID"
+msgstr ""
+
+#: templates/settings.php:265
+msgid "OAuth client secret"
+msgstr ""
+
+#: templates/settings.php:268
+#: templates/settings.php:340
+msgid "Saved — leave blank to keep it"
+msgstr ""
+
+#: templates/settings.php:268
+#: templates/settings.php:340
+msgid "Not set"
+msgstr ""
+
+#: templates/settings.php:269
+msgid "The stored secret is never sent back to the browser. Leave this blank to keep the current value."
+msgstr ""
+
+#: templates/settings.php:273
+msgid "Redirect URI"
+msgstr ""
+
+#: templates/settings.php:276
+msgid "Add this exact value to your OAuth client in Google Cloud Console."
+msgstr ""
+
+#: templates/settings.php:280
+msgid "Property"
+msgstr ""
+
+#: templates/settings.php:283
+msgid "Either sc-domain:example.com or the full URL-prefix property."
+msgstr ""
+
+#: templates/settings.php:287
+msgid "Sync schedule"
+msgstr ""
+
+#: templates/settings.php:291
+msgid "Lookback window"
+msgstr ""
+
+#: templates/settings.php:298
+msgid "Striking distance band"
+msgstr ""
+
+#: templates/settings.php:300
+msgid "positions"
+msgstr ""
+
+#: templates/settings.php:307
+msgid "Low CTR threshold"
+msgstr ""
+
+#: templates/settings.php:315
+msgid "AI requests go directly from your server to the provider using your key. Page content is sent as part of the prompt, so only enable this if that is acceptable for your site."
+msgstr ""
+
+#: templates/settings.php:323
+msgid "Enable AI features"
+msgstr ""
+
+#: templates/settings.php:331
+msgid "Anthropic"
+msgstr ""
+
+#: templates/settings.php:332
+msgid "OpenAI"
+msgstr ""
+
+#: templates/settings.php:337
+msgid "API key"
+msgstr ""
+
+#: templates/settings.php:341
+msgid "The stored key is never sent back to the browser. Leave this blank to keep the current value."
+msgstr ""
+
+#: templates/settings.php:348
+msgid "For example claude-sonnet-5 (Anthropic) or gpt-4o-mini (OpenAI)."
+msgstr ""
+
+#: templates/settings.php:356
+msgid "Temperature"
+msgstr ""
+
+#: templates/settings.php:363
+msgid "Affiliate link detection"
+msgstr ""
+
+#: templates/settings.php:366
+msgid "Network domains"
+msgstr ""
+
+#: templates/settings.php:369
+msgid "One per line. A link is affiliate if its host contains any of these strings."
+msgstr ""
+
+#: templates/settings.php:373
+msgid "Cloaking prefixes"
+msgstr ""
+
+#: templates/settings.php:376
+msgid "Path prefixes on your own domain used for cloaked links, e.g. /go/ or /recommends/."
+msgstr ""
+
+#: templates/settings.php:380
+msgid "Required rel values"
+msgstr ""
+
+#: templates/settings.php:389
+msgid "A link passes if it carries at least one of the selected values."
+msgstr ""
+
+#: templates/settings.php:396
+msgid "Email reports"
+msgstr ""
+
+#: templates/settings.php:399
+msgid "Send summaries"
+msgstr ""
+
+#: templates/settings.php:403
+msgid "Email an SEO health summary on a schedule"
+msgstr ""
+
+#: templates/settings.php:412
+msgid "Recipient"
+msgstr ""
+
+#: templates/settings.php:416
+msgid "Leave blank to use the site admin address."
+msgstr ""
+
+#: templates/settings.php:426
+msgid "Post types to audit"
+msgstr ""
+
+#: templates/settings.php:439
+msgid "Scheduled audit"
+msgstr ""
+
+#: templates/settings.php:443
+msgid "Pages per batch"
+msgstr ""
+
+#: templates/settings.php:446
+msgid "Lower this on shared hosting if scans time out."
+msgstr ""
+
+#: templates/settings.php:450
+msgid "Request timeout"
+msgstr ""
+
+#: templates/settings.php:453
+msgid "seconds"
+msgstr ""
+
+#: templates/settings.php:457
+msgid "Live URL checks"
+msgstr ""
+
+#: templates/settings.php:461
+msgid "Fetch each URL during a scan"
+msgstr ""
+
+#: templates/settings.php:463
+msgid "Required for HTTP status, redirect, schema and Open Graph checks. Costs one request per page scanned."
+msgstr ""
+
+#: templates/settings.php:467
+msgid "Scans to keep"
+msgstr ""
+
+#: templates/settings.php:475
+msgid "Save settings"
+msgstr ""
+
+#: templates/woocommerce.php:26
+msgid "Published products"
+msgstr ""
+
+#: templates/woocommerce.php:27
+msgid "Thin products"
+msgstr ""
+
+#: templates/woocommerce.php:28
+msgid "Missing meta"
+msgstr ""
+
+#: templates/woocommerce.php:29
+msgid "Missing image ALT"
+msgstr ""
+
+#: templates/woocommerce.php:30
+msgid "Weak linking"
+msgstr ""
+
+#: templates/woocommerce.php:31
+msgid "Schema problems"
+msgstr ""
+
+#: templates/woocommerce.php:32
+msgid "Canonical problems"
+msgstr ""
+
+#: templates/woocommerce.php:38
+msgid "Audit all products"
+msgstr ""
+
+#: templates/woocommerce.php:41
+msgid "View product issues"
+msgstr ""
+
+#: templates/woocommerce.php:51
+msgid "All products"
+msgstr ""
+
+#: templates/woocommerce.php:52
+msgid "Thin description"
+msgstr ""
+
+#: templates/woocommerce.php:53
+msgid "No meta description"
+msgstr ""
+
+#: templates/woocommerce.php:54
+msgid "Images without ALT"
+msgstr ""
+
+#: templates/woocommerce.php:55
+msgid "No incoming links"
+msgstr ""
+
+#: templates/woocommerce.php:59
+msgid "Search products"
+msgstr ""
+
+#: templates/woocommerce.php:65
+msgid "No products match these filters."
+msgstr ""
+
+#: templates/woocommerce.php:70
+msgid "Product"
+msgstr ""
+
+#: templates/woocommerce.php:72
+msgid "Meta"
+msgstr ""
+
+#: templates/woocommerce.php:73
+msgid "Short desc."
+msgstr ""
+
+#: templates/woocommerce.php:74
+msgid "Images"
+msgstr ""
+
+#: templates/woocommerce.php:99
+#: templates/woocommerce.php:106
+msgid "Missing"
+msgstr ""
+
+#. translators: %d: images without ALT text
+#: templates/woocommerce.php:116
+msgid "%d no ALT"
+msgstr ""
+
+#: wp-seo-doctor.php:108
+msgid "Are you sure? This cannot be undone."
+msgstr ""
+
+#: wp-seo-doctor.php:109
+msgid "Working…"
+msgstr ""
+
+#: wp-seo-doctor.php:110
+msgid "Request failed. Please try again."
+msgstr ""
+
+#: wp-seo-doctor.php:111
+msgid "Scanning"
+msgstr ""
+
+#: wp-seo-doctor.php:112
+msgid "Done"
+msgstr ""

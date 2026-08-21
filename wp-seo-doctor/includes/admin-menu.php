@@ -11,6 +11,12 @@ class WPSD_Admin_Menu {
 
     const CAPABILITY = 'manage_options';
 
+    /**
+     * Largest redirect CSV accepted. A bigger file is a mistake, and reading
+     * it would exhaust memory before the first row was parsed.
+     */
+    const MAX_IMPORT_BYTES = 2097152; // 2 MB
+
     public static function init(): void {
         add_action('admin_menu', [self::class, 'register']);
         add_action('admin_init', [self::class, 'handle_post_actions']);
@@ -387,8 +393,26 @@ class WPSD_Admin_Menu {
         $pasted = isset($_POST['csv']) ? wp_unslash($_POST['csv']) : '';
         $csv    = is_string($pasted) ? $pasted : '';
 
-        if (!empty($_FILES['csv_file']['tmp_name']) && is_uploaded_file($_FILES['csv_file']['tmp_name'])) {
-            $contents = file_get_contents(sanitize_text_field($_FILES['csv_file']['tmp_name']));
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified in handle_post_actions().
+        $upload = isset($_FILES['csv_file']) && is_array($_FILES['csv_file']) ? $_FILES['csv_file'] : [];
+        $tmp    = isset($upload['tmp_name']) ? (string) $upload['tmp_name'] : '';
+
+        if ($tmp !== '' && is_uploaded_file($tmp)) {
+            if ((int) ($upload['size'] ?? 0) > self::MAX_IMPORT_BYTES) {
+                self::notice(
+                    'import_too_large',
+                    sprintf(
+                        /* translators: %s: maximum file size */
+                        __('That file is larger than %s. Split the import into smaller files.', 'wp-seo-doctor'),
+                        size_format(self::MAX_IMPORT_BYTES)
+                    ),
+                    'error'
+                );
+                return;
+            }
+
+            // Read at most the cap even if the reported size lied.
+            $contents = file_get_contents($tmp, false, null, 0, self::MAX_IMPORT_BYTES);
             if (is_string($contents) && $contents !== '') {
                 $csv = $contents;
             }

@@ -59,6 +59,10 @@ class WPSD_Settings {
             // ── 404 monitor ──
             'monitor_404'           => true,
             'log_404_referrer'      => true,
+            // Off by default: an IP address is personal data under the GDPR,
+            // and nothing in the plugin needs one to do its job. When enabled
+            // it is still truncated to a /24 (or /64) before storage.
+            'log_404_ip'            => false,
             'notfound_retention'    => 90,          // days; 0 keeps forever
             'ignore_404_patterns'   => "/wp-content/\n/wp-includes/\n.env\n.php\nfavicon.ico\nrobots.txt\napple-touch-icon",
 
@@ -66,6 +70,10 @@ class WPSD_Settings {
             'redirects_enabled'     => true,
             'log_redirects'         => true,
             'redirect_log_limit'    => 5000,
+            // Days to keep individual redirect hits. Aggregate hit counts on
+            // the rule itself are never pruned, so analytics survive.
+            'redirect_log_retention' => 30,
+            'log_redirect_ip'       => false,
 
             // ── Content SEO ──
             'decay_window_days'     => 180,
@@ -146,6 +154,13 @@ class WPSD_Settings {
     }
 
     /**
+     * Options holding a credential. These are never rendered back into the
+     * settings page, so an empty submission means "unchanged" rather than
+     * "cleared" — otherwise every save would wipe the key.
+     */
+    const SECRET_KEYS = ['gsc_client_secret', 'ai_api_key'];
+
+    /**
      * Sanitise a raw $_POST payload from the settings screen.
      *
      * @param array<string,mixed> $input
@@ -165,6 +180,17 @@ class WPSD_Settings {
                 continue;
             }
             $raw = $input[$key];
+
+            if (in_array($key, self::SECRET_KEYS, true)) {
+                $submitted = trim((string) $raw);
+                // Blank keeps the stored credential; a literal deletion is
+                // done with the "Clear" control, which posts a sentinel.
+                if ($submitted === '') {
+                    continue;
+                }
+                $clean[$key] = $submitted === '-' ? '' : sanitize_text_field($submitted);
+                continue;
+            }
 
             if (is_bool($default)) {
                 $clean[$key] = (bool) $raw;

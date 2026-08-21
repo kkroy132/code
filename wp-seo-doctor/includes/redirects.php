@@ -85,19 +85,33 @@ class WPSD_Redirects {
                 if ($pattern === '') {
                     continue;
                 }
-                if (preg_match($pattern, $path, $matches)) {
+                if (self::safe_match($pattern, $path, $matches)) {
                     // $1, $2… in the target are filled from the capture groups.
-                    $target = preg_replace_callback(
+                    $target = (string) preg_replace_callback(
                         '/\$(\d+)/',
                         static fn($m) => $matches[(int) $m[1]] ?? '',
                         (string) $rule->target
                     );
-                    return [$rule, self::absolutize_target((string) $target)];
+
+                    // Validated after substitution and before resolving: a
+                    // captured segment becomes part of the destination, so the
+                    // stored pattern alone cannot vouch for it.
+                    if ((int) $rule->code !== 410 && is_wp_error(self::validate_target($target))) {
+                        continue;
+                    }
+
+                    return [$rule, self::absolutize_target($target)];
                 }
                 continue;
             }
 
             if ($rule->source_hash === $path_hash) {
+                // A rule written straight to the table, or saved before these
+                // checks existed, must not be honoured.
+                if ((int) $rule->code !== 410 && is_wp_error(self::validate_target((string) $rule->target))) {
+                    continue;
+                }
+
                 return [$rule, self::absolutize_target((string) $rule->target)];
             }
         }
@@ -161,7 +175,7 @@ class WPSD_Redirects {
             'user_agent'  => isset($_SERVER['HTTP_USER_AGENT'])
                 ? mb_substr(sanitize_text_field(wp_unslash($_SERVER['HTTP_USER_AGENT'])), 0, 255)
                 : '',
-            'ip'          => WPSD_Helpers::client_ip(),
+            'ip'          => WPSD_Helpers::client_ip('log_redirect_ip'),
             'created_at'  => WPSD_Helpers::now(),
         ]);
 
@@ -198,8 +212,16 @@ class WPSD_Redirects {
             return new WP_Error('wpsd_redirect_target', __('A target URL is required for this redirect type.', 'wp-seo-doctor'));
         }
 
-        if ($match_type === 'regex' && self::compile_regex($source) === '') {
-            return new WP_Error('wpsd_redirect_regex', __('That regular expression is not valid.', 'wp-seo-doctor'));
+        $valid_target = self::validate_target($target, $match_type);
+        if (is_wp_error($valid_target)) {
+            return $valid_target;
+        }
+
+        if ($match_type === 'regex') {
+            $valid_regex = self::validate_regex($source);
+            if (is_wp_error($valid_regex)) {
+                return $valid_regex;
+            }
         }
 
         // A rule pointing at itself would loop forever.
@@ -263,7 +285,12 @@ class WPSD_Redirects {
             $fields['source_hash'] = md5($source);
         }
         if (isset($data['target'])) {
-            $fields['target'] = trim((string) $data['target']);
+            $target = trim((string) $data['target']);
+            $valid  = self::validate_target($target, $new_match_type);
+            if (is_wp_error($valid)) {
+                return $valid;
+            }
+            $fields['target'] = $target;
         }
         if (isset($data['code'])) {
             $code           = (int) $data['code'];
@@ -281,8 +308,11 @@ class WPSD_Redirects {
 
         $match_type = $fields['match_type'] ?? $rule->match_type;
         $source     = $fields['source'] ?? $rule->source;
-        if ($match_type === 'regex' && self::compile_regex((string) $source) === '') {
-            return new WP_Error('wpsd_redirect_regex', __('That regular expression is not valid.', 'wp-seo-doctor'));
+        if ($match_type === 'regex') {
+            $valid_regex = self::validate_regex((string) $source);
+            if (is_wp_error($valid_regex)) {
+                return $valid_regex;
+            }
         }
 
         $wpdb->update(WPSD_DB::table('redirects'), $fields, ['id' => $id]);
@@ -422,15 +452,31 @@ class WPSD_Redirects {
         return $wpdb->get_results($wpdb->prepare($sql, max(1, $limit))) ?: [];
     }
 
-    private static function trim_log(): void {
+    /**
+     * Keep the hit log bounded by both age and row count.
+     *
+     * The per-rule `hits` counter is never touched, so the analytics the
+     * manager displays survive pruning — only the individual request rows,
+     * which are the ones carrying referrer and user-agent, expire.
+     */
+    public static function trim_log(): void {
         global $wpdb;
+
+        $table = WPSD_DB::table('redirect_log');
+
+        $retention = (int) WPSD_Settings::get('redirect_log_retention', 30);
+        if ($retention > 0) {
+            // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+            $wpdb->query($wpdb->prepare(
+                "DELETE FROM {$table} WHERE created_at < DATE_SUB(NOW(), INTERVAL %d DAY)",
+                $retention
+            ));
+        }
 
         $limit = (int) WPSD_Settings::get('redirect_log_limit', 5000);
         if ($limit <= 0) {
             return;
         }
-
-        $table = WPSD_DB::table('redirect_log');
         // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
         $cutoff = $wpdb->get_var($wpdb->prepare(
             "SELECT id FROM {$table} ORDER BY id DESC LIMIT 1 OFFSET %d",
@@ -575,6 +621,17 @@ class WPSD_Redirects {
         // the default escape character.
         while (($row = fgetcsv($handle, 0, ',', '"', '')) !== false) {
             $line_num++;
+
+            // One import call is bounded so a huge paste cannot spend the
+            // whole request budget creating rules.
+            if ($imported + $skipped >= self::MAX_IMPORT_ROWS) {
+                $errors[] = sprintf(
+                    /* translators: %d: maximum rows */
+                    __('Stopped after %d rows. Import the rest in a second file.', 'wp-seo-doctor'),
+                    self::MAX_IMPORT_ROWS
+                );
+                break;
+            }
             if ($row === [null] || $row === false) {
                 continue;
             }
@@ -751,6 +808,82 @@ class WPSD_Redirects {
         return $source;
     }
 
+    /**
+     * A redirect target must be a real destination, not a script payload.
+     *
+     * Relative paths and http(s) URLs are accepted — external redirects are a
+     * deliberate feature of the manager, so they stay allowed. Everything
+     * else is refused at save time rather than discovered at request time.
+     *
+     * @param string $match_type Regex targets may contain $1 placeholders.
+     * @return true|WP_Error
+     */
+    public static function validate_target(string $target, string $match_type = 'exact') {
+        $target = trim($target);
+
+        // A 410 has no destination.
+        if ($target === '') {
+            return true;
+        }
+
+        // Control characters would let a target smuggle a header break.
+        if (preg_match('/[\x00-\x1F\x7F]/', $target)) {
+            return new WP_Error('wpsd_redirect_target_control', __('The target URL contains control characters.', 'wp-seo-doctor'));
+        }
+
+        if (strlen($target) > 2000) {
+            return new WP_Error('wpsd_redirect_target_length', __('The target URL is too long.', 'wp-seo-doctor'));
+        }
+
+        // Leading whitespace or a stray colon is how "javascript:" gets past a
+        // naive prefix check, so compare against a stripped copy.
+        $probe = strtolower(preg_replace('/[\s\x00-\x1F]/', '', $target));
+
+        if (preg_match('#^[a-z][a-z0-9+.\-]*:#', $probe, $scheme)) {
+            $name = rtrim($scheme[0], ':');
+            if (!in_array($name, ['http', 'https'], true)) {
+                return new WP_Error(
+                    'wpsd_redirect_target_scheme',
+                    sprintf(
+                        /* translators: %s: URL scheme */
+                        __('A "%s" target is not allowed. Use a relative path or an http(s) URL.', 'wp-seo-doctor'),
+                        $name
+                    )
+                );
+            }
+
+            // Protocol-relative and absolute URLs must parse to a real host.
+            if (!wp_parse_url($target, PHP_URL_HOST)) {
+                return new WP_Error('wpsd_redirect_target_invalid', __('The target URL is not valid.', 'wp-seo-doctor'));
+            }
+
+            return true;
+        }
+
+        // "//evil.example" is protocol-relative: an external redirect wearing
+        // the costume of a local path.
+        if (strpos($probe, '//') === 0) {
+            return new WP_Error(
+                'wpsd_redirect_target_invalid',
+                __('Protocol-relative targets are not allowed. Use a full https:// URL.', 'wp-seo-doctor')
+            );
+        }
+
+        // A regex target carries $1 placeholders, which are not URL syntax.
+        if ($match_type === 'regex') {
+            return true;
+        }
+
+        if (strpos($target, '/') !== 0) {
+            return new WP_Error(
+                'wpsd_redirect_target_invalid',
+                __('A relative target must start with a slash.', 'wp-seo-doctor')
+            );
+        }
+
+        return true;
+    }
+
     /** Relative targets are resolved against the site root. */
     private static function absolutize_target(string $target): string {
         $target = trim($target);
@@ -768,9 +901,31 @@ class WPSD_Redirects {
      *
      * @return string Empty string when the pattern will not compile.
      */
+    /** Rules created by one import call. */
+    const MAX_IMPORT_ROWS = 5000;
+
+    /** Longest regex source accepted. */
+    const MAX_REGEX_LENGTH = 500;
+
+    /**
+     * Constructs that make a pattern explode combinatorially: a quantifier
+     * applied to an already-quantified group, e.g. (a+)+ or (.*)* against a
+     * long non-matching subject.
+     */
+    const CATASTROPHIC_PATTERNS = [
+        '/\((?:[^()]*[+*]\)?)[^()]*\)\s*[+*]/',
+        '/\([^()]*[+*][^()]*\)\{\d+,\}/',
+    ];
+
     public static function compile_regex(string $source): string {
         $source = trim($source);
         if ($source === '') {
+            return '';
+        }
+
+        // A pattern this long is not a redirect rule; refusing it bounds the
+        // work the matcher can be asked to do on every front-end request.
+        if (strlen($source) > self::MAX_REGEX_LENGTH) {
             return '';
         }
 
@@ -802,6 +957,81 @@ class WPSD_Redirects {
     }
 
     /**
+     * Whether a regex source is safe to accept.
+     *
+     * Rejects patterns that will not compile, are absurdly long, or contain
+     * nested quantifiers — the shape that turns a single request into minutes
+     * of CPU. Not a proof of safety, but it catches the forms people actually
+     * paste in.
+     *
+     * @return true|WP_Error
+     */
+    public static function validate_regex(string $source) {
+        $source = trim($source);
+
+        if ($source === '') {
+            return new WP_Error('wpsd_regex_empty', __('The pattern is empty.', 'wp-seo-doctor'));
+        }
+
+        if (strlen($source) > self::MAX_REGEX_LENGTH) {
+            return new WP_Error(
+                'wpsd_regex_length',
+                sprintf(
+                    /* translators: %d: maximum characters */
+                    __('The pattern is longer than %d characters.', 'wp-seo-doctor'),
+                    self::MAX_REGEX_LENGTH
+                )
+            );
+        }
+
+        foreach (self::CATASTROPHIC_PATTERNS as $danger) {
+            if (preg_match($danger, $source)) {
+                return new WP_Error(
+                    'wpsd_regex_backtracking',
+                    __('The pattern nests one quantifier inside another, which can hang the site on a non-matching URL. Simplify it.', 'wp-seo-doctor')
+                );
+            }
+        }
+
+        if (self::compile_regex($source) === '') {
+            return new WP_Error('wpsd_regex_invalid', __('That regular expression is not valid.', 'wp-seo-doctor'));
+        }
+
+        return true;
+    }
+
+    /**
+     * Run a compiled pattern with a bounded backtracking budget.
+     *
+     * A rule saved before these checks existed, or one that slips past them,
+     * must degrade to "no match" rather than take down every front-end
+     * request. PREG_BACKTRACK_LIMIT_ERROR surfaces as false, which is exactly
+     * the behaviour wanted here.
+     *
+     * @param array<int,string> $matches
+     */
+    private static function safe_match(string $pattern, string $subject, ?array &$matches = null): bool {
+        $previous = ini_get('pcre.backtrack_limit');
+        if ($previous !== false) {
+            ini_set('pcre.backtrack_limit', '100000');
+        }
+
+        // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+        $result = @preg_match($pattern, $subject, $matches);
+
+        if ($previous !== false) {
+            ini_set('pcre.backtrack_limit', (string) $previous);
+        }
+
+        if ($result === false) {
+            // Hit the limit or errored. Log once per rule rather than per hit.
+            return false;
+        }
+
+        return $result === 1;
+    }
+
+    /**
      * The stored form of a rule's source.
      *
      * Exact sources are normalised to a site-relative path; regex sources are
@@ -824,7 +1054,7 @@ class WPSD_Redirects {
             if ($pattern === '') {
                 return ['matches' => false, 'target' => '', 'error' => __('Invalid regular expression.', 'wp-seo-doctor')];
             }
-            if (!preg_match($pattern, $sample_path, $matches)) {
+            if (!self::safe_match($pattern, $sample_path, $matches)) {
                 return ['matches' => false, 'target' => '', 'error' => ''];
             }
             $resolved = preg_replace_callback(

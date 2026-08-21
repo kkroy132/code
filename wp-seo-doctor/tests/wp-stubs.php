@@ -42,7 +42,14 @@ function remove_accents($t) { return (string) $t; }
 function wp_json_encode($v) { return json_encode($v); }
 function _doing_it_wrong($f, $m, $v) { throw new RuntimeException("doing_it_wrong: {$f} {$m}"); }
 
-function home_url($path = '/') { return rtrim('https://example.test', '/') . $path; }
+function home_url($path = '/') {
+    $base = $GLOBALS['wpsd_stub_options']['home'] ?? 'https://example.test';
+    return rtrim($base, '/') . $path;
+}
+function site_url($path = '/') {
+    $base = $GLOBALS['wpsd_stub_options']['siteurl'] ?? ($GLOBALS['wpsd_stub_options']['home'] ?? 'https://example.test');
+    return rtrim($base, '/') . $path;
+}
 function admin_url($path = '') { return 'https://example.test/wp-admin/' . ltrim($path, '/'); }
 function get_bloginfo($k) { return $k === 'name' ? 'Example Site' : ''; }
 function set_url_scheme($url, $scheme) { return preg_replace('#^https?://#', $scheme . '://', $url); }
@@ -279,3 +286,8 @@ function wp_kses_post($content) { return $content; }
 
 function wp_doing_ajax() { return false; }
 function wp_doing_cron() { return false; }
+
+function load_plugin_textdomain($domain, $deprecated = false, $path = false) { return true; }
+function wp_add_privacy_policy_content($name, $content) { return true; }
+
+function size_format($bytes, $decimals = 0) { return round((int) $bytes / 1048576, (int) $decimals) . ' MB'; }

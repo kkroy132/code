@@ -1,14 +1,14 @@
 <?php
 /**
  * Plugin Name: WP SEO Doctor
- * Plugin URI:  https://example.com/wp-seo-doctor
  * Description: Complete SEO audit toolkit — on-page & technical audits, internal linking, broken links, 404 monitor, redirect manager, content SEO, Search Console, AI suggestions, affiliate & WooCommerce SEO, and reports.
  * Version:     1.1.0
  * Requires at least: 5.8
  * Requires PHP: 7.4
  * Author:      WP SEO Doctor
  * Text Domain: wp-seo-doctor
- * License:     GPL v2 or later
+ * Domain Path: /languages
+ * License:     GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  *
  * @package WP_SEO_Doctor
@@ -51,6 +51,7 @@ foreach ([
     'woocommerce',
     'reports',
     'export',
+    'privacy',
     'admin-menu',
     'ajax',
     'cron',
@@ -60,6 +61,10 @@ foreach ([
 
 register_activation_hook(__FILE__, ['WPSD_DB', 'install']);
 register_deactivation_hook(__FILE__, ['WPSD_Cron', 'clear_all']);
+
+add_action('init', function () {
+    load_plugin_textdomain('wp-seo-doctor', false, dirname(plugin_basename(WPSD_FILE)) . '/languages');
+});
 
 add_action('plugins_loaded', function () {
     // Upgrade routine for existing installs.
@@ -80,6 +85,7 @@ add_action('plugins_loaded', function () {
     WPSD_WooCommerce_SEO::init();
     WPSD_Reports::init();
     WPSD_Export::init();
+    WPSD_Privacy::init();
     WPSD_Cron::init();
 
     if (is_admin()) {

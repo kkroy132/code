@@ -12,6 +12,8 @@ $suites = [
     'content-filters' => 'links injected by the_content filters',
     'navigation-links' => 'site chrome, orphans and crawl depth',
     'scale'           => 'duplicate detection on a large corpus',
+    'ssrf'            => 'outbound request validation',
+    'redirect-safety' => 'redirect target and regex validation',
 ];
 
 $total_pass = 0;

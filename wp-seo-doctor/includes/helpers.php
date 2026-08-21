@@ -135,10 +135,227 @@ class WPSD_Helpers {
     }
 
     /**
+     * Hostnames that serve cloud instance credentials. Never fetchable.
+     */
+    const METADATA_HOSTS = [
+        '169.254.169.254',              // AWS, Azure, DigitalOcean, OpenStack
+        'metadata.google.internal',     // Google Cloud
+        'metadata.goog',
+        '100.100.100.200',              // Alibaba Cloud
+        'fd00:ec2::254',                // AWS IPv6
+        'metadata',
+    ];
+
+    /**
+     * Whether an IP address sits in a range that must never be fetched.
+     *
+     * PHP's own filter covers most of it; link-local and unique-local ranges
+     * are checked explicitly because FILTER_FLAG_NO_RES_RANGE misses some of
+     * them across PHP versions.
+     */
+    public static function is_blocked_ip(string $ip): bool {
+        if ($ip === '') {
+            return true;
+        }
+
+        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+                return true;
+            }
+            // 100.64.0.0/10, carrier-grade NAT, reaches provider infrastructure.
+            $long = ip2long($ip);
+            if ($long !== false && ($long & 0xFFC00000) === 0x64400000) {
+                return true;
+            }
+            return false;
+        }
+
+        if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+            $packed = @inet_pton($ip);
+            if ($packed === false) {
+                return true;
+            }
+
+            // ::1 loopback and :: unspecified.
+            if ($packed === str_repeat("\0", 15) . "\1" || $packed === str_repeat("\0", 16)) {
+                return true;
+            }
+
+            $first = ord($packed[0]);
+            // fc00::/7 unique-local.
+            if (($first & 0xFE) === 0xFC) {
+                return true;
+            }
+            // fe80::/10 link-local.
+            if ($first === 0xFE && (ord($packed[1]) & 0xC0) === 0x80) {
+                return true;
+            }
+            // ::ffff:0:0/96 — an IPv4 address wearing an IPv6 hat.
+            if (strncmp($packed, str_repeat("\0", 10) . "\xFF\xFF", 12) === 0) {
+                return self::is_blocked_ip(inet_ntop(substr($packed, 12)));
+            }
+
+            return !filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
+        }
+
+        // Not an IP at all.
+        return true;
+    }
+
+    /**
+     * Every address a hostname resolves to, or an empty array when it cannot
+     * be resolved.
+     *
+     * @return array<int,string>
+     */
+    public static function resolve_host(string $host): array {
+        static $cache = [];
+
+        $host = strtolower($host);
+        if (isset($cache[$host])) {
+            return $cache[$host];
+        }
+
+        if (filter_var($host, FILTER_VALIDATE_IP)) {
+            return $cache[$host] = [$host];
+        }
+
+        $addresses = [];
+
+        $ipv4 = @gethostbynamel($host);
+        if (is_array($ipv4)) {
+            $addresses = $ipv4;
+        }
+
+        if (function_exists('dns_get_record')) {
+            // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
+            $ipv6 = @dns_get_record($host, DNS_AAAA);
+            foreach ((array) $ipv6 as $record) {
+                if (!empty($record['ipv6'])) {
+                    $addresses[] = $record['ipv6'];
+                }
+            }
+        }
+
+        if (count($cache) > 500) {
+            $cache = [];
+        }
+
+        return $cache[$host] = array_values(array_unique($addresses));
+    }
+
+    /**
+     * Decide whether a URL discovered in site content may be fetched.
+     *
+     * The scanner follows links it finds in posts, sitemaps and Location
+     * headers, so without this the plugin is a request proxy into whatever the
+     * web server can reach — cloud metadata endpoints, internal admin panels,
+     * databases on the private network.
+     *
+     * The site's own host is always allowed: local and staging installs live
+     * on 127.0.0.1 or a private LAN address, and refusing to fetch them would
+     * break the scanner exactly where it is most used.
+     *
+     * @return true|WP_Error
+     */
+    public static function validate_request_url(string $url) {
+        $parts = wp_parse_url($url);
+
+        if (!is_array($parts) || empty($parts['host'])) {
+            return new WP_Error('wpsd_url_invalid', __('The URL could not be parsed.', 'wp-seo-doctor'));
+        }
+
+        $scheme = strtolower($parts['scheme'] ?? '');
+        if (!in_array($scheme, ['http', 'https'], true)) {
+            return new WP_Error(
+                'wpsd_url_scheme',
+                sprintf(
+                    /* translators: %s: URL scheme */
+                    __('Refusing to fetch a "%s" URL; only http and https are allowed.', 'wp-seo-doctor'),
+                    $scheme !== '' ? $scheme : 'schemeless'
+                )
+            );
+        }
+
+        $host = strtolower($parts['host']);
+
+        // Requests to our own site are always permitted, whatever it resolves
+        // to — that is how the scanner reads the pages it is auditing.
+        if (self::is_own_host($host)) {
+            return true;
+        }
+
+        if (in_array($host, self::METADATA_HOSTS, true) || substr($host, -14) === '.internal') {
+            return new WP_Error('wpsd_url_metadata', __('Refusing to fetch a cloud metadata endpoint.', 'wp-seo-doctor'));
+        }
+
+        if ($host === 'localhost' || substr($host, -6) === '.local' || substr($host, -10) === '.localhost') {
+            return new WP_Error('wpsd_url_local', __('Refusing to fetch a loopback host.', 'wp-seo-doctor'));
+        }
+
+        /**
+         * Hosts that bypass the private-address check.
+         *
+         * For installs that legitimately need to reach an internal service.
+         *
+         * @param array<int,string> $allowed Lowercase hostnames.
+         */
+        $allowed = array_map('strtolower', (array) apply_filters('wpsd_allowed_request_hosts', []));
+        if (in_array($host, $allowed, true)) {
+            return true;
+        }
+
+        $addresses = self::resolve_host($host);
+        if (!$addresses) {
+            // Unresolvable is reported as such rather than fetched blindly.
+            return new WP_Error('wpsd_url_unresolvable', __('The hostname could not be resolved.', 'wp-seo-doctor'));
+        }
+
+        foreach ($addresses as $address) {
+            if (self::is_blocked_ip($address)) {
+                return new WP_Error(
+                    'wpsd_url_private',
+                    __('Refusing to fetch a host that resolves to a private or reserved address.', 'wp-seo-doctor')
+                );
+            }
+        }
+
+        return true;
+    }
+
+    /** Is this hostname the site itself? */
+    public static function is_own_host(string $host): bool {
+        $host = preg_replace('/^www\./', '', strtolower($host));
+
+        if ($host === self::site_host()) {
+            return true;
+        }
+
+        // Multisite and installs where site_url differs from home_url.
+        $site = strtolower((string) wp_parse_url(site_url(), PHP_URL_HOST));
+        return $host === preg_replace('/^www\./', '', $site);
+    }
+
+    /**
      * HTTP request tuned for link checking. Never follows redirects so the
      * caller sees the real status code and Location header.
+     *
+     * Every outbound request in the plugin goes through here, which is what
+     * makes one SSRF check sufficient.
      */
     public static function request(string $url, array $args = []): array {
+        $allowed = self::validate_request_url($url);
+        if (is_wp_error($allowed)) {
+            return [
+                'status'   => 0,
+                'error'    => $allowed->get_error_message(),
+                'blocked'  => true,
+                'location' => '',
+                'body'     => '',
+                'headers'  => [],
+            ];
+        }
+
         $defaults = [
             'method'      => 'HEAD',
             'timeout'     => (int) WPSD_Settings::get('request_timeout', 10),
@@ -165,6 +382,7 @@ class WPSD_Helpers {
             return [
                 'status'   => 0,
                 'error'    => $response->get_error_message(),
+                'blocked'  => false,
                 'location' => '',
                 'body'     => '',
                 'headers'  => [],
@@ -174,6 +392,7 @@ class WPSD_Helpers {
         return [
             'status'   => (int) wp_remote_retrieve_response_code($response),
             'error'    => '',
+            'blocked'  => false,
             'location' => (string) wp_remote_retrieve_header($response, 'location'),
             'body'     => (string) wp_remote_retrieve_body($response),
             'headers'  => wp_remote_retrieve_headers($response),
@@ -687,8 +906,18 @@ class WPSD_Helpers {
         return current_time('mysql');
     }
 
-    /** Client IP, anonymised to /24 so we do not store full addresses. */
-    public static function client_ip(): string {
+    /**
+     * Client IP, truncated to a /24 (IPv4) or /64 (IPv6).
+     *
+     * Returns an empty string unless the caller's feature has IP logging
+     * switched on, which is off by default — the plugin's features work
+     * without it, and an IP is personal data.
+     */
+    public static function client_ip(string $setting = ''): string {
+        if ($setting !== '' && !WPSD_Settings::get($setting, false)) {
+            return '';
+        }
+
         $ip = isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : '';
         if ($ip === '' || !filter_var($ip, FILTER_VALIDATE_IP)) {
             return '';

@@ -98,6 +98,7 @@ class WPSD_Cron {
         wp_clear_scheduled_hook(self::HOUSEKEEPING);
         wp_clear_scheduled_hook('wpsd_prune_404s');
         wp_clear_scheduled_hook('wpsd_continue_scan');
+        wp_clear_scheduled_hook('wpsd_retag_affiliate');
     }
 
     /**
@@ -106,6 +107,17 @@ class WPSD_Cron {
     public static function housekeeping(): void {
         WPSD_Monitor_404::prune();
         WPSD_Issues::prune((int) WPSD_Settings::get('scan_history_limit', 30));
+
+        // Visitor-facing logs expire on a schedule rather than only when a
+        // request happens to trigger a trim.
+        WPSD_Redirects::trim_log();
+
+        // Fingerprints and shingles for posts that are gone or unpublished,
+        // and link rows whose source post no longer exists.
+        WPSD_Fingerprints::prune();
+        WPSD_Internal_Links::prune_orphaned_rows();
+        WPSD_GSC::prune();
+
         WPSD_Score::snapshot();
 
         // Release a scan that died mid-run so the next one is not blocked.

@@ -20,6 +20,15 @@ class WPSD_GSC {
     const API_BASE       = 'https://searchconsole.googleapis.com/webmasters/v3';
     const SCOPE          = 'https://www.googleapis.com/auth/webmasters.readonly';
 
+    /** Google's per-request ceiling for Search Analytics. */
+    const MAX_ROWS_PER_REQUEST = 25000;
+
+    /**
+     * Pages to request before stopping. 10 x 25,000 is far more than any
+     * report here consumes, and bounds a sync on a very large property.
+     */
+    const MAX_SYNC_PAGES = 10;
+
     public static function init(): void {
         add_action('admin_init', [self::class, 'maybe_handle_oauth']);
         add_action('wpsd_sync_gsc', [self::class, 'sync']);
@@ -219,7 +228,7 @@ class WPSD_GSC {
      * @param array<int,string> $dimensions
      * @return array<int,array<string,mixed>>|WP_Error
      */
-    public static function query_api(string $start, string $end, array $dimensions, int $limit = 5000) {
+    public static function query_api(string $start, string $end, array $dimensions, int $limit = 5000, int $start_row = 0) {
         $token = self::access_token();
         if (is_wp_error($token)) {
             return $token;
@@ -242,7 +251,8 @@ class WPSD_GSC {
                 'startDate'  => $start,
                 'endDate'    => $end,
                 'dimensions' => $dimensions,
-                'rowLimit'   => min(25000, max(1, $limit)),
+                'rowLimit'   => min(self::MAX_ROWS_PER_REQUEST, max(1, $limit)),
+                'startRow'   => max(0, $start_row),
                 'type'       => 'web',
             ]),
         ]);
@@ -285,9 +295,40 @@ class WPSD_GSC {
         $end   = gmdate('Y-m-d', strtotime('-2 days'));
         $start = gmdate('Y-m-d', strtotime("-{$days} days", strtotime($end)));
 
-        $rows = self::query_api($start, $end, ['date', 'page', 'query'], 25000);
-        if (is_wp_error($rows)) {
-            return $rows;
+        // Google caps a single response at 25,000 rows. Taking the first page
+        // and reporting success would quietly discard the rest of a busy
+        // property's data, so page until the API runs out or the cap is hit.
+        $rows      = [];
+        $truncated = false;
+
+        for ($page = 0; $page < self::MAX_SYNC_PAGES; $page++) {
+            $batch = self::query_api(
+                $start,
+                $end,
+                ['date', 'page', 'query'],
+                self::MAX_ROWS_PER_REQUEST,
+                $page * self::MAX_ROWS_PER_REQUEST
+            );
+
+            if (is_wp_error($batch)) {
+                // Keep whatever earlier pages returned; a partial sync beats
+                // discarding good data because page four timed out.
+                if (!$rows) {
+                    return $batch;
+                }
+                $truncated = true;
+                break;
+            }
+
+            $rows = array_merge($rows, $batch);
+
+            if (count($batch) < self::MAX_ROWS_PER_REQUEST) {
+                break;
+            }
+
+            if ($page === self::MAX_SYNC_PAGES - 1) {
+                $truncated = true;
+            }
         }
 
         $table = WPSD_DB::table('gsc');
@@ -346,11 +387,38 @@ class WPSD_GSC {
 
         update_option(self::LAST_SYNC, WPSD_Helpers::now(), false);
 
-        return ['rows' => $inserted, 'from' => $start, 'to' => $end];
+        // The caller is told when the window was not fully retrieved, so the
+        // UI can say so rather than implying a complete sync.
+        return [
+            'rows'      => $inserted,
+            'from'      => $start,
+            'to'        => $end,
+            'truncated' => $truncated,
+        ];
     }
 
     public static function last_sync(): string {
         return (string) get_option(self::LAST_SYNC, '');
+    }
+
+    /**
+     * Discard Search Console rows older than the reporting window needs.
+     *
+     * Trend and decay comparisons look back at most twice the configured
+     * lookback, so anything beyond that plus a margin is dead weight — and on
+     * a busy site this table grows fastest of all.
+     */
+    public static function prune(): void {
+        global $wpdb;
+
+        $table  = WPSD_DB::table('gsc');
+        $keep   = max(60, (int) WPSD_Settings::get('gsc_lookback_days', 28) * 3);
+
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        $wpdb->query($wpdb->prepare(
+            "DELETE FROM {$table} WHERE data_date < DATE_SUB(CURDATE(), INTERVAL %d DAY)",
+            $keep
+        ));
     }
 
     public static function has_data(): bool {

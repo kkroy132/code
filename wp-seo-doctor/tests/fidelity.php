@@ -112,6 +112,8 @@ const ACKNOWLEDGED_INERT = [
     'do_shortcode' => 'shortcode expansion is unverified; production path runs through the_content',
     'wpautop' => 'paragraph wrapping is unverified; production path runs through the_content',
     'remove_accents' => 'transliteration is unverified; affects slug comparison only',
+    'load_plugin_textdomain' => 'translation loading is not covered by these suites',
+    'wp_add_privacy_policy_content' => 'privacy policy text is asserted by inspection, not by WordPress storing it',
 ];
 
 $pass = 0;

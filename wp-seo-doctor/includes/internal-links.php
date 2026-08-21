@@ -1052,6 +1052,24 @@ class WPSD_Internal_Links {
         return WPSD_Helpers::truncate($title, 60);
     }
 
+    /**
+     * Drop link rows whose source post no longer exists or is no longer
+     * published. Without this the graph keeps counting links from deleted
+     * posts, which inflates incoming counts and hides orphans.
+     */
+    public static function prune_orphaned_rows(): void {
+        global $wpdb;
+
+        $links = WPSD_DB::table('links');
+
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        $wpdb->query(
+            "DELETE l FROM {$links} l
+             LEFT JOIN {$wpdb->posts} p ON p.ID = l.source_id
+             WHERE l.source_id > 0 AND (p.ID IS NULL OR p.post_status <> 'publish')"
+        );
+    }
+
     public static function flush_graph_cache(): void {
         delete_transient(self::DEPTH_TRANSIENT);
         delete_transient(self::BOILERPLATE_TRANSIENT);

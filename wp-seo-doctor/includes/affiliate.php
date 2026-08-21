@@ -13,6 +13,7 @@ defined('ABSPATH') || exit;
 class WPSD_Affiliate {
 
     public static function init(): void {
+        add_action('wpsd_retag_affiliate', [self::class, 'continue_retag'], 10, 1);
         // Re-tag affiliate links whenever the detection lists change, so an
         // edited domain list takes effect without a full re-index.
         add_action('update_option_' . WPSD_Settings::OPTION, [self::class, 'maybe_retag'], 10, 2);
@@ -29,32 +30,106 @@ class WPSD_Affiliate {
         $keys = ['affiliate_domains', 'affiliate_prefixes'];
         foreach ($keys as $key) {
             if (($old[$key] ?? '') !== ($new[$key] ?? '')) {
-                self::retag_links();
+                // Retag what fits in the request, then hand the rest to cron.
+                // Saving settings must not hang while a large link table is
+                // reprocessed, and it must not stop halfway either.
+                $result = self::retag_links(0, 5.0);
+                if (empty($result['complete'])) {
+                    self::schedule_continuation((int) $result['last_id']);
+                }
                 return;
             }
         }
     }
 
     /**
-     * Recompute the is_affiliate flag across the whole link table.
+     * Queue the rest of a retag run.
      */
-    public static function retag_links(): int {
+    public static function schedule_continuation(int $after_id): void {
+        if (!wp_next_scheduled('wpsd_retag_affiliate', [$after_id])) {
+            wp_schedule_single_event(time() + 60, 'wpsd_retag_affiliate', [$after_id]);
+        }
+    }
+
+    /**
+     * Cron handler: continue retagging, rescheduling until the table is done.
+     */
+    public static function continue_retag(int $after_id = 0): void {
+        $result = self::retag_links($after_id, 30.0);
+
+        if (empty($result['complete'])) {
+            self::schedule_continuation((int) $result['last_id']);
+        }
+    }
+
+    /** Rows read per pass. Keeps peak memory flat whatever the table size. */
+    const RETAG_BATCH = 2000;
+
+    /**
+     * Recompute the is_affiliate flag across the whole link table.
+     *
+     * Walks the table by primary key rather than reading it in one go: the
+     * previous version stopped at 50,000 rows and returned as though it had
+     * finished, so a large site's later links kept a stale flag with nothing
+     * to indicate it.
+     *
+     * @param float $budget_seconds Wall-clock budget; 0 means run to the end.
+     * @return array{changed:int,scanned:int,complete:bool,last_id:int}
+     */
+    public static function retag_links(int $after_id = 0, float $budget_seconds = 20.0): array {
         global $wpdb;
-        $table = WPSD_DB::table('links');
 
-        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-        $rows = $wpdb->get_results("SELECT id, target_url, is_affiliate FROM {$table} LIMIT 50000");
+        $table    = WPSD_DB::table('links');
+        $deadline = $budget_seconds > 0 ? microtime(true) + $budget_seconds : 0.0;
 
-        $changed = 0;
-        foreach ((array) $rows as $row) {
-            $flag = WPSD_Checks_Affiliate::is_affiliate((string) $row->target_url) ? 1 : 0;
-            if ($flag !== (int) $row->is_affiliate) {
-                $wpdb->update($table, ['is_affiliate' => $flag], ['id' => (int) $row->id]);
-                $changed++;
+        $changed  = 0;
+        $scanned  = 0;
+        $last_id  = $after_id;
+        $complete = false;
+
+        while (true) {
+            // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+            $rows = $wpdb->get_results($wpdb->prepare(
+                "SELECT id, target_url, is_affiliate FROM {$table}
+                 WHERE id > %d ORDER BY id ASC LIMIT %d",
+                $last_id,
+                self::RETAG_BATCH
+            ));
+
+            if (!$rows) {
+                $complete = true;
+                break;
+            }
+
+            foreach ($rows as $row) {
+                $last_id = (int) $row->id;
+                $scanned++;
+
+                $flag = WPSD_Checks_Affiliate::is_affiliate((string) $row->target_url) ? 1 : 0;
+                if ($flag !== (int) $row->is_affiliate) {
+                    $wpdb->update($table, ['is_affiliate' => $flag], ['id' => (int) $row->id]);
+                    $changed++;
+                }
+            }
+
+            if (count($rows) < self::RETAG_BATCH) {
+                $complete = true;
+                break;
+            }
+
+            if ($deadline > 0.0 && microtime(true) >= $deadline) {
+                // Out of budget with rows still to go; the caller resumes from
+                // last_id rather than being told the job is done.
+                break;
             }
         }
 
-        return $changed;
+        return [
+            'changed'  => $changed,
+            'scanned'  => $scanned,
+            'complete' => $complete,
+            'last_id'  => $last_id,
+        ];
     }
 
     /**

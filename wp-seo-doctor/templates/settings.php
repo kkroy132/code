@@ -263,7 +263,11 @@ $wpsd_schedule_field = static function (string $key, string $value, int $next = 
             </tr>
             <tr>
                 <th scope="row"><label for="wpsd-gsc-secret"><?php esc_html_e('OAuth client secret', 'wp-seo-doctor'); ?></label></th>
-                <td><input type="password" id="wpsd-gsc-secret" name="wpsd[gsc_client_secret]" value="<?php echo esc_attr((string) $wpsd_settings['gsc_client_secret']); ?>" class="large-text" autocomplete="off"></td>
+                <td>
+                    <input type="password" id="wpsd-gsc-secret" name="wpsd[gsc_client_secret]" value="" class="large-text" autocomplete="off"
+                           placeholder="<?php echo esc_attr($wpsd_settings['gsc_client_secret'] !== '' ? __('Saved — leave blank to keep it', 'wp-seo-doctor') : __('Not set', 'wp-seo-doctor')); ?>">
+                    <p class="description"><?php esc_html_e('The stored secret is never sent back to the browser. Leave this blank to keep the current value.', 'wp-seo-doctor'); ?></p>
+                </td>
             </tr>
             <tr>
                 <th scope="row"><?php esc_html_e('Redirect URI', 'wp-seo-doctor'); ?></th>
@@ -331,7 +335,11 @@ $wpsd_schedule_field = static function (string $key, string $value, int $next = 
             </tr>
             <tr>
                 <th scope="row"><label for="wpsd-ai-key"><?php esc_html_e('API key', 'wp-seo-doctor'); ?></label></th>
-                <td><input type="password" id="wpsd-ai-key" name="wpsd[ai_api_key]" value="<?php echo esc_attr((string) $wpsd_settings['ai_api_key']); ?>" class="large-text" autocomplete="off"></td>
+                <td>
+                    <input type="password" id="wpsd-ai-key" name="wpsd[ai_api_key]" value="" class="large-text" autocomplete="off"
+                           placeholder="<?php echo esc_attr($wpsd_settings['ai_api_key'] !== '' ? __('Saved — leave blank to keep it', 'wp-seo-doctor') : __('Not set', 'wp-seo-doctor')); ?>">
+                    <p class="description"><?php esc_html_e('The stored key is never sent back to the browser. Leave this blank to keep the current value.', 'wp-seo-doctor'); ?></p>
+                </td>
             </tr>
             <tr>
                 <th scope="row"><label for="wpsd-ai-model"><?php esc_html_e('Model', 'wp-seo-doctor'); ?></label></th>

@@ -73,7 +73,7 @@ class WPSD_Monitor_404 {
             $hash,
             $referrer,
             mb_substr($user_agent, 0, 255),
-            WPSD_Helpers::client_ip(),
+            WPSD_Helpers::client_ip('log_404_ip'),
             $now,
             $now
         ));

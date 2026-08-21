@@ -493,15 +493,19 @@ class WPSD_Ajax {
             wp_send_json_error(['message' => $result->get_error_message()]);
         }
 
-        wp_send_json_success(array_merge($result, [
-            'message' => sprintf(
-                /* translators: 1: row count, 2: start date, 3: end date */
-                __('Synced %1$d rows (%2$s to %3$s).', 'wp-seo-doctor'),
-                $result['rows'],
-                $result['from'],
-                $result['to']
-            ),
-        ]));
+        $message = sprintf(
+            /* translators: 1: row count, 2: start date, 3: end date */
+            __('Synced %1$d rows (%2$s to %3$s).', 'wp-seo-doctor'),
+            $result['rows'],
+            $result['from'],
+            $result['to']
+        );
+
+        if (!empty($result['truncated'])) {
+            $message .= ' ' . __('Search Console returned more data than one sync can retrieve, so this window is partial. Narrow the lookback period for complete figures.', 'wp-seo-doctor');
+        }
+
+        wp_send_json_success(array_merge($result, ['message' => $message]));
     }
 
     public static function gsc_properties(): void {
@@ -591,15 +595,22 @@ class WPSD_Ajax {
     public static function retag_affiliate(): void {
         self::guard();
 
-        $changed = WPSD_Affiliate::retag_links();
+        $result = WPSD_Affiliate::retag_links(self::post_int('after_id'));
 
-        wp_send_json_success([
-            'changed' => $changed,
-            'message' => sprintf(
-                /* translators: %d: number of links retagged */
-                __('%d link(s) retagged.', 'wp-seo-doctor'),
-                $changed
-            ),
-        ]);
+        wp_send_json_success(array_merge($result, [
+            'message' => $result['complete']
+                ? sprintf(
+                    /* translators: 1: links changed, 2: links examined */
+                    __('%1$d of %2$d link(s) retagged.', 'wp-seo-doctor'),
+                    $result['changed'],
+                    $result['scanned']
+                )
+                : sprintf(
+                    /* translators: 1: links changed, 2: links examined */
+                    __('%1$d of %2$d link(s) retagged so far — continuing…', 'wp-seo-doctor'),
+                    $result['changed'],
+                    $result['scanned']
+                ),
+        ]));
     }
 }
