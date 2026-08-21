@@ -36,6 +36,11 @@ class Scheduler {
 	const HOOK_SCAN_POST = 'lwblc_scan_post';
 
 	/**
+	 * Hook that continues an unfinished schema migration.
+	 */
+	const HOOK_MIGRATE = 'lwblc_migrate';
+
+	/**
 	 * Hook that checks one batch of links.
 	 */
 	const HOOK_CHECK_BATCH = 'lwblc_check_batch';
@@ -156,5 +161,6 @@ class Scheduler {
 		self::unschedule( self::HOOK_SCAN_BATCH );
 		self::unschedule( self::HOOK_SCAN_POST );
 		self::unschedule( self::HOOK_CHECK_BATCH );
+		self::unschedule( self::HOOK_MIGRATE );
 	}
 }

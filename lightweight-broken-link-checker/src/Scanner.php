@@ -134,7 +134,7 @@ class Scanner {
 			return 0;
 		}
 
-		$links = self::extract_links( (string) $post->post_content );
+		$links = self::extract_links( (string) $post->post_content, $post_id );
 		$urls  = array();
 		$found = 0;
 
@@ -192,7 +192,7 @@ class Scanner {
 	public static function default_state() {
 		return array(
 			'running'       => false,
-			'offset'        => 0,
+			'last_id'       => 0,
 			'scanned'       => 0,
 			'total'         => 0,
 			'links_found'   => 0,
@@ -264,7 +264,7 @@ class Scanner {
 		self::save_state(
 			array(
 				'running'    => true,
-				'offset'     => 0,
+				'last_id'    => 0,
 				'scanned'    => 0,
 				'total'      => self::count_scannable_posts(),
 				'started_at' => Plugin::now(),
@@ -324,14 +324,14 @@ class Scanner {
 	/**
 	 * Processes one batch of posts and chains the next one.
 	 *
-	 * @param int $offset Offset of the batch to process.
+	 * @param int $after_id Highest post ID already processed; the batch starts after it.
 	 * @return void
 	 */
-	public static function run_batch( $offset = 0 ) {
+	public static function run_batch( $after_id = 0 ) {
 		global $wpdb;
 
-		$offset = max( 0, (int) $offset );
-		$state  = self::get_state();
+		$after_id = max( 0, (int) $after_id );
+		$state    = self::get_state();
 
 		if ( empty( $state['running'] ) ) {
 			return;
@@ -345,15 +345,15 @@ class Scanner {
 		}
 
 		$placeholders = implode( ', ', array_fill( 0, count( $post_types ), '%s' ) );
-		$args         = array_merge( array( 'publish' ), $post_types, array( self::BATCH_SIZE, $offset ) );
+		$args         = array_merge( array( 'publish' ), $post_types, array( $after_id, self::BATCH_SIZE ) );
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- $placeholders holds only %s tokens; values are passed as an array.
 		$sql = $wpdb->prepare(
 			"SELECT ID, post_title, post_content, post_modified_gmt
 			FROM {$wpdb->posts}
-			WHERE post_status = %s AND post_type IN ({$placeholders})
+			WHERE post_status = %s AND post_type IN ({$placeholders}) AND ID > %d
 			ORDER BY ID ASC
-			LIMIT %d OFFSET %d",
+			LIMIT %d",
 			$args
 		);
 		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
@@ -369,7 +369,7 @@ class Scanner {
 		$found = 0;
 
 		foreach ( $posts as $post ) {
-			$links = self::extract_links( (string) $post['post_content'] );
+			$links = self::extract_links( (string) $post['post_content'], (int) $post['ID'] );
 			$urls  = array();
 
 			foreach ( $links as $link ) {
@@ -392,8 +392,10 @@ class Scanner {
 			self::prune_post_links( (int) $post['ID'], $urls );
 		}
 
-		$state['offset']        = $offset + count( $posts );
-		$state['scanned']       = $state['offset'];
+		$last = end( $posts );
+
+		$state['last_id']       = (int) $last['ID'];
+		$state['scanned']       = (int) $state['scanned'] + count( $posts );
 		$state['links_found']   = (int) $state['links_found'] + $found;
 		$state['last_batch_at'] = Plugin::now();
 
@@ -402,9 +404,20 @@ class Scanner {
 			return;
 		}
 
+		/*
+		 * Re-read the state before continuing: a cancellation that landed while
+		 * this batch was running must not be overwritten by the batch that
+		 * started before it.
+		 */
+		wp_cache_delete( self::STATE_OPTION, 'options' );
+
+		if ( ! self::is_running() ) {
+			return;
+		}
+
 		self::save_state( $state );
 
-		Scheduler::schedule_single( time(), Scheduler::HOOK_SCAN_BATCH, array( $state['offset'] ) );
+		Scheduler::schedule_single( time(), Scheduler::HOOK_SCAN_BATCH, array( $state['last_id'] ) );
 	}
 
 	/**
@@ -434,9 +447,10 @@ class Scanner {
 	 * Extracts checkable links from a piece of HTML.
 	 *
 	 * @param string $content Post content.
+	 * @param int    $post_id Source post, used to resolve relative links.
 	 * @return array<int,array{url:string,text:string}>
 	 */
-	public static function extract_links( $content ) {
+	public static function extract_links( $content, $post_id = 0 ) {
 		$content = trim( (string) $content );
 
 		if ( '' === $content || false === strpos( $content, '<a' ) ) {
@@ -470,7 +484,7 @@ class Scanner {
 		foreach ( $document->getElementsByTagName( 'a' ) as $anchor ) {
 			$href = trim( (string) $anchor->getAttribute( 'href' ) );
 
-			$url = self::normalize_url( $href );
+			$url = self::normalize_url( $href, $post_id );
 
 			if ( '' === $url ) {
 				continue;
@@ -502,10 +516,11 @@ class Scanner {
 	 * Rejects mailto:, tel: and friends, in-page anchors, empty hrefs and
 	 * protocol-less fragments. Protocol relative URLs are upgraded to https.
 	 *
-	 * @param string $href Raw href attribute.
+	 * @param string $href    Raw href attribute.
+	 * @param int    $post_id Source post, used to resolve relative links.
 	 * @return string Checkable absolute URL, or an empty string.
 	 */
-	public static function normalize_url( $href ) {
+	public static function normalize_url( $href, $post_id = 0 ) {
 		$href = trim( (string) $href );
 
 		if ( '' === $href || '#' === $href[0] ) {
@@ -524,14 +539,18 @@ class Scanner {
 			}
 		}
 
-		// Protocol relative URL.
-		if ( 0 === strpos( $href, '//' ) ) {
-			$href = 'https:' . $href;
-		}
+		/*
+		 * Anything without a scheme is relative to the document it was found in.
+		 * `/about/`, `about/`, `../about/`, `../../page/` and `//host/path` are
+		 * all resolved against the source post's permalink, the same way a
+		 * browser resolves them, so none of them is mistaken for a dead link.
+		 */
+		if ( ! preg_match( '#^[a-z][a-z0-9+.\-]*:#i', $href ) ) {
+			$href = self::make_absolute( $href, self::base_url( $post_id ) );
 
-		// Root or document relative URL: resolve against the site address.
-		if ( 0 === strpos( $href, '/' ) ) {
-			$href = untrailingslashit( home_url() ) . $href;
+			if ( '' === $href ) {
+				return '';
+			}
 		}
 
 		$scheme = wp_parse_url( $href, PHP_URL_SCHEME );
@@ -593,12 +612,13 @@ class Scanner {
 		$post_id       = (int) $post_id;
 		$post_title    = self::trim_length( wp_strip_all_tags( (string) $post_title ), 255 );
 		$post_modified = self::sanitize_datetime( $post_modified );
+		$hash          = Database::hash_url( $url );
 
 		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $table is built from $wpdb->prefix.
 		$lookup_sql = $wpdb->prepare(
-			"SELECT id FROM {$table} WHERE source_post_id = %d AND link_url = %s",
+			"SELECT id FROM {$table} WHERE source_post_id = %d AND link_hash = %s",
 			$post_id,
-			$url
+			$hash
 		);
 		// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 
@@ -628,18 +648,20 @@ class Scanner {
 			$table,
 			array(
 				'link_url'           => $url,
+				'link_hash'          => $hash,
 				'link_text'          => $text,
 				'source_post_id'     => $post_id,
 				'source_post_title'  => $post_title,
 				'post_modified_date' => $post_modified,
 				'last_checked_at'    => null,
 				'status'             => Database::STATUS_PENDING,
+				'status_reason'      => '',
 				'http_code'          => 0,
 				'fail_count'         => 0,
 				'created_at'         => $now,
 				'updated_at'         => $now,
 			),
-			array( '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%s' )
+			array( '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%s' )
 		);
 
 		return (bool) $inserted;
@@ -668,12 +690,14 @@ class Scanner {
 			$sql = $wpdb->prepare( "DELETE FROM {$table} WHERE source_post_id = %d", $post_id );
 			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		} else {
-			$placeholders = implode( ', ', array_fill( 0, count( $keep_urls ), '%s' ) );
+			// Match on the hash so a long URL is compared in full, not by prefix.
+			$keep_hashes  = array_map( array( Database::class, 'hash_url' ), array_values( $keep_urls ) );
+			$placeholders = implode( ', ', array_fill( 0, count( $keep_hashes ), '%s' ) );
 
 			// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- $table comes from $wpdb->prefix, $placeholders holds only %s tokens.
 			$sql = $wpdb->prepare(
-				"DELETE FROM {$table} WHERE source_post_id = %d AND link_url NOT IN ({$placeholders})",
-				array_merge( array( $post_id ), array_values( $keep_urls ) )
+				"DELETE FROM {$table} WHERE source_post_id = %d AND link_hash NOT IN ({$placeholders})",
+				array_merge( array( $post_id ), $keep_hashes )
 			);
 			// phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 		}
@@ -696,6 +720,82 @@ class Scanner {
 	 */
 	public static function delete_post_links( $post_id ) {
 		self::prune_post_links( (int) $post_id, array() );
+	}
+
+	/**
+	 * Returns the document a post's relative links resolve against.
+	 *
+	 * Looked up only when a relative link is actually found, and remembered for
+	 * the rest of the request, so a scan of content that only holds absolute
+	 * URLs never pays for a permalink lookup.
+	 *
+	 * @param int $post_id Source post, 0 when unknown.
+	 * @return string Absolute base URL.
+	 */
+	public static function base_url( $post_id = 0 ) {
+		static $cache = array();
+
+		$post_id = (int) $post_id;
+
+		if ( isset( $cache[ $post_id ] ) ) {
+			return $cache[ $post_id ];
+		}
+
+		$base = '';
+
+		if ( $post_id > 0 ) {
+			$permalink = get_permalink( $post_id );
+
+			if ( is_string( $permalink ) && '' !== $permalink ) {
+				$base = $permalink;
+			}
+		}
+
+		if ( '' === $base ) {
+			$base = home_url( '/' );
+		}
+
+		$cache[ $post_id ] = $base;
+
+		return $base;
+	}
+
+	/**
+	 * Resolves a relative reference against a base URL.
+	 *
+	 * @param string $href Relative reference.
+	 * @param string $base Absolute base URL.
+	 * @return string Absolute URL, or an empty string when it cannot be built.
+	 */
+	private static function make_absolute( $href, $base ) {
+		if ( class_exists( '\WP_Http' ) && method_exists( '\WP_Http', 'make_absolute_url' ) ) {
+			$absolute = \WP_Http::make_absolute_url( $href, $base );
+
+			// The helper hands the reference back untouched when it cannot resolve it.
+			return $absolute === $href && ! preg_match( '#^https?://#i', $href ) ? '' : (string) $absolute;
+		}
+
+		// Minimal stand-in for the two shapes that matter most.
+		$parts = wp_parse_url( $base );
+
+		if ( ! is_array( $parts ) || empty( $parts['scheme'] ) || empty( $parts['host'] ) ) {
+			return '';
+		}
+
+		$root = $parts['scheme'] . '://' . $parts['host'] . ( isset( $parts['port'] ) ? ':' . $parts['port'] : '' );
+
+		if ( 0 === strpos( $href, '//' ) ) {
+			return $parts['scheme'] . ':' . $href;
+		}
+
+		if ( 0 === strpos( $href, '/' ) ) {
+			return $root . $href;
+		}
+
+		$path = isset( $parts['path'] ) ? $parts['path'] : '/';
+		$path = substr( $path, 0, (int) strrpos( $path, '/' ) + 1 );
+
+		return $root . $path . $href;
 	}
 
 	/**

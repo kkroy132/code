@@ -35,12 +35,9 @@ class Database {
 	const STATUS_REDIRECT = 'redirect';
 
 	/**
-	 * Number of characters of `link_url` covered by the unique index.
-	 *
-	 * Kept well under the 767 byte InnoDB prefix limit for utf8mb4
-	 * (180 * 4 bytes + 8 bytes for the bigint = 728 bytes).
+	 * Link was not contacted because the address is not publicly checkable.
 	 */
-	const URL_INDEX_LENGTH = 180;
+	const STATUS_SKIPPED = 'skipped';
 
 	/**
 	 * Unprefixed table name.
@@ -168,7 +165,21 @@ class Database {
 			self::STATUS_OK,
 			self::STATUS_BROKEN,
 			self::STATUS_REDIRECT,
+			self::STATUS_SKIPPED,
 		);
+	}
+
+	/**
+	 * Returns the uniqueness hash for a normalised URL.
+	 *
+	 * Raw SHA-256, so the whole address is covered whatever its length. The
+	 * full URL is still stored beside it for display.
+	 *
+	 * @param string $url Normalised URL.
+	 * @return string 32 raw bytes.
+	 */
+	public static function hash_url( $url ) {
+		return hash( 'sha256', (string) $url, true );
 	}
 
 	/**
@@ -197,23 +208,31 @@ class Database {
 
 		$table   = self::table();
 		$collate = $wpdb->get_charset_collate();
-		$url_len = self::URL_INDEX_LENGTH;
 
+		/*
+		 * Uniqueness is carried by `link_hash`, the raw SHA-256 of the whole
+		 * URL, not by a prefix of `link_url`. A prefix index cannot tell apart
+		 * two addresses that only differ past the cut-off, which silently
+		 * dropped the second one. `link_hash` is BINARY, so it has no charset
+		 * of its own and compares byte for byte on any collation.
+		 */
 		return "CREATE TABLE {$table} (
 			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
 			link_url varchar(2048) NOT NULL,
+			link_hash binary(32) NOT NULL,
 			link_text varchar(255) NOT NULL DEFAULT '',
 			source_post_id bigint(20) unsigned NOT NULL DEFAULT 0,
 			source_post_title varchar(255) NOT NULL DEFAULT '',
 			post_modified_date datetime DEFAULT NULL,
 			last_checked_at datetime DEFAULT NULL,
 			status varchar(20) NOT NULL DEFAULT 'pending',
+			status_reason varchar(32) NOT NULL DEFAULT '',
 			http_code smallint(5) unsigned NOT NULL DEFAULT 0,
 			fail_count tinyint(3) unsigned NOT NULL DEFAULT 0,
 			created_at datetime NOT NULL,
 			updated_at datetime NOT NULL,
 			PRIMARY KEY  (id),
-			UNIQUE KEY link_source (link_url({$url_len}),source_post_id),
+			UNIQUE KEY link_source (source_post_id,link_hash),
 			KEY status_checked (status,last_checked_at),
 			KEY status_modified (status,post_modified_date),
 			KEY source_post_id (source_post_id),

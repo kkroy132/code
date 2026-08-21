@@ -121,3 +121,8 @@
 .lwblc-wrap .column-last_checked {
 	width: 140px;
 }
+
+.lwblc-wrap .lwblc-badge-skipped {
+	background: #f0f0f1;
+	color: #3c434a;
+}

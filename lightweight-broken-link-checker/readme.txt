@@ -4,7 +4,7 @@ Tags: broken links, link checker, seo, 404, maintenance
 Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.1.1
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -78,6 +78,10 @@ No. Saving a published post queues a rescan of that one post, so its links are c
 
 No. Links settled as broken or redirecting are revisited automatically once a month, at the lowest priority, and return to the healthy list when they answer normally again. **Recheck now** on the row is only there for when you do not want to wait.
 
+= What does the Skipped status mean? =
+
+The address is not something the checker will contact: a link to `localhost`, to an address on a private or reserved network, or on a protocol other than http and https. Those are refused deliberately, so the plugin can never be used to probe machines inside your network. The row shows a short reason, and the link is revisited monthly in case it becomes publicly reachable. To check a host on your own network on purpose, add it with the `lwblc_trusted_hosts` filter.
+
 = Does it modify my content? =
 
 Never. The plugin only reads your content and reports what it finds. Fixing a link is always your decision, made in the post editor.
@@ -96,6 +100,15 @@ The link table, the plugin options and any queued background jobs. Deactivating 
 2. Row actions for rechecking a link or editing the post that contains it.
 
 == Changelog ==
+
+= 1.2.0 =
+* Link uniqueness is now based on a SHA-256 hash of the whole address instead of an index over its first 180 characters. Two long URLs that only differed past that point used to collide, and the second one was quietly dropped; both are now tracked. Existing installations migrate themselves, keeping every stored link.
+* Outbound checks are guarded against server-side request forgery: only http and https on the usual ports are contacted, addresses on loopback, private, shared, link-local, multicast and reserved ranges are refused in both IPv4 and IPv6, internal host names are refused, resolved addresses are checked before connecting and pinned for the request, and redirects are never followed automatically.
+* Links that cannot safely be contacted are listed as **Skipped** with a short reason instead of being counted as broken.
+* Check results now record why a link failed — timeout, host not found, certificate problem, rate limited, and so on — shown under the status.
+* Relative links are resolved against the post's own permalink, so `about/`, `../about/` and `//host/path` are checked correctly rather than ignored.
+* Full scans page by post ID instead of by offset, so a long scan cannot skip or repeat posts when content is added or deleted while it runs.
+* Cancelling a scan now takes effect even if a batch was already in flight.
 
 = 1.1.1 =
 * Tested against WordPress 7.0.
@@ -116,6 +129,9 @@ The link table, the plugin options and any queued background jobs. Deactivating 
 * Broken Links dashboard with status filters, search, sorting, per link recheck and a summary box.
 
 == Upgrade Notice ==
+
+= 1.2.0 =
+Security and reliability release: SSRF protection for outbound checks, and URL uniqueness by full hash instead of a 180 character prefix. The database migrates itself on the first load and keeps all existing links.
 
 = 1.1.1 =
 Compatibility with WordPress 7.0, plus hardened database query construction. No database changes.

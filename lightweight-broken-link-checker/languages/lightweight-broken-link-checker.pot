@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Lightweight Broken Link Checker 1.1.1\n"
+"Project-Id-Version: Lightweight Broken Link Checker 1.2.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/lightweight-broken-link-checker\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-08-17T17:40:01+00:00\n"
+"POT-Creation-Date: 2026-08-21T19:53:35+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: lightweight-broken-link-checker\n"
@@ -88,7 +88,7 @@ msgstr ""
 
 #: src/Admin/Admin.php:292
 #: src/Admin/Links_List_Table.php:102
-#: src/Admin/Links_List_Table.php:393
+#: src/Admin/Links_List_Table.php:394
 msgid "Broken"
 msgstr ""
 
@@ -129,72 +129,129 @@ msgid "All"
 msgstr ""
 
 #: src/Admin/Links_List_Table.php:103
-#: src/Admin/Links_List_Table.php:394
+#: src/Admin/Links_List_Table.php:395
 msgid "Redirect"
 msgstr ""
 
 #: src/Admin/Links_List_Table.php:104
-#: src/Admin/Links_List_Table.php:395
+#: src/Admin/Links_List_Table.php:396
 msgid "Pending"
 msgstr ""
 
 #: src/Admin/Links_List_Table.php:105
-#: src/Admin/Links_List_Table.php:392
+#: src/Admin/Links_List_Table.php:393
 msgid "OK"
 msgstr ""
 
-#: src/Admin/Links_List_Table.php:312
+#: src/Admin/Links_List_Table.php:106
+#: src/Admin/Links_List_Table.php:397
+msgid "Skipped"
+msgstr ""
+
+#: src/Admin/Links_List_Table.php:313
 msgid "(no anchor text)"
 msgstr ""
 
-#: src/Admin/Links_List_Table.php:318
+#: src/Admin/Links_List_Table.php:319
 msgid "Recheck now"
 msgstr ""
 
-#: src/Admin/Links_List_Table.php:323
+#: src/Admin/Links_List_Table.php:324
 msgid "Open link"
 msgstr ""
 
-#: src/Admin/Links_List_Table.php:333
+#: src/Admin/Links_List_Table.php:334
 msgid "Edit source post"
 msgstr ""
 
 #. translators: %d: post ID.
-#: src/Admin/Links_List_Table.php:358
+#: src/Admin/Links_List_Table.php:359
 #, php-format
 msgid "Post #%d"
 msgstr ""
 
 #. translators: %s: formatted date.
-#: src/Admin/Links_List_Table.php:372
+#: src/Admin/Links_List_Table.php:373
 #, php-format
 msgid "Modified %s"
 msgstr ""
 
 #. translators: %d: number of consecutive failures.
-#: src/Admin/Links_List_Table.php:412
+#: src/Admin/Links_List_Table.php:420
 #, php-format
 msgid "%d failed attempt"
 msgid_plural "%d failed attempts"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/Admin/Links_List_Table.php:432
-msgid "n/a"
+#: src/Admin/Links_List_Table.php:441
+msgid "Private or local address, not checked"
+msgstr ""
+
+#: src/Admin/Links_List_Table.php:442
+msgid "Unsupported protocol"
+msgstr ""
+
+#: src/Admin/Links_List_Table.php:443
+msgid "Address could not be read"
+msgstr ""
+
+#: src/Admin/Links_List_Table.php:444
+msgid "Timed out"
+msgstr ""
+
+#: src/Admin/Links_List_Table.php:445
+msgid "Host not found"
 msgstr ""
 
 #: src/Admin/Links_List_Table.php:446
+msgid "Certificate problem"
+msgstr ""
+
+#: src/Admin/Links_List_Table.php:447
+msgid "Could not connect"
+msgstr ""
+
+#: src/Admin/Links_List_Table.php:448
+msgid "Access refused"
+msgstr ""
+
+#: src/Admin/Links_List_Table.php:449
+msgid "Page not found"
+msgstr ""
+
+#: src/Admin/Links_List_Table.php:450
+msgid "Permanently removed"
+msgstr ""
+
+#: src/Admin/Links_List_Table.php:451
+msgid "Rate limited"
+msgstr ""
+
 #: src/Admin/Links_List_Table.php:452
+msgid "Server error"
+msgstr ""
+
+#: src/Admin/Links_List_Table.php:453
+msgid "Rejected by the server"
+msgstr ""
+
+#: src/Admin/Links_List_Table.php:469
+msgid "n/a"
+msgstr ""
+
+#: src/Admin/Links_List_Table.php:483
+#: src/Admin/Links_List_Table.php:489
 msgid "Never"
 msgstr ""
 
 #. translators: %s: human readable time difference.
-#: src/Admin/Links_List_Table.php:461
+#: src/Admin/Links_List_Table.php:498
 #, php-format
 msgid "%s ago"
 msgstr ""
 
-#: src/Admin/Links_List_Table.php:502
+#: src/Admin/Links_List_Table.php:539
 msgid "No links found. Run a scan to collect the links in your content."
 msgstr ""
 
@@ -258,4 +315,48 @@ msgstr ""
 
 #: src/Scanner.php:278
 msgid "Scan started. Progress updates automatically."
+msgstr ""
+
+#: src/Url_Guard.php:180
+msgid "The address is empty or too long."
+msgstr ""
+
+#: src/Url_Guard.php:186
+msgid "The address could not be parsed."
+msgstr ""
+
+#: src/Url_Guard.php:194
+msgid "Only http and https addresses are checked."
+msgstr ""
+
+#: src/Url_Guard.php:198
+msgid "The address has no host."
+msgstr ""
+
+#: src/Url_Guard.php:203
+msgid "Addresses containing credentials are not checked."
+msgstr ""
+
+#: src/Url_Guard.php:209
+msgid "That port is not checked."
+msgstr ""
+
+#: src/Url_Guard.php:215
+msgid "The address has no usable host name."
+msgstr ""
+
+#: src/Url_Guard.php:231
+msgid "That address is on a private or reserved network."
+msgstr ""
+
+#: src/Url_Guard.php:243
+msgid "That host name is local to this network."
+msgstr ""
+
+#: src/Url_Guard.php:249
+msgid "The host name could not be resolved."
+msgstr ""
+
+#: src/Url_Guard.php:259
+msgid "That host resolves to a private or reserved address."
 msgstr ""

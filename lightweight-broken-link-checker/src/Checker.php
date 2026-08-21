@@ -243,11 +243,12 @@ class Checker {
 			$wpdb->prepare(
 				"SELECT id, link_url, status, fail_count, http_code
 				FROM {$table}
-				WHERE status IN ( %s, %s ) AND ( last_checked_at IS NULL OR last_checked_at < %s )
+				WHERE status IN ( %s, %s, %s ) AND ( last_checked_at IS NULL OR last_checked_at < %s )
 				ORDER BY last_checked_at ASC, id ASC
 				LIMIT %d",
 				Database::STATUS_BROKEN,
 				Database::STATUS_REDIRECT,
+				Database::STATUS_SKIPPED,
 				gmdate( 'Y-m-d H:i:s', time() - self::RECHECK_SETTLED_AFTER ),
 				(int) $limit
 			),
@@ -310,7 +311,25 @@ class Checker {
 		$result = self::request( $url );
 
 		$code   = (int) $result['code'];
+		$reason = isset( $result['reason'] ) ? (string) $result['reason'] : '';
 		$status = Database::STATUS_OK;
+
+		/*
+		 * The guard refused to send the request at all. That says nothing about
+		 * whether the target works, so it is recorded as skipped and the
+		 * failure counter is left alone rather than marching towards `broken`.
+		 */
+		if ( in_array( $reason, array( 'blocked', 'unsupported_scheme', 'invalid_url' ), true ) ) {
+			self::save_result( (int) $link['id'], Database::STATUS_SKIPPED, 0, 0, $reason );
+
+			return array(
+				'id'         => (int) $link['id'],
+				'status'     => Database::STATUS_SKIPPED,
+				'http_code'  => 0,
+				'fail_count' => 0,
+				'reason'     => $reason,
+			);
+		}
 
 		if ( 0 === $code ) {
 			// Transport level failure (DNS, TLS, timeout): count it, do not judge yet.
@@ -334,13 +353,14 @@ class Checker {
 			$fail_count = 0;
 		}
 
-		self::save_result( (int) $link['id'], $status, $code, $fail_count );
+		self::save_result( (int) $link['id'], $status, $code, $fail_count, $reason );
 
 		return array(
 			'id'         => (int) $link['id'],
 			'status'     => $status,
 			'http_code'  => $code,
 			'fail_count' => $fail_count,
+			'reason'     => $reason,
 		);
 	}
 
@@ -365,6 +385,16 @@ class Checker {
 	 * @return array{code:int,method:string}
 	 */
 	public static function request( $url ) {
+		$destination = Url_Guard::validate( $url );
+
+		if ( is_wp_error( $destination ) ) {
+			return array(
+				'code'   => 0,
+				'method' => '',
+				'reason' => self::reason_from_error( $destination ),
+			);
+		}
+
 		$args = array(
 			'timeout'             => self::TIMEOUT,
 			'redirection'         => 0,
@@ -384,27 +414,138 @@ class Checker {
 		 */
 		$args = apply_filters( 'lwblc_request_args', $args, $url );
 
-		$response = wp_remote_head( $url, $args );
-		$code     = is_wp_error( $response ) ? 0 : (int) wp_remote_retrieve_response_code( $response );
+		/*
+		 * Set after the filter, never before: following a redirect would send
+		 * the request to an address that was never validated, so a 3xx is
+		 * reported rather than chased. The marker lets the transport hook
+		 * recognise our own requests.
+		 */
+		$args['redirection'] = 0;
+		$args['lwblc']       = true;
 
-		if ( self::needs_get_retry( $code ) ) {
+		Url_Guard::pin( $destination );
+
+		try {
+			$outcome = self::interpret( wp_remote_head( $url, $args ) );
+
+			if ( ! self::needs_get_retry( $outcome['code'] ) ) {
+				$outcome['method'] = 'HEAD';
+
+				return $outcome;
+			}
+
 			$get_args            = $args;
 			$get_args['method']  = 'GET';
 			$get_args['headers'] = array( 'Accept' => 'text/html,*/*;q=0.8' );
 
-			$response = wp_remote_get( $url, $get_args );
-			$get_code = is_wp_error( $response ) ? 0 : (int) wp_remote_retrieve_response_code( $response );
+			$outcome           = self::interpret( wp_remote_get( $url, $get_args ) );
+			$outcome['method'] = 'GET';
 
+			return $outcome;
+		} finally {
+			Url_Guard::unpin();
+		}
+	}
+
+	/**
+	 * Turns an HTTP response or transport error into a code and a reason.
+	 *
+	 * @param array|\WP_Error $response Response from the HTTP API.
+	 * @return array{code:int,method:string,reason:string}
+	 */
+	private static function interpret( $response ) {
+		if ( is_wp_error( $response ) ) {
 			return array(
-				'code'   => $get_code,
-				'method' => 'GET',
+				'code'   => 0,
+				'method' => '',
+				'reason' => self::reason_from_error( $response ),
 			);
 		}
 
+		$code = (int) wp_remote_retrieve_response_code( $response );
+
 		return array(
 			'code'   => $code,
-			'method' => 'HEAD',
+			'method' => '',
+			'reason' => self::reason_from_code( $code ),
 		);
+	}
+
+	/**
+	 * Names the outcome behind an HTTP status code.
+	 *
+	 * @param int $code Response code.
+	 * @return string
+	 */
+	public static function reason_from_code( $code ) {
+		$code = (int) $code;
+
+		if ( $code >= 200 && $code < 300 ) {
+			return 'ok';
+		}
+
+		if ( $code >= 300 && $code < 400 ) {
+			return 'redirect';
+		}
+
+		switch ( $code ) {
+			case 401:
+			case 403:
+				return 'forbidden';
+			case 404:
+				return 'not_found';
+			case 410:
+				return 'gone';
+			case 429:
+				return 'rate_limited';
+		}
+
+		if ( $code >= 500 ) {
+			return 'server_error';
+		}
+
+		if ( $code >= 400 ) {
+			return 'client_error';
+		}
+
+		return 'connection';
+	}
+
+	/**
+	 * Names the outcome behind a transport error.
+	 *
+	 * @param \WP_Error $error Error from the guard or the HTTP API.
+	 * @return string
+	 */
+	public static function reason_from_error( $error ) {
+		switch ( $error->get_error_code() ) {
+			case 'lwblc_unsupported_scheme':
+				return 'unsupported_scheme';
+			case 'lwblc_blocked_host':
+			case 'lwblc_blocked_ip':
+			case 'lwblc_blocked_port':
+				return 'blocked';
+			case 'lwblc_invalid_url':
+				return 'invalid_url';
+			case 'lwblc_dns_failure':
+				return 'dns';
+		}
+
+		$message = strtolower( (string) $error->get_error_message() );
+
+		if ( false !== strpos( $message, 'timed out' ) || false !== strpos( $message, 'timeout' ) ) {
+			return 'timeout';
+		}
+
+		if ( false !== strpos( $message, 'resolve host' ) || false !== strpos( $message, 'name or service not known' ) ) {
+			return 'dns';
+		}
+
+		if ( false !== strpos( $message, 'ssl' ) || false !== strpos( $message, 'certificate' ) ) {
+			return 'ssl';
+		}
+
+		return 'connection';
 	}
 
 	/**
@@ -444,9 +585,10 @@ class Checker {
 	 * @param string $status     New status.
 	 * @param int    $code       HTTP code, 0 when unreachable.
 	 * @param int    $fail_count New failure counter.
+	 * @param string $reason     Machine readable reason for the outcome.
 	 * @return void
 	 */
-	private static function save_result( $id, $status, $code, $fail_count ) {
+	private static function save_result( $id, $status, $code, $fail_count, $reason = '' ) {
 		global $wpdb;
 
 		$now = Plugin::now();
@@ -456,6 +598,7 @@ class Checker {
 			Database::table(),
 			array(
 				'status'          => Database::sanitize_status( $status ),
+				'status_reason'   => self::sanitize_reason( $reason ),
 				'http_code'       => max( 0, (int) $code ),
 				// The column is a tinyint; a link rechecked for years must not overflow it.
 				'fail_count'      => min( 255, max( 0, (int) $fail_count ) ),
@@ -463,9 +606,42 @@ class Checker {
 				'updated_at'      => $now,
 			),
 			array( 'id' => (int) $id ),
-			array( '%s', '%d', '%d', '%s', '%s' ),
+			array( '%s', '%s', '%d', '%d', '%s', '%s' ),
 			array( '%d' )
 		);
+	}
+
+	/**
+	 * Keeps the stored reason to a short known token.
+	 *
+	 * The column only ever holds one of these machine readable words. Nothing
+	 * from the remote server, and no network detail, is written to it.
+	 *
+	 * @param string $reason Candidate reason.
+	 * @return string
+	 */
+	public static function sanitize_reason( $reason ) {
+		$allowed = array(
+			'ok',
+			'redirect',
+			'forbidden',
+			'not_found',
+			'gone',
+			'rate_limited',
+			'client_error',
+			'server_error',
+			'timeout',
+			'dns',
+			'ssl',
+			'connection',
+			'blocked',
+			'unsupported_scheme',
+			'invalid_url',
+		);
+
+		$reason = is_string( $reason ) ? strtolower( trim( $reason ) ) : '';
+
+		return in_array( $reason, $allowed, true ) ? $reason : '';
 	}
 
 	/**

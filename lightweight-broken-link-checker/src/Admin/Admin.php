@@ -230,7 +230,7 @@ class Admin {
 						type="button"
 						class="button"
 						id="lwblc-cancel-button"
-						<?php echo $scanning ? '' : 'style="display:none"'; ?>
+						<?php echo $scanning ? '' : ' style="display:none"'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Both branches are literals. ?>
 					>
 						<?php esc_html_e( 'Cancel scan', 'lightweight-broken-link-checker' ); ?>
 					</button>

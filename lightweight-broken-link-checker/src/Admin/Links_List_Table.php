@@ -103,6 +103,7 @@ class Links_List_Table extends WP_List_Table {
 			Database::STATUS_REDIRECT => __( 'Redirect', 'lightweight-broken-link-checker' ),
 			Database::STATUS_PENDING  => __( 'Pending', 'lightweight-broken-link-checker' ),
 			Database::STATUS_OK       => __( 'OK', 'lightweight-broken-link-checker' ),
+			Database::STATUS_SKIPPED  => __( 'Skipped', 'lightweight-broken-link-checker' ),
 		);
 
 		$views = array();
@@ -393,6 +394,7 @@ class Links_List_Table extends WP_List_Table {
 			Database::STATUS_BROKEN   => __( 'Broken', 'lightweight-broken-link-checker' ),
 			Database::STATUS_REDIRECT => __( 'Redirect', 'lightweight-broken-link-checker' ),
 			Database::STATUS_PENDING  => __( 'Pending', 'lightweight-broken-link-checker' ),
+			Database::STATUS_SKIPPED  => __( 'Skipped', 'lightweight-broken-link-checker' ),
 		);
 
 		$badge = sprintf(
@@ -400,6 +402,12 @@ class Links_List_Table extends WP_List_Table {
 			esc_attr( $status ),
 			esc_html( isset( $labels[ $status ] ) ? $labels[ $status ] : $status )
 		);
+
+		$reason = isset( $item['status_reason'] ) ? $this->reason_label( (string) $item['status_reason'] ) : '';
+
+		if ( '' !== $reason ) {
+			$badge .= sprintf( '<div class="lwblc-muted">%s</div>', esc_html( $reason ) );
+		}
 
 		$fail_count = (int) $item['fail_count'];
 
@@ -417,6 +425,35 @@ class Links_List_Table extends WP_List_Table {
 		}
 
 		return $badge;
+	}
+
+	/**
+	 * Turns a stored reason token into something a person can read.
+	 *
+	 * Deliberately vague about the network: an editor is told the address was
+	 * not checked, not which internal range it pointed at.
+	 *
+	 * @param string $reason Stored reason token.
+	 * @return string Empty when there is nothing worth showing.
+	 */
+	private function reason_label( $reason ) {
+		$labels = array(
+			'blocked'            => __( 'Private or local address, not checked', 'lightweight-broken-link-checker' ),
+			'unsupported_scheme' => __( 'Unsupported protocol', 'lightweight-broken-link-checker' ),
+			'invalid_url'        => __( 'Address could not be read', 'lightweight-broken-link-checker' ),
+			'timeout'            => __( 'Timed out', 'lightweight-broken-link-checker' ),
+			'dns'                => __( 'Host not found', 'lightweight-broken-link-checker' ),
+			'ssl'                => __( 'Certificate problem', 'lightweight-broken-link-checker' ),
+			'connection'         => __( 'Could not connect', 'lightweight-broken-link-checker' ),
+			'forbidden'          => __( 'Access refused', 'lightweight-broken-link-checker' ),
+			'not_found'          => __( 'Page not found', 'lightweight-broken-link-checker' ),
+			'gone'               => __( 'Permanently removed', 'lightweight-broken-link-checker' ),
+			'rate_limited'       => __( 'Rate limited', 'lightweight-broken-link-checker' ),
+			'server_error'       => __( 'Server error', 'lightweight-broken-link-checker' ),
+			'client_error'       => __( 'Rejected by the server', 'lightweight-broken-link-checker' ),
+		);
+
+		return isset( $labels[ $reason ] ) ? $labels[ $reason ] : '';
 	}
 
 	/**

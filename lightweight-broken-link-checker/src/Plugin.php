@@ -60,7 +60,13 @@ class Plugin {
 
 		$this->booted = true;
 
+		// Transport hardening has to be in place before any request goes out.
+		Url_Guard::init();
+
 		Installer::maybe_upgrade();
+
+		// Lets an interrupted migration finish in the background.
+		add_action( Scheduler::HOOK_MIGRATE, array( Installer::class, 'maybe_upgrade' ) );
 
 		Scanner::init();
 		Checker::init();
