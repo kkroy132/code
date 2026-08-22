@@ -1,6 +1,6 @@
 <?php
 /**
- * Tasks data access layer.
+ * Milestones data access layer.
  *
  * @package Personal_Project_Tracker
  */
@@ -10,22 +10,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class PTP_Tasks_Repository
+ * Class PTP_Milestones_Repository
  *
- * Owns all reads/writes to the tasks table, plus the single
+ * Owns all reads/writes to the milestones table, plus the single
  * sanitize-and-validate routine ( prepare_fields() ) shared by the
  * admin-post form handler and the REST controller. Mirrors
- * PTP_Projects_Repository's shape so the two modules stay consistent.
+ * PTP_Tasks_Repository's shape, including archiving being independent
+ * of status (a completed milestone stays completed once archived).
  *
- * Archiving a task is independent of its status (unlike Projects, where
- * 'archived' is itself a status value): a task keeps whatever status it
- * had and simply gets an archived_at timestamp, so completed work stays
- * marked completed even after being tidied out of the active list.
+ * Task relationships (view/add/remove) are handled here by delegating to
+ * PTP_Tasks_Repository — a milestone never writes to the tasks table
+ * directly, so task data always goes through its own owning repository.
  */
-class PTP_Tasks_Repository {
+class PTP_Milestones_Repository {
 
 	/**
-	 * Columns that may be used to sort the task list.
+	 * Columns that may be used to sort the milestone list.
 	 *
 	 * @var string[]
 	 */
@@ -35,38 +35,37 @@ class PTP_Tasks_Repository {
 		'priority',
 		'start_date',
 		'due_date',
-		'estimated_time',
+		'progress',
 		'created_at',
 		'updated_at',
 	);
 
 	/**
-	 * Get the fully-prefixed tasks table name.
+	 * Get the fully-prefixed milestones table name.
 	 *
 	 * @return string
 	 */
 	public static function get_table() {
-		return ptp_table( 'tasks' );
+		return ptp_table( 'milestones' );
 	}
 
 	/**
-	 * Allowed task statuses.
+	 * Allowed milestone statuses.
 	 *
 	 * @return array<string, string>
 	 */
 	public static function get_statuses() {
 		return array(
-			'todo'        => __( 'Todo', 'personal-project-tracker' ),
+			'planning'    => __( 'Planning', 'personal-project-tracker' ),
 			'in_progress' => __( 'In Progress', 'personal-project-tracker' ),
-			'blocked'     => __( 'Blocked', 'personal-project-tracker' ),
-			'review'      => __( 'Review', 'personal-project-tracker' ),
 			'completed'   => __( 'Completed', 'personal-project-tracker' ),
+			'on_hold'     => __( 'On Hold', 'personal-project-tracker' ),
 			'cancelled'   => __( 'Cancelled', 'personal-project-tracker' ),
 		);
 	}
 
 	/**
-	 * Allowed task priorities.
+	 * Allowed milestone priorities.
 	 *
 	 * @return array<string, string>
 	 */
@@ -96,13 +95,12 @@ class PTP_Tasks_Repository {
 	}
 
 	/**
-	 * Sanitize and validate raw input (from $_POST or a REST request) into a
-	 * safe, column-ready associative array. The only place task input is
-	 * validated — both the admin form controller and the REST controller
-	 * call this so the rules never drift apart.
+	 * Sanitize and validate raw input into a safe, column-ready array. The
+	 * only place milestone input is validated — both the admin form
+	 * controller and the REST controller call this.
 	 *
 	 * @param array $raw Raw input, keyed by field name.
-	 * @return array|WP_Error Sanitized data, or a WP_Error with one or more validation failures.
+	 * @return array|WP_Error
 	 */
 	public static function prepare_fields( array $raw ) {
 		$errors = new WP_Error();
@@ -111,7 +109,7 @@ class PTP_Tasks_Repository {
 		$title = isset( $raw['title'] ) ? PTP_Security::sanitize_text( $raw['title'] ) : '';
 
 		if ( '' === $title ) {
-			$errors->add( 'title_required', __( 'Task title is required.', 'personal-project-tracker' ) );
+			$errors->add( 'title_required', __( 'Milestone title is required.', 'personal-project-tracker' ) );
 		}
 
 		$data['title']       = substr( $title, 0, 255 );
@@ -120,25 +118,15 @@ class PTP_Tasks_Repository {
 		$project_id = isset( $raw['project_id'] ) ? absint( $raw['project_id'] ) : 0;
 
 		if ( ! $project_id ) {
-			$errors->add( 'project_required', __( 'A task must belong to a project.', 'personal-project-tracker' ) );
+			$errors->add( 'project_required', __( 'A milestone must belong to a project.', 'personal-project-tracker' ) );
 		} elseif ( ! PTP_Projects_Repository::exists( $project_id ) ) {
 			$errors->add( 'project_invalid', __( 'The selected project does not exist.', 'personal-project-tracker' ) );
 		}
 
 		$data['project_id'] = $project_id;
 
-		// Milestones are implemented in a later phase; accept and validate
-		// the column now (data integrity) without exposing a picker yet.
-		$milestone_id = isset( $raw['milestone_id'] ) ? absint( $raw['milestone_id'] ) : 0;
-
-		if ( $milestone_id && ! self::milestone_exists( $milestone_id ) ) {
-			$errors->add( 'milestone_invalid', __( 'The selected milestone does not exist.', 'personal-project-tracker' ) );
-		}
-
-		$data['milestone_id'] = $milestone_id ? $milestone_id : null;
-
-		$status         = isset( $raw['status'] ) ? sanitize_key( wp_unslash( (string) $raw['status'] ) ) : 'todo';
-		$data['status'] = self::is_valid_status( $status ) ? $status : 'todo';
+		$status         = isset( $raw['status'] ) ? sanitize_key( wp_unslash( (string) $raw['status'] ) ) : 'planning';
+		$data['status'] = self::is_valid_status( $status ) ? $status : 'planning';
 
 		$priority         = isset( $raw['priority'] ) ? sanitize_key( wp_unslash( (string) $raw['priority'] ) ) : 'medium';
 		$data['priority'] = self::is_valid_priority( $priority ) ? $priority : 'medium';
@@ -150,28 +138,14 @@ class PTP_Tasks_Repository {
 			$errors->add( 'invalid_date_range', __( 'The due date cannot be earlier than the start date.', 'personal-project-tracker' ) );
 		}
 
-		$data['estimated_time'] = self::sanitize_hours( $raw['estimated_time'] ?? null );
-
-		$tags         = isset( $raw['tags'] ) ? PTP_Security::sanitize_text( $raw['tags'] ) : '';
-		$data['tags'] = substr( $tags, 0, 500 );
+		$progress         = isset( $raw['progress'] ) ? (int) $raw['progress'] : 0;
+		$data['progress'] = max( 0, min( 100, $progress ) );
 
 		if ( $errors->has_errors() ) {
 			return $errors;
 		}
 
 		return $data;
-	}
-
-	/**
-	 * @param int $milestone_id Milestone ID.
-	 * @return bool
-	 */
-	private static function milestone_exists( $milestone_id ) {
-		global $wpdb;
-
-		$table = ptp_table( 'milestones' );
-
-		return (bool) $wpdb->get_var( $wpdb->prepare( "SELECT 1 FROM {$table} WHERE id = %d", $milestone_id ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 	}
 
 	/**
@@ -195,42 +169,22 @@ class PTP_Tasks_Repository {
 	}
 
 	/**
-	 * @param mixed $value Raw hours value.
-	 * @return float|null Non-negative float, or null when empty.
-	 */
-	private static function sanitize_hours( $value ) {
-		if ( null === $value || '' === $value ) {
-			return null;
-		}
-
-		$value = (float) $value;
-
-		return $value < 0 ? 0.0 : $value;
-	}
-
-	/**
-	 * Map sanitized data keys to their $wpdb format specifiers.
-	 *
 	 * @param array $data Sanitized data.
 	 * @return string[]
 	 */
 	private static function formats_for( array $data ) {
 		$map = array(
-			'project_id'      => '%d',
-			'milestone_id'    => '%d',
-			'title'           => '%s',
-			'description'     => '%s',
-			'status'          => '%s',
-			'priority'        => '%s',
-			'due_date'        => '%s',
-			'start_date'      => '%s',
-			'estimated_time'  => '%f',
-			'actual_time'     => '%f',
-			'assigned_user'   => '%d',
-			'tags'            => '%s',
-			'created_at'      => '%s',
-			'updated_at'      => '%s',
-			'archived_at'     => '%s',
+			'project_id'  => '%d',
+			'title'       => '%s',
+			'description' => '%s',
+			'status'      => '%s',
+			'priority'    => '%s',
+			'start_date'  => '%s',
+			'due_date'    => '%s',
+			'progress'    => '%d',
+			'created_at'  => '%s',
+			'updated_at'  => '%s',
+			'archived_at' => '%s',
 		);
 
 		$formats = array();
@@ -243,9 +197,9 @@ class PTP_Tasks_Repository {
 	}
 
 	/**
-	 * Get a single task by ID.
+	 * Get a single milestone by ID.
 	 *
-	 * @param int $id Task ID.
+	 * @param int $id Milestone ID.
 	 * @return object|null
 	 */
 	public static function get( $id ) {
@@ -258,7 +212,7 @@ class PTP_Tasks_Repository {
 	}
 
 	/**
-	 * @param int $id Task ID.
+	 * @param int $id Milestone ID.
 	 * @return bool
 	 */
 	public static function exists( $id ) {
@@ -266,10 +220,10 @@ class PTP_Tasks_Repository {
 	}
 
 	/**
-	 * Create a new task.
+	 * Create a new milestone.
 	 *
 	 * @param array $raw Raw input.
-	 * @return int|WP_Error New task ID, or a WP_Error on validation/DB failure.
+	 * @return int|WP_Error
 	 */
 	public static function create( array $raw ) {
 		$data = self::prepare_fields( $raw );
@@ -280,36 +234,35 @@ class PTP_Tasks_Repository {
 
 		global $wpdb;
 
-		$now                     = ptp_now();
-		$data['assigned_user']   = get_current_user_id();
-		$data['created_at']      = $now;
-		$data['updated_at']      = $now;
+		$now                = ptp_now();
+		$data['created_at'] = $now;
+		$data['updated_at'] = $now;
 
 		$inserted = $wpdb->insert( self::get_table(), $data, self::formats_for( $data ) );
 
 		if ( false === $inserted ) {
-			ptp_log_error( 'Failed to insert task: ' . $wpdb->last_error );
+			ptp_log_error( 'Failed to insert milestone: ' . $wpdb->last_error );
 
-			return new WP_Error( 'ptp_db_error', __( 'Could not create the task. Please try again.', 'personal-project-tracker' ) );
+			return new WP_Error( 'ptp_db_error', __( 'Could not create the milestone. Please try again.', 'personal-project-tracker' ) );
 		}
 
 		$id = (int) $wpdb->insert_id;
 
 		PTP_Activity_Log::log(
-			'task_created',
-			'task',
+			'milestone_created',
+			'milestone',
 			$id,
-			/* translators: %s: task title. */
-			sprintf( __( 'Created task "%s"', 'personal-project-tracker' ), $data['title'] )
+			/* translators: %s: milestone title. */
+			sprintf( __( 'Created milestone "%s"', 'personal-project-tracker' ), $data['title'] )
 		);
 
 		return $id;
 	}
 
 	/**
-	 * Update an existing task.
+	 * Update an existing milestone.
 	 *
-	 * @param int   $id  Task ID.
+	 * @param int   $id  Milestone ID.
 	 * @param array $raw Raw input.
 	 * @return true|WP_Error
 	 */
@@ -318,7 +271,7 @@ class PTP_Tasks_Repository {
 		$existing = self::get( $id );
 
 		if ( ! $existing ) {
-			return new WP_Error( 'ptp_not_found', __( 'Task not found.', 'personal-project-tracker' ) );
+			return new WP_Error( 'ptp_not_found', __( 'Milestone not found.', 'personal-project-tracker' ) );
 		}
 
 		$data = self::prepare_fields( $raw );
@@ -334,26 +287,28 @@ class PTP_Tasks_Repository {
 		$updated = $wpdb->update( self::get_table(), $data, array( 'id' => $id ), self::formats_for( $data ), array( '%d' ) );
 
 		if ( false === $updated ) {
-			ptp_log_error( 'Failed to update task ' . $id . ': ' . $wpdb->last_error );
+			ptp_log_error( 'Failed to update milestone ' . $id . ': ' . $wpdb->last_error );
 
-			return new WP_Error( 'ptp_db_error', __( 'Could not update the task. Please try again.', 'personal-project-tracker' ) );
+			return new WP_Error( 'ptp_db_error', __( 'Could not update the milestone. Please try again.', 'personal-project-tracker' ) );
 		}
 
 		PTP_Activity_Log::log(
-			'task_updated',
-			'task',
+			'milestone_updated',
+			'milestone',
 			$id,
-			/* translators: %s: task title. */
-			sprintf( __( 'Updated task "%s"', 'personal-project-tracker' ), $data['title'] )
+			/* translators: %s: milestone title. */
+			sprintf( __( 'Updated milestone "%s"', 'personal-project-tracker' ), $data['title'] )
 		);
 
 		return true;
 	}
 
 	/**
-	 * Permanently delete a task (its subtasks are removed along with it).
+	 * Permanently delete a milestone. Tasks assigned to it are detached
+	 * (milestone_id set back to NULL), never deleted — deleting a milestone
+	 * must not delete task records.
 	 *
-	 * @param int $id Task ID.
+	 * @param int $id Milestone ID.
 	 * @return true|WP_Error
 	 */
 	public static function delete( $id ) {
@@ -361,57 +316,59 @@ class PTP_Tasks_Repository {
 		$existing = self::get( $id );
 
 		if ( ! $existing ) {
-			return new WP_Error( 'ptp_not_found', __( 'Task not found.', 'personal-project-tracker' ) );
+			return new WP_Error( 'ptp_not_found', __( 'Milestone not found.', 'personal-project-tracker' ) );
+		}
+
+		foreach ( PTP_Tasks_Repository::get_by_milestone( $id ) as $task ) {
+			self::detach_task( $task->id );
 		}
 
 		global $wpdb;
 
-		$wpdb->delete( ptp_table( 'subtasks' ), array( 'task_id' => $id ), array( '%d' ) );
-
 		$deleted = $wpdb->delete( self::get_table(), array( 'id' => $id ), array( '%d' ) );
 
 		if ( ! $deleted ) {
-			ptp_log_error( 'Failed to delete task ' . $id . ': ' . $wpdb->last_error );
+			ptp_log_error( 'Failed to delete milestone ' . $id . ': ' . $wpdb->last_error );
 
-			return new WP_Error( 'ptp_db_error', __( 'Could not delete the task. Please try again.', 'personal-project-tracker' ) );
+			return new WP_Error( 'ptp_db_error', __( 'Could not delete the milestone. Please try again.', 'personal-project-tracker' ) );
 		}
 
 		PTP_Activity_Log::log(
-			'task_deleted',
-			'task',
+			'milestone_deleted',
+			'milestone',
 			$id,
-			/* translators: %s: task title. */
-			sprintf( __( 'Deleted task "%s"', 'personal-project-tracker' ), $existing->title )
+			/* translators: %s: milestone title. */
+			sprintf( __( 'Deleted milestone "%s"', 'personal-project-tracker' ), $existing->title )
 		);
 
 		return true;
 	}
 
 	/**
-	 * Mark a task completed.
+	 * Mark a milestone completed.
 	 *
-	 * @param int $id Task ID.
+	 * @param int $id Milestone ID.
 	 * @return true|WP_Error
 	 */
 	public static function complete( $id ) {
-		return self::set_status( $id, 'completed', 'task_completed', __( 'Completed task "%s"', 'personal-project-tracker' ) );
+		return self::set_status( $id, 'completed', 'milestone_completed', __( 'Completed milestone "%s"', 'personal-project-tracker' ) );
 	}
 
 	/**
-	 * Reopen a completed/cancelled task back to Todo.
+	 * Reopen a milestone back to Planning.
 	 *
-	 * @param int $id Task ID.
+	 * @param int $id Milestone ID.
 	 * @return true|WP_Error
 	 */
 	public static function reopen( $id ) {
-		return self::set_status( $id, 'todo', 'task_reopened', __( 'Reopened task "%s"', 'personal-project-tracker' ) );
+		return self::set_status( $id, 'planning', 'milestone_reopened', __( 'Reopened milestone "%s"', 'personal-project-tracker' ) );
 	}
 
 	/**
-	 * @param int    $id            Task ID.
-	 * @param string $status        New status.
-	 * @param string $log_action    Activity log action slug.
-	 * @param string $log_template  sprintf() template with one %s for the title.
+	 * @param int    $id           Milestone ID.
+	 * @param string $status       New status.
+	 * @param string $log_action   Activity log action slug.
+	 * @param string $log_template sprintf() template with one %s for the title.
 	 * @return true|WP_Error
 	 */
 	private static function set_status( $id, $status, $log_action, $log_template ) {
@@ -419,7 +376,7 @@ class PTP_Tasks_Repository {
 		$existing = self::get( $id );
 
 		if ( ! $existing ) {
-			return new WP_Error( 'ptp_not_found', __( 'Task not found.', 'personal-project-tracker' ) );
+			return new WP_Error( 'ptp_not_found', __( 'Milestone not found.', 'personal-project-tracker' ) );
 		}
 
 		global $wpdb;
@@ -435,15 +392,15 @@ class PTP_Tasks_Repository {
 			array( '%d' )
 		);
 
-		PTP_Activity_Log::log( $log_action, 'task', $id, sprintf( $log_template, $existing->title ) );
+		PTP_Activity_Log::log( $log_action, 'milestone', $id, sprintf( $log_template, $existing->title ) );
 
 		return true;
 	}
 
 	/**
-	 * Archive a task: stamps archived_at without changing its status.
+	 * Archive a milestone: stamps archived_at without changing its status.
 	 *
-	 * @param int $id Task ID.
+	 * @param int $id Milestone ID.
 	 * @return true|WP_Error
 	 */
 	public static function archive( $id ) {
@@ -451,7 +408,7 @@ class PTP_Tasks_Repository {
 		$existing = self::get( $id );
 
 		if ( ! $existing ) {
-			return new WP_Error( 'ptp_not_found', __( 'Task not found.', 'personal-project-tracker' ) );
+			return new WP_Error( 'ptp_not_found', __( 'Milestone not found.', 'personal-project-tracker' ) );
 		}
 
 		global $wpdb;
@@ -468,20 +425,20 @@ class PTP_Tasks_Repository {
 		);
 
 		PTP_Activity_Log::log(
-			'task_archived',
-			'task',
+			'milestone_archived',
+			'milestone',
 			$id,
-			/* translators: %s: task title. */
-			sprintf( __( 'Archived task "%s"', 'personal-project-tracker' ), $existing->title )
+			/* translators: %s: milestone title. */
+			sprintf( __( 'Archived milestone "%s"', 'personal-project-tracker' ), $existing->title )
 		);
 
 		return true;
 	}
 
 	/**
-	 * Restore a previously archived task.
+	 * Restore a previously archived milestone.
 	 *
-	 * @param int $id Task ID.
+	 * @param int $id Milestone ID.
 	 * @return true|WP_Error
 	 */
 	public static function restore( $id ) {
@@ -489,7 +446,7 @@ class PTP_Tasks_Repository {
 		$existing = self::get( $id );
 
 		if ( ! $existing ) {
-			return new WP_Error( 'ptp_not_found', __( 'Task not found.', 'personal-project-tracker' ) );
+			return new WP_Error( 'ptp_not_found', __( 'Milestone not found.', 'personal-project-tracker' ) );
 		}
 
 		global $wpdb;
@@ -506,21 +463,122 @@ class PTP_Tasks_Repository {
 		);
 
 		PTP_Activity_Log::log(
-			'task_restored',
-			'task',
+			'milestone_restored',
+			'milestone',
 			$id,
-			/* translators: %s: task title. */
-			sprintf( __( 'Restored task "%s"', 'personal-project-tracker' ), $existing->title )
+			/* translators: %s: milestone title. */
+			sprintf( __( 'Restored milestone "%s"', 'personal-project-tracker' ), $existing->title )
 		);
 
 		return true;
 	}
 
 	/**
-	 * Get a filtered, sorted, paginated list of tasks.
+	 * Assign an existing task to a milestone. The task must belong to the
+	 * same project as the milestone (data integrity) and its record is
+	 * never duplicated — only its milestone_id is updated via
+	 * PTP_Tasks_Repository, which already owns that table.
+	 *
+	 * @param int $milestone_id Milestone ID.
+	 * @param int $task_id      Task ID.
+	 * @return true|WP_Error
+	 */
+	public static function attach_task( $milestone_id, $task_id ) {
+		$milestone = self::get( $milestone_id );
+
+		if ( ! $milestone ) {
+			return new WP_Error( 'ptp_not_found', __( 'Milestone not found.', 'personal-project-tracker' ) );
+		}
+
+		$task = PTP_Tasks_Repository::get( $task_id );
+
+		if ( ! $task ) {
+			return new WP_Error( 'ptp_not_found', __( 'Task not found.', 'personal-project-tracker' ) );
+		}
+
+		if ( (int) $task->project_id !== (int) $milestone->project_id ) {
+			return new WP_Error( 'ptp_project_mismatch', __( 'A task can only be added to a milestone in the same project.', 'personal-project-tracker' ) );
+		}
+
+		$result = PTP_Tasks_Repository::update( $task_id, array_merge( self::task_to_raw( $task ), array( 'milestone_id' => $milestone_id ) ) );
+
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		PTP_Activity_Log::log(
+			'milestone_task_attached',
+			'milestone',
+			$milestone_id,
+			/* translators: %s: task title. */
+			sprintf( __( 'Added task "%s" to this milestone', 'personal-project-tracker' ), $task->title )
+		);
+
+		return true;
+	}
+
+	/**
+	 * Remove a task from whichever milestone it belongs to.
+	 *
+	 * @param int $task_id Task ID.
+	 * @return true|WP_Error
+	 */
+	public static function detach_task( $task_id ) {
+		$task = PTP_Tasks_Repository::get( $task_id );
+
+		if ( ! $task ) {
+			return new WP_Error( 'ptp_not_found', __( 'Task not found.', 'personal-project-tracker' ) );
+		}
+
+		$previous_milestone_id = $task->milestone_id;
+
+		$result = PTP_Tasks_Repository::update( $task_id, array_merge( self::task_to_raw( $task ), array( 'milestone_id' => 0 ) ) );
+
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+
+		if ( $previous_milestone_id ) {
+			PTP_Activity_Log::log(
+				'milestone_task_detached',
+				'milestone',
+				(int) $previous_milestone_id,
+				/* translators: %s: task title. */
+				sprintf( __( 'Removed task "%s" from this milestone', 'personal-project-tracker' ), $task->title )
+			);
+		}
+
+		return true;
+	}
+
+	/**
+	 * Rebuild a full raw-input array from an existing task row, so it can be
+	 * round-tripped through PTP_Tasks_Repository::update() — which expects
+	 * a full representation, not a partial patch — without this module
+	 * needing to know or duplicate Tasks' validation rules.
+	 *
+	 * @param object $task Task row.
+	 * @return array
+	 */
+	private static function task_to_raw( $task ) {
+		return array(
+			'title'          => $task->title,
+			'description'    => $task->description,
+			'project_id'     => $task->project_id,
+			'status'         => $task->status,
+			'priority'       => $task->priority,
+			'start_date'     => $task->start_date,
+			'due_date'       => $task->due_date,
+			'estimated_time' => $task->estimated_time,
+			'tags'           => $task->tags,
+		);
+	}
+
+	/**
+	 * Get a filtered, sorted, paginated list of milestones.
 	 *
 	 * @param array $args {
-	 *     @type string $search     Free-text search against title/description/tags.
+	 *     @type string $search     Free-text search against title/description.
 	 *     @type string $status     Status filter.
 	 *     @type string $priority   Priority filter.
 	 *     @type int    $project_id Project filter.
@@ -561,8 +619,7 @@ class PTP_Tasks_Repository {
 
 		if ( '' !== $search ) {
 			$like     = '%' . $wpdb->esc_like( $search ) . '%';
-			$where[]  = '(title LIKE %s OR description LIKE %s OR tags LIKE %s)';
-			$params[] = $like;
+			$where[]  = '(title LIKE %s OR description LIKE %s)';
 			$params[] = $like;
 			$params[] = $like;
 		}
@@ -644,59 +701,9 @@ class PTP_Tasks_Repository {
 	}
 
 	/**
-	 * Get all tasks assigned to a milestone, for the Milestone detail page's
-	 * "Related Tasks" section. Owned here (not duplicated in the Milestones
-	 * module) since Tasks already owns all reads/writes to this table.
+	 * Get summary statistics used by the Milestones list page and the Dashboard.
 	 *
-	 * @param int $milestone_id Milestone ID.
-	 * @return object[]
-	 */
-	public static function get_by_milestone( $milestone_id ) {
-		global $wpdb;
-
-		$table = self::get_table();
-
-		return $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT * FROM {$table} WHERE milestone_id = %d ORDER BY due_date ASC, title ASC", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				(int) $milestone_id
-			)
-		);
-	}
-
-	/**
-	 * Get a lightweight id => title map of a project's non-archived tasks,
-	 * for the Milestone detail page's "Add existing task" picker.
-	 *
-	 * @param int $project_id Project ID.
-	 * @return array<int, string>
-	 */
-	public static function get_options_for_project( $project_id ) {
-		global $wpdb;
-
-		$table = self::get_table();
-
-		$rows = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT id, title FROM {$table} WHERE project_id = %d AND archived_at IS NULL ORDER BY title ASC", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				(int) $project_id
-			),
-			ARRAY_A
-		);
-
-		$options = array();
-
-		foreach ( $rows as $row ) {
-			$options[ (int) $row['id'] ] = $row['title'];
-		}
-
-		return $options;
-	}
-
-	/**
-	 * Get summary statistics used by the Tasks list page and the Dashboard.
-	 *
-	 * @return array{total: int, today: int, overdue: int, in_progress: int, completed: int, by_status: array<string,int>}
+	 * @return array{total: int, upcoming: int, overdue: int, completed: int, by_status: array<string,int>}
 	 */
 	public static function get_stats() {
 		global $wpdb;
@@ -712,10 +719,11 @@ class PTP_Tasks_Repository {
 			$by_status[ $row['status'] ] = (int) $row['cnt'];
 		}
 
-		$today_count = (int) $wpdb->get_var(
+		$upcoming = (int) $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT COUNT(*) FROM {$table} WHERE archived_at IS NULL AND due_date = %s AND status NOT IN ('completed','cancelled')", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				$today
+				"SELECT COUNT(*) FROM {$table} WHERE archived_at IS NULL AND due_date IS NOT NULL AND due_date BETWEEN %s AND %s AND status NOT IN ('completed','cancelled')", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				$today,
+				gmdate( 'Y-m-d', strtotime( $today . ' +13 days' ) )
 			)
 		);
 
@@ -727,12 +735,32 @@ class PTP_Tasks_Repository {
 		);
 
 		return array(
-			'total'       => array_sum( $by_status ),
-			'today'       => $today_count,
-			'overdue'     => $overdue,
-			'in_progress' => $by_status['in_progress'] ?? 0,
-			'completed'   => $by_status['completed'] ?? 0,
-			'by_status'   => $by_status,
+			'total'     => array_sum( $by_status ),
+			'upcoming'  => $upcoming,
+			'overdue'   => $overdue,
+			'completed' => $by_status['completed'] ?? 0,
+			'by_status' => $by_status,
+		);
+	}
+
+	/**
+	 * Get the soonest upcoming (non-overdue, non-completed) milestones, for
+	 * the Dashboard widget.
+	 *
+	 * @param int $limit Max rows to return.
+	 * @return object[]
+	 */
+	public static function get_upcoming( $limit = 5 ) {
+		global $wpdb;
+
+		$table = self::get_table();
+
+		return $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT * FROM {$table} WHERE archived_at IS NULL AND due_date IS NOT NULL AND due_date >= %s AND status NOT IN ('completed','cancelled') ORDER BY due_date ASC LIMIT %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				current_time( 'Y-m-d' ),
+				(int) $limit
+			)
 		);
 	}
 }

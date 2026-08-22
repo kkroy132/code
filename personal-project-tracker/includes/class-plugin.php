@@ -70,6 +70,7 @@ class PTP_Plugin {
 		$modules = array(
 			'PTP_Projects_Module',
 			'PTP_Tasks_Module',
+			'PTP_Milestones_Module',
 		);
 
 		foreach ( $modules as $module_class ) {

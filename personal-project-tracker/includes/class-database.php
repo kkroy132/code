@@ -90,6 +90,8 @@ class PTP_Database {
 	 * - v2: tasks.archived_at (Archive/Restore Task), subtasks.sort_order
 	 *   + a (task_id, sort_order) index (Reorder Subtask). dbDelta() only
 	 *   adds the new columns/keys to existing installs — no data is touched.
+	 * - v3: milestones.start_date, milestones.archived_at (Archive/Restore
+	 *   Milestone, independent of status — same pattern as Tasks).
 	 *
 	 * @param string $charset_collate Charset/collation clause.
 	 * @return string[] List of CREATE TABLE statements.
@@ -171,11 +173,13 @@ class PTP_Database {
 			title VARCHAR(255) NOT NULL,
 			description LONGTEXT NULL,
 			status VARCHAR(20) NOT NULL DEFAULT 'planning',
+			start_date DATE NULL,
 			due_date DATE NULL,
 			progress TINYINT UNSIGNED NOT NULL DEFAULT 0,
 			priority VARCHAR(20) NOT NULL DEFAULT 'medium',
 			created_at DATETIME NOT NULL,
 			updated_at DATETIME NOT NULL,
+			archived_at DATETIME NULL,
 			PRIMARY KEY  (id),
 			KEY project_id (project_id),
 			KEY status (status),

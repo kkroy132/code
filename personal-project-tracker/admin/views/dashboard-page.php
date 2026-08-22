@@ -137,6 +137,57 @@ $tables = PTP_Database::get_table_names();
 
 <?php endif; ?>
 
+<?php if ( current_user_can( 'ptp_manage_projects' ) && class_exists( 'PTP_Milestones_Repository' ) ) : ?>
+
+	<?php
+	$ptp_milestone_stats = PTP_Milestones_Repository::get_stats();
+	$ptp_upcoming_milestones = PTP_Milestones_Repository::get_upcoming( 5 );
+	$ptp_milestone_statuses  = PTP_Milestones_Repository::get_statuses();
+	?>
+
+	<div class="ptp-page-header">
+		<h2><?php esc_html_e( 'Milestones', 'personal-project-tracker' ); ?></h2>
+		<a class="button button-primary" href="<?php echo esc_url( add_query_arg( array( 'page' => 'ptp-milestones', 'action' => 'new' ), admin_url( 'admin.php' ) ) ); ?>">
+			<?php esc_html_e( '+ New Milestone', 'personal-project-tracker' ); ?>
+		</a>
+	</div>
+
+	<div class="ptp-stats-grid">
+		<div class="ptp-stat-tile">
+			<span class="ptp-stat-value"><?php echo esc_html( number_format_i18n( $ptp_milestone_stats['upcoming'] ) ); ?></span>
+			<span class="ptp-stat-label"><?php esc_html_e( 'Upcoming Milestones', 'personal-project-tracker' ); ?></span>
+		</div>
+		<div class="ptp-stat-tile ptp-stat-tile-warning">
+			<span class="ptp-stat-value"><?php echo esc_html( number_format_i18n( $ptp_milestone_stats['overdue'] ) ); ?></span>
+			<span class="ptp-stat-label"><?php esc_html_e( 'Overdue Milestones', 'personal-project-tracker' ); ?></span>
+		</div>
+		<div class="ptp-stat-tile">
+			<span class="ptp-stat-value"><?php echo esc_html( number_format_i18n( $ptp_milestone_stats['completed'] ) ); ?></span>
+			<span class="ptp-stat-label"><?php esc_html_e( 'Completed Milestones', 'personal-project-tracker' ); ?></span>
+		</div>
+	</div>
+
+	<?php if ( ! empty( $ptp_upcoming_milestones ) ) : ?>
+		<div class="ptp-card">
+			<h2><?php esc_html_e( 'Upcoming Milestones', 'personal-project-tracker' ); ?></h2>
+			<ul class="ptp-simple-list">
+				<?php foreach ( $ptp_upcoming_milestones as $ptp_upcoming ) : ?>
+					<li>
+						<a href="<?php echo esc_url( add_query_arg( array( 'page' => 'ptp-milestones', 'action' => 'view', 'id' => $ptp_upcoming->id ), admin_url( 'admin.php' ) ) ); ?>">
+							<?php echo esc_html( $ptp_upcoming->title ); ?>
+						</a>
+						<span>
+							<span class="ptp-badge ptp-badge-status-<?php echo esc_attr( $ptp_upcoming->status ); ?>"><?php echo esc_html( $ptp_milestone_statuses[ $ptp_upcoming->status ] ?? $ptp_upcoming->status ); ?></span>
+							<?php echo esc_html( mysql2date( get_option( 'date_format' ), $ptp_upcoming->due_date ) ); ?>
+						</span>
+					</li>
+				<?php endforeach; ?>
+			</ul>
+		</div>
+	<?php endif; ?>
+
+<?php endif; ?>
+
 <div class="ptp-card">
 	<h2><?php esc_html_e( 'System Status', 'personal-project-tracker' ); ?></h2>
 	<table class="widefat striped ptp-status-table">

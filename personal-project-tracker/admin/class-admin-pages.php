@@ -123,7 +123,49 @@ class PTP_Admin_Pages {
 	}
 
 	public function render_milestones() {
-		$this->render_placeholder( __( 'Milestones', 'personal-project-tracker' ), 'ptp_manage_projects' );
+		PTP_Security::require_capability( 'ptp_manage_projects' );
+
+		$action = isset( $_GET['action'] ) ? sanitize_key( wp_unslash( $_GET['action'] ) ) : 'list'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		switch ( $action ) {
+			case 'new':
+				$this->render_view(
+					'milestones/milestone-form',
+					'ptp_manage_projects',
+					array(
+						'milestone' => null,
+						'is_edit'   => false,
+						'flash'     => PTP_Milestones_Controller::get_flash(),
+					)
+				);
+				break;
+
+			case 'edit':
+				$id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$this->render_view(
+					'milestones/milestone-form',
+					'ptp_manage_projects',
+					array(
+						'milestone' => $id ? PTP_Milestones_Repository::get( $id ) : null,
+						'is_edit'   => true,
+						'flash'     => PTP_Milestones_Controller::get_flash(),
+					)
+				);
+				break;
+
+			case 'view':
+				$id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$this->render_view(
+					'milestones/milestone-view',
+					'ptp_manage_projects',
+					array( 'milestone' => $id ? PTP_Milestones_Repository::get( $id ) : null )
+				);
+				break;
+
+			default:
+				$this->render_view( 'milestones/milestones-list', 'ptp_manage_projects', array() );
+				break;
+		}
 	}
 
 	public function render_calendar() {

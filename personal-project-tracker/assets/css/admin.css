@@ -427,7 +427,8 @@
 
 	/* Hide secondary columns on narrow screens; the table remains reachable via horizontal scroll. */
 	.ptp-projects-table .ptp-col-optional,
-	.ptp-tasks-table .ptp-col-optional {
+	.ptp-tasks-table .ptp-col-optional,
+	.ptp-milestones-table .ptp-col-optional {
 		display: none;
 	}
 }
