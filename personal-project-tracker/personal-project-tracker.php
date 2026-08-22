@@ -77,9 +77,16 @@ require_once PTP_PLUGIN_DIR . 'includes/class-settings.php';
 require_once PTP_PLUGIN_DIR . 'includes/class-activator.php';
 require_once PTP_PLUGIN_DIR . 'includes/class-deactivator.php';
 require_once PTP_PLUGIN_DIR . 'includes/class-rest-api.php';
+require_once PTP_PLUGIN_DIR . 'includes/class-activity-log.php';
 require_once PTP_PLUGIN_DIR . 'includes/class-plugin.php';
 require_once PTP_PLUGIN_DIR . 'admin/class-admin-menu.php';
 require_once PTP_PLUGIN_DIR . 'admin/class-admin-pages.php';
+
+// Feature modules.
+require_once PTP_PLUGIN_DIR . 'modules/projects/class-projects-repository.php';
+require_once PTP_PLUGIN_DIR . 'modules/projects/class-projects-controller.php';
+require_once PTP_PLUGIN_DIR . 'modules/projects/class-projects-rest.php';
+require_once PTP_PLUGIN_DIR . 'modules/projects/class-projects-module.php';
 
 register_activation_hook( __FILE__, array( 'PTP_Activator', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'PTP_Deactivator', 'deactivate' ) );

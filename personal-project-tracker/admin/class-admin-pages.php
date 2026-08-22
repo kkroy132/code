@@ -31,7 +31,49 @@ class PTP_Admin_Pages {
 	}
 
 	public function render_projects() {
-		$this->render_placeholder( __( 'Projects', 'personal-project-tracker' ), 'ptp_manage_projects' );
+		PTP_Security::require_capability( 'ptp_manage_projects' );
+
+		$action = isset( $_GET['action'] ) ? sanitize_key( wp_unslash( $_GET['action'] ) ) : 'list'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		switch ( $action ) {
+			case 'new':
+				$this->render_view(
+					'projects/project-form',
+					'ptp_manage_projects',
+					array(
+						'project' => null,
+						'is_edit' => false,
+						'flash'   => PTP_Projects_Controller::get_flash(),
+					)
+				);
+				break;
+
+			case 'edit':
+				$id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$this->render_view(
+					'projects/project-form',
+					'ptp_manage_projects',
+					array(
+						'project' => $id ? PTP_Projects_Repository::get( $id ) : null,
+						'is_edit' => true,
+						'flash'   => PTP_Projects_Controller::get_flash(),
+					)
+				);
+				break;
+
+			case 'view':
+				$id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$this->render_view(
+					'projects/project-view',
+					'ptp_manage_projects',
+					array( 'project' => $id ? PTP_Projects_Repository::get( $id ) : null )
+				);
+				break;
+
+			default:
+				$this->render_view( 'projects/projects-list', 'ptp_manage_projects', array() );
+				break;
+		}
 	}
 
 	public function render_tasks() {

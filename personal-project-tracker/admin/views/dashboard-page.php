@@ -1,10 +1,10 @@
 <?php
 /**
- * Dashboard view — Phase 1 foundation status.
+ * Dashboard view.
  *
- * Feature widgets (project/task counts, revenue, activity, quick actions,
- * etc.) are added on top of this scaffold as their owning modules are
- * implemented in later phases.
+ * Feature widgets are added on top of this scaffold as their owning
+ * modules are implemented in later phases; the System Status / Database
+ * Tables cards from Phase 1 are kept as-is below the feature widgets.
  *
  * @package Personal_Project_Tracker
  */
@@ -19,8 +19,91 @@ $tables = PTP_Database::get_table_names();
 ?>
 <h1><?php esc_html_e( 'Project Tracker', 'personal-project-tracker' ); ?></h1>
 <p class="description">
-	<?php esc_html_e( 'Foundation installed. Feature modules (Projects, Tasks, Finance, Reports, and the rest) are added phase by phase.', 'personal-project-tracker' ); ?>
+	<?php esc_html_e( 'Your private project management workspace.', 'personal-project-tracker' ); ?>
 </p>
+
+<?php if ( current_user_can( 'ptp_manage_projects' ) && class_exists( 'PTP_Projects_Repository' ) ) : ?>
+
+	<?php
+	$ptp_dashboard_stats   = PTP_Projects_Repository::get_stats();
+	$ptp_dashboard_recent  = PTP_Projects_Repository::get_recent( 5 );
+	$ptp_dashboard_statuses = PTP_Projects_Repository::get_statuses();
+	?>
+
+	<div class="ptp-page-header">
+		<h2><?php esc_html_e( 'Projects', 'personal-project-tracker' ); ?></h2>
+		<a class="button button-primary" href="<?php echo esc_url( add_query_arg( array( 'page' => 'ptp-projects', 'action' => 'new' ), admin_url( 'admin.php' ) ) ); ?>">
+			<?php esc_html_e( '+ New Project', 'personal-project-tracker' ); ?>
+		</a>
+	</div>
+
+	<div class="ptp-stats-grid">
+		<div class="ptp-stat-tile">
+			<span class="ptp-stat-value"><?php echo esc_html( number_format_i18n( $ptp_dashboard_stats['total'] ) ); ?></span>
+			<span class="ptp-stat-label"><?php esc_html_e( 'Total Projects', 'personal-project-tracker' ); ?></span>
+		</div>
+		<div class="ptp-stat-tile">
+			<span class="ptp-stat-value"><?php echo esc_html( number_format_i18n( $ptp_dashboard_stats['active'] ) ); ?></span>
+			<span class="ptp-stat-label"><?php esc_html_e( 'Active Projects', 'personal-project-tracker' ); ?></span>
+		</div>
+		<div class="ptp-stat-tile">
+			<span class="ptp-stat-value"><?php echo esc_html( number_format_i18n( $ptp_dashboard_stats['completed'] ) ); ?></span>
+			<span class="ptp-stat-label"><?php esc_html_e( 'Completed Projects', 'personal-project-tracker' ); ?></span>
+		</div>
+		<div class="ptp-stat-tile ptp-stat-tile-warning">
+			<span class="ptp-stat-value"><?php echo esc_html( number_format_i18n( $ptp_dashboard_stats['overdue'] ) ); ?></span>
+			<span class="ptp-stat-label"><?php esc_html_e( 'Overdue Projects', 'personal-project-tracker' ); ?></span>
+		</div>
+	</div>
+
+	<div class="ptp-card">
+		<h2><?php esc_html_e( 'Recent Projects', 'personal-project-tracker' ); ?></h2>
+		<?php if ( empty( $ptp_dashboard_recent ) ) : ?>
+			<div class="ptp-empty-state">
+				<span class="dashicons dashicons-portfolio"></span>
+				<p><?php esc_html_e( 'No projects yet. Create your first project to get started.', 'personal-project-tracker' ); ?></p>
+				<p>
+					<a class="button button-primary" href="<?php echo esc_url( add_query_arg( array( 'page' => 'ptp-projects', 'action' => 'new' ), admin_url( 'admin.php' ) ) ); ?>">
+						<?php esc_html_e( '+ Add New Project', 'personal-project-tracker' ); ?>
+					</a>
+				</p>
+			</div>
+		<?php else : ?>
+			<div class="ptp-table-responsive">
+				<table class="widefat striped ptp-projects-table">
+					<thead>
+						<tr>
+							<th><?php esc_html_e( 'Title', 'personal-project-tracker' ); ?></th>
+							<th><?php esc_html_e( 'Status', 'personal-project-tracker' ); ?></th>
+							<th class="ptp-col-optional"><?php esc_html_e( 'Progress', 'personal-project-tracker' ); ?></th>
+							<th class="ptp-col-optional"><?php esc_html_e( 'Updated', 'personal-project-tracker' ); ?></th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php foreach ( $ptp_dashboard_recent as $ptp_recent_project ) : ?>
+							<tr>
+								<td>
+									<a href="<?php echo esc_url( add_query_arg( array( 'page' => 'ptp-projects', 'action' => 'view', 'id' => $ptp_recent_project->id ), admin_url( 'admin.php' ) ) ); ?>">
+										<strong><?php echo esc_html( $ptp_recent_project->title ); ?></strong>
+									</a>
+								</td>
+								<td><span class="ptp-badge ptp-badge-status-<?php echo esc_attr( $ptp_recent_project->status ); ?>"><?php echo esc_html( $ptp_dashboard_statuses[ $ptp_recent_project->status ] ?? $ptp_recent_project->status ); ?></span></td>
+								<td class="ptp-col-optional"><?php echo esc_html( (int) $ptp_recent_project->progress ); ?>%</td>
+								<td class="ptp-col-optional"><?php echo esc_html( mysql2date( get_option( 'date_format' ), $ptp_recent_project->updated_at ) ); ?></td>
+							</tr>
+						<?php endforeach; ?>
+					</tbody>
+				</table>
+			</div>
+			<p>
+				<a href="<?php echo esc_url( add_query_arg( array( 'page' => 'ptp-projects' ), admin_url( 'admin.php' ) ) ); ?>">
+					<?php esc_html_e( 'View all projects &raquo;', 'personal-project-tracker' ); ?>
+				</a>
+			</p>
+		<?php endif; ?>
+	</div>
+
+<?php endif; ?>
 
 <div class="ptp-card">
 	<h2><?php esc_html_e( 'System Status', 'personal-project-tracker' ); ?></h2>

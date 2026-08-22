@@ -74,3 +74,254 @@
 		padding-bottom: 0;
 	}
 }
+
+/* Page header: title + primary action, wraps on narrow screens. */
+.ptp-page-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin: 16px 0;
+}
+
+.ptp-page-header h1,
+.ptp-page-header h2 {
+	margin: 0;
+}
+
+/* Stat tiles. */
+.ptp-stats-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+	gap: 12px;
+	margin: 16px 0;
+}
+
+.ptp-stat-tile {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-left: 4px solid #2271b1;
+	border-radius: 4px;
+	padding: 14px 16px;
+}
+
+.ptp-stat-tile-warning {
+	border-left-color: #d63638;
+}
+
+.ptp-stat-value {
+	display: block;
+	font-size: 24px;
+	font-weight: 600;
+	line-height: 1.3;
+}
+
+.ptp-stat-label {
+	display: block;
+	color: #646970;
+	font-size: 13px;
+}
+
+/* Filter bar. */
+.ptp-filter-bar {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center;
+	margin-bottom: 16px;
+}
+
+.ptp-filter-bar input[type="search"] {
+	min-width: 220px;
+	flex: 1 1 220px;
+}
+
+/* Status/priority badges. */
+.ptp-badge-status-planning { background: #f0f0f1; color: #50575e; }
+.ptp-badge-status-active { background: #edfaef; color: #1a7f37; }
+.ptp-badge-status-on_hold { background: #fef8ee; color: #9a6700; }
+.ptp-badge-status-completed { background: #e7f2fd; color: #0a4b78; }
+.ptp-badge-status-cancelled { background: #fcebea; color: #b32d2e; }
+.ptp-badge-status-archived { background: #f0f0f1; color: #787c82; }
+
+.ptp-badge-priority-low { background: #f0f0f1; color: #50575e; }
+.ptp-badge-priority-medium { background: #e7f2fd; color: #0a4b78; }
+.ptp-badge-priority-high { background: #fef8ee; color: #9a6700; }
+.ptp-badge-priority-critical { background: #fcebea; color: #b32d2e; }
+
+/* Progress bar. */
+.ptp-progress {
+	background: #f0f0f1;
+	border-radius: 6px;
+	height: 8px;
+	width: 100px;
+	display: inline-block;
+	overflow: hidden;
+	vertical-align: middle;
+}
+
+.ptp-progress-bar {
+	background: #2271b1;
+	height: 100%;
+}
+
+.ptp-progress-label {
+	margin-left: 6px;
+	font-size: 12px;
+	color: #646970;
+}
+
+.ptp-color-dot {
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	margin-right: 6px;
+	vertical-align: middle;
+}
+
+.ptp-text-danger {
+	color: #b32d2e;
+}
+
+/* Responsive table wrapper: horizontal scroll instead of page overflow. */
+.ptp-table-responsive {
+	overflow-x: auto;
+}
+
+.ptp-quick-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.ptp-quick-actions .button.ptp-is-loading {
+	opacity: 0.6;
+	cursor: default;
+}
+
+/* Empty states. */
+.ptp-empty-state {
+	text-align: center;
+	padding: 40px 20px;
+	color: #646970;
+}
+
+.ptp-empty-state .dashicons {
+	font-size: 36px;
+	width: 36px;
+	height: 36px;
+	color: #c3c4c7;
+	margin-bottom: 10px;
+}
+
+/* Forms. */
+.ptp-form-grid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 16px;
+	margin-bottom: 16px;
+}
+
+.ptp-form-field-full {
+	grid-column: 1 / -1;
+}
+
+.ptp-form-field label {
+	display: block;
+	font-weight: 600;
+	margin-bottom: 4px;
+}
+
+.ptp-form-field input[type="text"],
+.ptp-form-field input[type="date"],
+.ptp-form-field input[type="number"],
+.ptp-form-field select,
+.ptp-form-field textarea {
+	width: 100%;
+}
+
+.ptp-required {
+	color: #b32d2e;
+}
+
+.ptp-error-list {
+	margin: 0.5em 0 0.5em 1.5em;
+	list-style: disc;
+}
+
+.ptp-form-actions {
+	margin-top: 8px;
+}
+
+/* Project detail page: two-column layout that stacks on narrower screens. */
+.ptp-detail-grid {
+	display: grid;
+	grid-template-columns: 2fr 1fr;
+	gap: 16px;
+	align-items: start;
+}
+
+.ptp-project-description {
+	margin-bottom: 12px;
+}
+
+.ptp-activity-list {
+	margin: 0;
+}
+
+.ptp-activity-list li {
+	display: flex;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 8px 0;
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.ptp-activity-list li:last-child {
+	border-bottom: none;
+}
+
+.ptp-activity-date {
+	color: #646970;
+	font-size: 12px;
+	white-space: nowrap;
+}
+
+.ptp-pagination {
+	margin-top: 16px;
+}
+
+.ptp-pagination .page-numbers {
+	display: inline-block;
+	padding: 4px 10px;
+	margin-right: 4px;
+	border: 1px solid #dcdcde;
+	border-radius: 3px;
+	text-decoration: none;
+}
+
+.ptp-pagination .page-numbers.current {
+	background: #2271b1;
+	border-color: #2271b1;
+	color: #fff;
+}
+
+/* Responsive breakpoints for tablet/mobile. */
+@media screen and (max-width: 960px) {
+	.ptp-detail-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media screen and (max-width: 782px) {
+	.ptp-form-grid {
+		grid-template-columns: 1fr;
+	}
+
+	/* Hide secondary columns on narrow screens; the table remains reachable via horizontal scroll. */
+	.ptp-projects-table .ptp-col-optional {
+		display: none;
+	}
+}

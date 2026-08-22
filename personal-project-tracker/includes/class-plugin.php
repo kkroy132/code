@@ -13,8 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Class PTP_Plugin
  *
  * Wires up the plugin's cross-cutting concerns (i18n, DB upgrades, REST,
- * admin menu). Feature modules hook themselves in independently in later
- * phases; this class intentionally does not know about individual modules.
+ * admin menu) and boots each feature module. Modules own their own hooks,
+ * admin-post handlers, and REST routes — this class only knows their
+ * bootstrap class name, listed in load_modules().
  */
 class PTP_Plugin {
 
@@ -55,6 +56,26 @@ class PTP_Plugin {
 
 		$admin_menu = new PTP_Admin_Menu();
 		$admin_menu->register();
+
+		$this->load_modules();
+	}
+
+	/**
+	 * Instantiate and register every feature module.
+	 *
+	 * Each entry is a module bootstrap class implementing register().
+	 * Later phases append to this list; nothing else here changes.
+	 */
+	private function load_modules() {
+		$modules = array(
+			'PTP_Projects_Module',
+		);
+
+		foreach ( $modules as $module_class ) {
+			if ( class_exists( $module_class ) ) {
+				( new $module_class() )->register();
+			}
+		}
 	}
 
 	/**
