@@ -92,6 +92,10 @@ class PTP_Database {
 	 *   adds the new columns/keys to existing installs — no data is touched.
 	 * - v3: milestones.start_date, milestones.archived_at (Archive/Restore
 	 *   Milestone, independent of status — same pattern as Tasks).
+	 * - v4: calendar_events.location, calendar_events.color,
+	 *   calendar_events.reminder_minutes (an inert integration point for
+	 *   the future Reminders/Notifications module — no cron or delivery
+	 *   logic is implemented yet, just the data column to hang it off of).
 	 *
 	 * @param string $charset_collate Charset/collation clause.
 	 * @return string[] List of CREATE TABLE statements.
@@ -197,6 +201,9 @@ class PTP_Database {
 			start_datetime DATETIME NOT NULL,
 			end_datetime DATETIME NULL,
 			all_day TINYINT(1) NOT NULL DEFAULT 0,
+			location VARCHAR(255) NULL,
+			color VARCHAR(20) NULL,
+			reminder_minutes SMALLINT UNSIGNED NULL,
 			created_at DATETIME NOT NULL,
 			updated_at DATETIME NOT NULL,
 			PRIMARY KEY  (id),

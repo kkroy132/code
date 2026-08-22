@@ -169,7 +169,49 @@ class PTP_Admin_Pages {
 	}
 
 	public function render_calendar() {
-		$this->render_placeholder( __( 'Calendar', 'personal-project-tracker' ), 'ptp_manage_data' );
+		PTP_Security::require_capability( 'ptp_manage_data' );
+
+		$action = isset( $_GET['action'] ) ? sanitize_key( wp_unslash( $_GET['action'] ) ) : 'list'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		switch ( $action ) {
+			case 'new':
+				$this->render_view(
+					'calendar/event-form',
+					'ptp_manage_data',
+					array(
+						'event'   => null,
+						'is_edit' => false,
+						'flash'   => PTP_Calendar_Controller::get_flash(),
+					)
+				);
+				break;
+
+			case 'edit':
+				$id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$this->render_view(
+					'calendar/event-form',
+					'ptp_manage_data',
+					array(
+						'event'   => $id ? PTP_Calendar_Repository::get( $id ) : null,
+						'is_edit' => true,
+						'flash'   => PTP_Calendar_Controller::get_flash(),
+					)
+				);
+				break;
+
+			case 'view':
+				$id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$this->render_view(
+					'calendar/event-view',
+					'ptp_manage_data',
+					array( 'event' => $id ? PTP_Calendar_Repository::get( $id ) : null )
+				);
+				break;
+
+			default:
+				$this->render_view( 'calendar/calendar-page', 'ptp_manage_data', array() );
+				break;
+		}
 	}
 
 	public function render_time_tracking() {

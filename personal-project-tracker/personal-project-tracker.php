@@ -23,8 +23,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Core plugin constants.
  */
-define( 'PTP_VERSION', '1.2.0' );
-define( 'PTP_DB_VERSION', 3 );
+define( 'PTP_VERSION', '1.3.0' );
+define( 'PTP_DB_VERSION', 4 );
 define( 'PTP_TEXT_DOMAIN', 'personal-project-tracker' );
 define( 'PTP_PLUGIN_FILE', __FILE__ );
 define( 'PTP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
@@ -99,6 +99,11 @@ require_once PTP_PLUGIN_DIR . 'modules/milestones/class-milestones-repository.ph
 require_once PTP_PLUGIN_DIR . 'modules/milestones/class-milestones-controller.php';
 require_once PTP_PLUGIN_DIR . 'modules/milestones/class-milestones-rest.php';
 require_once PTP_PLUGIN_DIR . 'modules/milestones/class-milestones-module.php';
+
+require_once PTP_PLUGIN_DIR . 'modules/calendar/class-calendar-repository.php';
+require_once PTP_PLUGIN_DIR . 'modules/calendar/class-calendar-controller.php';
+require_once PTP_PLUGIN_DIR . 'modules/calendar/class-calendar-rest.php';
+require_once PTP_PLUGIN_DIR . 'modules/calendar/class-calendar-module.php';
 
 register_activation_hook( __FILE__, array( 'PTP_Activator', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'PTP_Deactivator', 'deactivate' ) );

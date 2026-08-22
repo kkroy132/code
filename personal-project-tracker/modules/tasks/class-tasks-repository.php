@@ -694,6 +694,51 @@ class PTP_Tasks_Repository {
 	}
 
 	/**
+	 * Get a lightweight id => title map of all non-archived tasks (across
+	 * every project), for the Calendar's "link to a task" event picker.
+	 *
+	 * @return array<int, string>
+	 */
+	public static function get_options_for_select() {
+		global $wpdb;
+
+		$table = self::get_table();
+
+		$rows = $wpdb->get_results( "SELECT id, title FROM {$table} WHERE archived_at IS NULL ORDER BY title ASC", ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+
+		$options = array();
+
+		foreach ( $rows as $row ) {
+			$options[ (int) $row['id'] ] = $row['title'];
+		}
+
+		return $options;
+	}
+
+	/**
+	 * Get non-archived tasks whose due date falls within a date range, for
+	 * the Calendar module. Due dates are never copied into a separate
+	 * events table — the Calendar reads them live from here.
+	 *
+	 * @param string $start 'Y-m-d' range start (inclusive).
+	 * @param string $end   'Y-m-d' range end (inclusive).
+	 * @return object[] Rows with id, title, due_date, status, priority, project_id.
+	 */
+	public static function get_deadlines_in_range( $start, $end ) {
+		global $wpdb;
+
+		$table = self::get_table();
+
+		return $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT id, title, due_date, status, priority, project_id FROM {$table} WHERE due_date IS NOT NULL AND due_date BETWEEN %s AND %s AND archived_at IS NULL ORDER BY due_date ASC", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				$start,
+				$end
+			)
+		);
+	}
+
+	/**
 	 * Get summary statistics used by the Tasks list page and the Dashboard.
 	 *
 	 * @return array{total: int, today: int, overdue: int, in_progress: int, completed: int, by_status: array<string,int>}

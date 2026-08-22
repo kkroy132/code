@@ -432,3 +432,170 @@
 		display: none;
 	}
 }
+
+/* Calendar toolbar: navigation + view switcher, wraps on narrow screens. */
+.ptp-calendar-toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: center;
+	gap: 10px;
+	margin-bottom: 12px;
+}
+
+.ptp-calendar-nav,
+.ptp-calendar-views {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px;
+}
+
+.ptp-calendar-period-label {
+	margin-left: 8px;
+}
+
+/* Month grid. */
+.ptp-calendar-month {
+	width: 100%;
+	table-layout: fixed;
+	border-collapse: collapse;
+}
+
+.ptp-calendar-month th {
+	padding: 6px 4px;
+	text-align: center;
+	background: #f6f7f7;
+	border: 1px solid #dcdcde;
+}
+
+.ptp-cal-day {
+	vertical-align: top;
+	border: 1px solid #dcdcde;
+	padding: 4px;
+	min-width: 120px;
+	height: 90px;
+}
+
+.ptp-cal-day-outside {
+	background: #f9f9f9;
+	color: #a7aaad;
+}
+
+.ptp-cal-day-today {
+	background: #edf6fc;
+}
+
+.ptp-cal-day-number {
+	display: inline-block;
+	font-weight: 600;
+	text-decoration: none;
+	margin-bottom: 2px;
+}
+
+.ptp-cal-day-items {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.ptp-cal-item {
+	display: block;
+	font-size: 11px;
+	line-height: 1.4;
+	padding: 1px 4px;
+	border-left: 3px solid #2271b1;
+	background: #f6f7f7;
+	color: #1d2327;
+	text-decoration: none;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.ptp-cal-item:hover {
+	background: #eee;
+}
+
+.ptp-cal-item-time {
+	font-weight: 600;
+	margin-right: 2px;
+}
+
+.ptp-cal-more {
+	font-size: 11px;
+	color: #2271b1;
+	text-decoration: none;
+}
+
+/* Week view: taller single-row cells. */
+.ptp-calendar-week {
+	width: 100%;
+	table-layout: fixed;
+	border-collapse: collapse;
+}
+
+.ptp-calendar-week th {
+	padding: 6px 4px;
+	text-align: center;
+	background: #f6f7f7;
+	border: 1px solid #dcdcde;
+}
+
+.ptp-cal-day-week {
+	min-height: 220px;
+	height: 220px;
+}
+
+/* Day view list. */
+.ptp-cal-day-list {
+	margin: 0 0 16px;
+	list-style: none;
+	padding: 0;
+}
+
+.ptp-cal-day-list li {
+	margin-bottom: 4px;
+}
+
+.ptp-cal-day-list .ptp-cal-item {
+	white-space: normal;
+	font-size: 13px;
+	padding: 4px 8px;
+}
+
+/* Agenda view. */
+.ptp-cal-agenda {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.ptp-cal-agenda-day {
+	padding: 10px 0;
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.ptp-cal-agenda-day:last-child {
+	border-bottom: none;
+}
+
+.ptp-cal-agenda-date {
+	font-weight: 600;
+	margin-bottom: 6px;
+}
+
+.ptp-cal-agenda-date.ptp-cal-day-today {
+	color: #2271b1;
+}
+
+@media screen and (max-width: 782px) {
+	.ptp-cal-day {
+		min-width: 100px;
+	}
+
+	.ptp-calendar-toolbar {
+		flex-direction: column;
+		align-items: flex-start;
+	}
+}

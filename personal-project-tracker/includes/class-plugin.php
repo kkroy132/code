@@ -71,6 +71,7 @@ class PTP_Plugin {
 			'PTP_Projects_Module',
 			'PTP_Tasks_Module',
 			'PTP_Milestones_Module',
+			'PTP_Calendar_Module',
 		);
 
 		foreach ( $modules as $module_class ) {

@@ -565,6 +565,30 @@ class PTP_Projects_Repository {
 	}
 
 	/**
+	 * Get non-archived projects whose deadline falls within a date range,
+	 * for the Calendar module. Deadlines are never copied into a separate
+	 * events table — the Calendar reads them live from here so they can
+	 * never drift out of sync with the project record.
+	 *
+	 * @param string $start 'Y-m-d' range start (inclusive).
+	 * @param string $end   'Y-m-d' range end (inclusive).
+	 * @return object[] Rows with id, title, deadline, status, priority, color.
+	 */
+	public static function get_deadlines_in_range( $start, $end ) {
+		global $wpdb;
+
+		$table = self::get_table();
+
+		return $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT id, title, deadline, status, priority, color FROM {$table} WHERE deadline IS NOT NULL AND deadline BETWEEN %s AND %s AND status != 'archived' ORDER BY deadline ASC", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				$start,
+				$end
+			)
+		);
+	}
+
+	/**
 	 * Get summary statistics used by the Projects list page and the Dashboard.
 	 *
 	 * @return array{total: int, active: int, completed: int, overdue: int, by_status: array<string,int>}
