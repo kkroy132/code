@@ -77,7 +77,49 @@ class PTP_Admin_Pages {
 	}
 
 	public function render_tasks() {
-		$this->render_placeholder( __( 'Tasks', 'personal-project-tracker' ), 'ptp_manage_tasks' );
+		PTP_Security::require_capability( 'ptp_manage_tasks' );
+
+		$action = isset( $_GET['action'] ) ? sanitize_key( wp_unslash( $_GET['action'] ) ) : 'list'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		switch ( $action ) {
+			case 'new':
+				$this->render_view(
+					'tasks/task-form',
+					'ptp_manage_tasks',
+					array(
+						'task'    => null,
+						'is_edit' => false,
+						'flash'   => PTP_Tasks_Controller::get_flash(),
+					)
+				);
+				break;
+
+			case 'edit':
+				$id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$this->render_view(
+					'tasks/task-form',
+					'ptp_manage_tasks',
+					array(
+						'task'    => $id ? PTP_Tasks_Repository::get( $id ) : null,
+						'is_edit' => true,
+						'flash'   => PTP_Tasks_Controller::get_flash(),
+					)
+				);
+				break;
+
+			case 'view':
+				$id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$this->render_view(
+					'tasks/task-view',
+					'ptp_manage_tasks',
+					array( 'task' => $id ? PTP_Tasks_Repository::get( $id ) : null )
+				);
+				break;
+
+			default:
+				$this->render_view( 'tasks/tasks-list', 'ptp_manage_tasks', array() );
+				break;
+		}
 	}
 
 	public function render_milestones() {

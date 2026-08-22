@@ -308,6 +308,111 @@
 	color: #fff;
 }
 
+/* Task statuses not shared with Projects (completed/cancelled reuse the Projects rules above). */
+.ptp-badge-status-todo { background: #f0f0f1; color: #50575e; }
+.ptp-badge-status-in_progress { background: #e7f2fd; color: #0a4b78; }
+.ptp-badge-status-blocked { background: #fcebea; color: #b32d2e; }
+.ptp-badge-status-review { background: #fef8ee; color: #9a6700; }
+
+/* A compact "Tasks for this project" list on the Project detail page. */
+.ptp-simple-list {
+	margin: 0;
+}
+
+.ptp-simple-list li {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	padding: 8px 0;
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.ptp-simple-list li:last-child {
+	border-bottom: none;
+}
+
+/* "Coming soon" module list on the Task detail sidebar. */
+.ptp-coming-soon-list {
+	margin: 0;
+	color: #646970;
+}
+
+.ptp-coming-soon-list li {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 0;
+}
+
+.ptp-coming-soon-list .dashicons {
+	color: #c3c4c7;
+}
+
+/* A wider progress bar for the Task detail page's subtask completion. */
+.ptp-progress-wide {
+	width: 100%;
+	height: 10px;
+	margin-bottom: 4px;
+}
+
+.ptp-subtask-completion {
+	color: #646970;
+	font-size: 13px;
+}
+
+/* Subtask checklist. */
+.ptp-subtask-list {
+	margin: 8px 0;
+}
+
+.ptp-subtask-row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 0;
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.ptp-subtask-row:last-child {
+	border-bottom: none;
+}
+
+.ptp-subtask-title-input {
+	flex: 1 1 auto;
+	border: 1px solid transparent;
+	background: transparent;
+	padding: 4px 6px;
+}
+
+.ptp-subtask-title-input:hover,
+.ptp-subtask-title-input:focus {
+	border-color: #dcdcde;
+	background: #fff;
+}
+
+.ptp-subtask-controls {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	white-space: nowrap;
+}
+
+.ptp-subtask-controls .button-link {
+	text-decoration: none;
+	padding: 0 4px;
+}
+
+.ptp-subtask-add-form {
+	display: flex;
+	gap: 8px;
+	margin-top: 10px;
+}
+
+.ptp-subtask-add-form input[type="text"] {
+	flex: 1 1 auto;
+}
+
 /* Responsive breakpoints for tablet/mobile. */
 @media screen and (max-width: 960px) {
 	.ptp-detail-grid {
@@ -321,7 +426,8 @@
 	}
 
 	/* Hide secondary columns on narrow screens; the table remains reachable via horizontal scroll. */
-	.ptp-projects-table .ptp-col-optional {
+	.ptp-projects-table .ptp-col-optional,
+	.ptp-tasks-table .ptp-col-optional {
 		display: none;
 	}
 }

@@ -69,6 +69,7 @@ class PTP_Plugin {
 	private function load_modules() {
 		$modules = array(
 			'PTP_Projects_Module',
+			'PTP_Tasks_Module',
 		);
 
 		foreach ( $modules as $module_class ) {

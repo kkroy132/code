@@ -23,8 +23,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Core plugin constants.
  */
-define( 'PTP_VERSION', '1.0.0' );
-define( 'PTP_DB_VERSION', 1 );
+define( 'PTP_VERSION', '1.1.0' );
+define( 'PTP_DB_VERSION', 2 );
 define( 'PTP_TEXT_DOMAIN', 'personal-project-tracker' );
 define( 'PTP_PLUGIN_FILE', __FILE__ );
 define( 'PTP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
@@ -87,6 +87,13 @@ require_once PTP_PLUGIN_DIR . 'modules/projects/class-projects-repository.php';
 require_once PTP_PLUGIN_DIR . 'modules/projects/class-projects-controller.php';
 require_once PTP_PLUGIN_DIR . 'modules/projects/class-projects-rest.php';
 require_once PTP_PLUGIN_DIR . 'modules/projects/class-projects-module.php';
+
+require_once PTP_PLUGIN_DIR . 'modules/tasks/class-tasks-repository.php';
+require_once PTP_PLUGIN_DIR . 'modules/tasks/class-subtasks-repository.php';
+require_once PTP_PLUGIN_DIR . 'modules/tasks/class-tasks-controller.php';
+require_once PTP_PLUGIN_DIR . 'modules/tasks/class-tasks-rest.php';
+require_once PTP_PLUGIN_DIR . 'modules/tasks/class-subtasks-rest.php';
+require_once PTP_PLUGIN_DIR . 'modules/tasks/class-tasks-module.php';
 
 register_activation_hook( __FILE__, array( 'PTP_Activator', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'PTP_Deactivator', 'deactivate' ) );

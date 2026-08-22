@@ -85,6 +85,12 @@ class PTP_Database {
 	 * dbDelta() is strict about formatting: two spaces after PRIMARY KEY,
 	 * each field/key on its own line, no backticks around index names.
 	 *
+	 * Schema history:
+	 * - v1: initial schema (all core tables).
+	 * - v2: tasks.archived_at (Archive/Restore Task), subtasks.sort_order
+	 *   + a (task_id, sort_order) index (Reorder Subtask). dbDelta() only
+	 *   adds the new columns/keys to existing installs — no data is touched.
+	 *
 	 * @param string $charset_collate Charset/collation clause.
 	 * @return string[] List of CREATE TABLE statements.
 	 */
@@ -135,6 +141,7 @@ class PTP_Database {
 			tags VARCHAR(500) NULL,
 			created_at DATETIME NOT NULL,
 			updated_at DATETIME NOT NULL,
+			archived_at DATETIME NULL,
 			PRIMARY KEY  (id),
 			KEY project_id (project_id),
 			KEY milestone_id (milestone_id),
@@ -150,10 +157,12 @@ class PTP_Database {
 			priority VARCHAR(20) NOT NULL DEFAULT 'medium',
 			due_date DATE NULL,
 			completed TINYINT(1) NOT NULL DEFAULT 0,
+			sort_order INT UNSIGNED NOT NULL DEFAULT 0,
 			created_at DATETIME NOT NULL,
 			updated_at DATETIME NOT NULL,
 			PRIMARY KEY  (id),
-			KEY task_id (task_id)
+			KEY task_id (task_id),
+			KEY task_sort (task_id, sort_order)
 		) {$charset_collate};";
 
 		$sql[] = "CREATE TABLE {$prefix}milestones (

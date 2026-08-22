@@ -105,6 +105,38 @@ $tables = PTP_Database::get_table_names();
 
 <?php endif; ?>
 
+<?php if ( current_user_can( 'ptp_manage_tasks' ) && class_exists( 'PTP_Tasks_Repository' ) ) : ?>
+
+	<?php $ptp_task_stats = PTP_Tasks_Repository::get_stats(); ?>
+
+	<div class="ptp-page-header">
+		<h2><?php esc_html_e( 'Tasks', 'personal-project-tracker' ); ?></h2>
+		<a class="button button-primary" href="<?php echo esc_url( add_query_arg( array( 'page' => 'ptp-tasks', 'action' => 'new' ), admin_url( 'admin.php' ) ) ); ?>">
+			<?php esc_html_e( '+ New Task', 'personal-project-tracker' ); ?>
+		</a>
+	</div>
+
+	<div class="ptp-stats-grid">
+		<div class="ptp-stat-tile">
+			<span class="ptp-stat-value"><?php echo esc_html( number_format_i18n( $ptp_task_stats['today'] ) ); ?></span>
+			<span class="ptp-stat-label"><?php esc_html_e( 'Tasks Today', 'personal-project-tracker' ); ?></span>
+		</div>
+		<div class="ptp-stat-tile ptp-stat-tile-warning">
+			<span class="ptp-stat-value"><?php echo esc_html( number_format_i18n( $ptp_task_stats['overdue'] ) ); ?></span>
+			<span class="ptp-stat-label"><?php esc_html_e( 'Overdue Tasks', 'personal-project-tracker' ); ?></span>
+		</div>
+		<div class="ptp-stat-tile">
+			<span class="ptp-stat-value"><?php echo esc_html( number_format_i18n( $ptp_task_stats['in_progress'] ) ); ?></span>
+			<span class="ptp-stat-label"><?php esc_html_e( 'Tasks In Progress', 'personal-project-tracker' ); ?></span>
+		</div>
+		<div class="ptp-stat-tile">
+			<span class="ptp-stat-value"><?php echo esc_html( number_format_i18n( $ptp_task_stats['completed'] ) ); ?></span>
+			<span class="ptp-stat-label"><?php esc_html_e( 'Completed Tasks', 'personal-project-tracker' ); ?></span>
+		</div>
+	</div>
+
+<?php endif; ?>
+
 <div class="ptp-card">
 	<h2><?php esc_html_e( 'System Status', 'personal-project-tracker' ); ?></h2>
 	<table class="widefat striped ptp-status-table">

@@ -541,6 +541,30 @@ class PTP_Projects_Repository {
 	}
 
 	/**
+	 * Get a lightweight id => title map of all non-archived projects, for
+	 * use in other modules' project-picker dropdowns (e.g. the Task form).
+	 * Kept here rather than duplicated per-module since Projects already
+	 * owns the table.
+	 *
+	 * @return array<int, string>
+	 */
+	public static function get_options_for_select() {
+		global $wpdb;
+
+		$table = self::get_table();
+
+		$rows = $wpdb->get_results( "SELECT id, title FROM {$table} WHERE status != 'archived' ORDER BY title ASC", ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+
+		$options = array();
+
+		foreach ( $rows as $row ) {
+			$options[ (int) $row['id'] ] = $row['title'];
+		}
+
+		return $options;
+	}
+
+	/**
 	 * Get summary statistics used by the Projects list page and the Dashboard.
 	 *
 	 * @return array{total: int, active: int, completed: int, overdue: int, by_status: array<string,int>}
