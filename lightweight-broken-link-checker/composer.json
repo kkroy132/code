@@ -1,0 +1,33 @@
+{
+	"name": "lightweight-plugins/lightweight-broken-link-checker",
+	"description": "Controlled, batch-based broken link checking for WordPress.",
+	"type": "wordpress-plugin",
+	"license": "GPL-2.0-or-later",
+	"require": {
+		"php": ">=7.4",
+		"ext-dom": "*",
+		"woocommerce/action-scheduler": "^3.9"
+	},
+	"require-dev": {
+		"squizlabs/php_codesniffer": "^3.9",
+		"wp-coding-standards/wpcs": "^3.0",
+		"phpcompatibility/phpcompatibility-wp": "^2.1"
+	},
+	"autoload": {
+		"psr-4": {
+			"LWBLC\\": "src/"
+		}
+	},
+	"config": {
+		"platform": {
+			"php": "7.4"
+		}
+	},
+	"extra": {
+		"installer-paths": {
+			"vendor/action-scheduler": [
+				"woocommerce/action-scheduler"
+			]
+		}
+	}
+}

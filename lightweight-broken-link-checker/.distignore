@@ -1,0 +1,14 @@
+# Files excluded from the distributed plugin package.
+.distignore
+.git
+.gitignore
+.github
+composer.json
+composer.lock
+phpcs.xml
+phpcs.xml.dist
+phpunit.xml
+phpunit.xml.dist
+node_modules
+tests
+bin
