@@ -106,7 +106,14 @@ class PTP_Reports_REST {
 		$args['paged']     = $request->get_param( 'page' );
 		$args['per_page']  = $request->get_param( 'per_page' );
 
-		return new WP_REST_Response( PTP_Reports_Service::get_project_report( $args ), 200 );
+		// This route is gated at ptp_manage_data (see register_routes()), but
+		// the project report includes revenue/expenses/profit — Finance data
+		// that must stay private per ptp_manage_finance everywhere else in
+		// the plugin, so it's only included when the caller also holds that
+		// capability (the same pattern PTP_Analytics_REST::get_dashboard() uses).
+		$include_finance = current_user_can( 'ptp_manage_finance' );
+
+		return new WP_REST_Response( PTP_Reports_Service::get_project_report( $args, $include_finance ), 200 );
 	}
 
 	/**

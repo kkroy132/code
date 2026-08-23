@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $ptp_paged  = isset( $_GET['paged'] ) ? max( 1, absint( $_GET['paged'] ) ) : 1; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-$ptp_report = PTP_Reports_Service::get_project_report( array_merge( $ptp_filter_args, array( 'paged' => $ptp_paged, 'per_page' => 20 ) ) );
+$ptp_report = PTP_Reports_Service::get_project_report( array_merge( $ptp_filter_args, array( 'paged' => $ptp_paged, 'per_page' => 20 ) ), $ptp_can_view_finance );
 ?>
 <div class="ptp-card">
 	<h2><?php esc_html_e( 'Project Report', 'personal-project-tracker' ); ?></h2>

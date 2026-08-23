@@ -363,6 +363,19 @@ class PTP_Search_Service {
 			$params[] = $date_to . ' 23:59:59';
 		}
 
+		if ( 'activity_logs' === $source['short_table'] && ! current_user_can( 'ptp_manage_finance' ) ) {
+			// Unlike expenses/revenues (whole tables gated behind
+			// ptp_manage_finance in active_sources()), activity_logs holds
+			// every action's entry in one shared table — object_type
+			// distinguishes an expense/revenue entry from everything else.
+			// Their description text embeds the actual amount (e.g. "Logged
+			// expense of $500.00" — see PTP_Expenses_Repository::create()),
+			// so those rows must be excluded here the same way
+			// PTP_Notifications_Repository already hides finance-category
+			// notifications from a non-Finance user.
+			$where[] = "object_type NOT IN ('expense','revenue')";
+		}
+
 		return array( implode( ' AND ', $where ), $params );
 	}
 

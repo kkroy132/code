@@ -82,7 +82,12 @@ class PTP_Reports_Controller {
 	private static function rows_for_export( $report, array $args ) {
 		switch ( $report ) {
 			case 'projects':
-				$data = PTP_Reports_Service::get_project_report( array_merge( $args, array( 'per_page' => 100 ) ) );
+				// The Projects report includes revenue/expenses/profit —
+				// Finance data that must stay private per ptp_manage_finance
+				// everywhere else in the plugin (the 'finance' report type
+				// above already requires it; this export must too, since the
+				// export itself is only gated at ptp_manage_data).
+				$data = PTP_Reports_Service::get_project_report( array_merge( $args, array( 'per_page' => 100 ) ), current_user_can( 'ptp_manage_finance' ) );
 				return array( $data['items'], self::COLUMNS['projects'] );
 
 			case 'tasks':

@@ -345,7 +345,19 @@ class PTP_Backup_Service {
 		$htaccess_file = trailingslashit( $dir ) . '.htaccess';
 
 		if ( ! $fs->exists( $htaccess_file ) ) {
-			$fs->put_contents( $htaccess_file, "Deny from all\n" );
+			// "Deny from all" alone is Apache 2.2 syntax and is silently a
+			// no-op on Apache 2.4 (the standard since ~2012) unless the
+			// legacy mod_access_compat module is still enabled — include
+			// both the 2.4 (Require all denied) and 2.2 syntax so this
+			// actually blocks direct access on any Apache version. This is
+			// still inert on non-Apache servers (nginx, IIS don't read
+			// .htaccess at all); the unpredictable per-file random suffix
+			// in create_backup()'s filename is the mitigation that holds
+			// regardless of server software.
+			$fs->put_contents(
+				$htaccess_file,
+				"<IfModule mod_authz_core.c>\n\tRequire all denied\n</IfModule>\n<IfModule !mod_authz_core.c>\n\tDeny from all\n</IfModule>\n"
+			);
 		}
 
 		return $dir;
@@ -389,7 +401,15 @@ class PTP_Backup_Service {
 			return new WP_Error( 'ptp_backup_encode_failed', __( 'Could not encode backup data.', 'personal-project-tracker' ) );
 		}
 
-		$filename = 'ptp-backup-' . gmdate( 'Y-m-d-His' ) . '-' . substr( md5( uniqid( '', true ) ), 0, 8 ) . '.json';
+		// The backup directory sits under wp-content/uploads (see
+		// get_backup_dir()) and is only protected from direct web access by
+		// index.php + .htaccess (see ensure_backup_dir()), which is inert on
+		// non-Apache servers (nginx, IIS don't read .htaccess). A wide,
+		// unpredictable filename is the one mitigation that still holds
+		// regardless of server software — wp_generate_password() draws on
+		// PHP's CSPRNG, unlike the previous 8-hex-char md5(uniqid()) suffix
+		// (uniqid() is time-seeded and only 32 bits, guessable).
+		$filename = 'ptp-backup-' . gmdate( 'Y-m-d-His' ) . '-' . wp_generate_password( 32, false, false ) . '.json';
 		$path     = trailingslashit( $dir ) . $filename;
 
 		if ( ! $fs->put_contents( $path, $json, defined( 'FS_CHMOD_FILE' ) ? FS_CHMOD_FILE : 0644 ) ) {

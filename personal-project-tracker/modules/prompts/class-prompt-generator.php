@@ -430,7 +430,7 @@ class PTP_Prompt_Generator {
 		}
 
 		if ( ! empty( $args['include_reports'] ) && class_exists( 'PTP_Reports_Service' ) ) {
-			$report_rows = PTP_Reports_Service::get_project_report( array( 'project_id' => $project_id ) )['items'];
+			$report_rows = PTP_Reports_Service::get_project_report( array( 'project_id' => $project_id ), ! empty( $args['finance_allowed'] ) )['items'];
 			$report_row  = $report_rows[0] ?? null;
 
 			if ( $report_row ) {

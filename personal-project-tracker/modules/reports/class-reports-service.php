@@ -52,15 +52,24 @@ class PTP_Reports_Service {
 	 * returns a page of rows using the same bounded pagination as the
 	 * Projects list everywhere else in the plugin.
 	 *
-	 * @param array $args Shared filters, plus paged/per_page when listing all projects.
+	 * $include_finance must be explicitly passed as true by a caller that
+	 * has already checked ptp_manage_finance (see PTP_Analytics_Service::
+	 * get_dashboard()'s identical parameter) — it defaults to false so a
+	 * caller that forgets the check fails closed (no finance figures)
+	 * rather than leaking revenue/expenses/profit, the same Finance-privacy
+	 * boundary this data's own module (PTP_Finance_Service) already
+	 * enforces everywhere else.
+	 *
+	 * @param array $args            Shared filters, plus paged/per_page when listing all projects.
+	 * @param bool  $include_finance Whether to compute/include revenue/expenses/profit/currency.
 	 * @return array{items: array, total: int, total_pages?: int, page?: int, per_page?: int}
 	 */
-	public static function get_project_report( array $args = array() ) {
+	public static function get_project_report( array $args = array(), $include_finance = false ) {
 		$args = wp_parse_args( $args, array_merge( self::default_args(), array( 'paged' => 1, 'per_page' => 20 ) ) );
 
 		if ( $args['project_id'] ) {
 			$project = PTP_Projects_Repository::get( $args['project_id'] );
-			$row     = $project ? self::build_project_row( $project, $args ) : null;
+			$row     = $project ? self::build_project_row( $project, $args, $include_finance ) : null;
 
 			return array(
 				'items' => $row ? array( $row ) : array(),
@@ -80,7 +89,7 @@ class PTP_Reports_Service {
 		$items = array();
 
 		foreach ( $list['items'] as $project ) {
-			$items[] = self::build_project_row( $project, $args );
+			$items[] = self::build_project_row( $project, $args, $include_finance );
 		}
 
 		return array(
@@ -93,11 +102,12 @@ class PTP_Reports_Service {
 	}
 
 	/**
-	 * @param object $project A project row.
-	 * @param array  $args    Shared filters (date_from/date_to apply to tasks/milestones/time/finance).
+	 * @param object $project         A project row.
+	 * @param array  $args            Shared filters (date_from/date_to apply to tasks/milestones/time/finance).
+	 * @param bool   $include_finance Whether to compute/include revenue/expenses/profit/currency.
 	 * @return array
 	 */
-	private static function build_project_row( $project, array $args ) {
+	private static function build_project_row( $project, array $args, $include_finance = false ) {
 		$task_counts = PTP_Tasks_Repository::get_report_counts(
 			array(
 				'project_id' => $project->id,
@@ -124,13 +134,15 @@ class PTP_Reports_Service {
 			)
 		);
 
-		$finance = PTP_Finance_Service::get_project_summary(
-			$project->id,
-			array(
-				'date_from' => $args['date_from'],
-				'date_to'   => $args['date_to'],
+		$finance = $include_finance
+			? PTP_Finance_Service::get_project_summary(
+				$project->id,
+				array(
+					'date_from' => $args['date_from'],
+					'date_to'   => $args['date_to'],
+				)
 			)
-		);
+			: null;
 
 		return array(
 			'project_id'           => (int) $project->id,
@@ -143,10 +155,10 @@ class PTP_Reports_Service {
 			'milestones_total'     => $milestone_counts['total'],
 			'milestones_completed' => $milestone_counts['completed'],
 			'tracked_seconds'      => $time_totals['total_seconds'],
-			'currency'             => $finance['currency'] ?? null,
-			'revenue'              => $finance['revenue'] ?? 0.0,
-			'expenses'             => $finance['expenses'] ?? 0.0,
-			'profit'               => $finance['profit'] ?? 0.0,
+			'currency'             => $include_finance ? ( $finance['currency'] ?? null ) : null,
+			'revenue'              => $include_finance ? ( $finance['revenue'] ?? 0.0 ) : null,
+			'expenses'             => $include_finance ? ( $finance['expenses'] ?? 0.0 ) : null,
+			'profit'               => $include_finance ? ( $finance['profit'] ?? 0.0 ) : null,
 		);
 	}
 

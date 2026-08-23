@@ -54,8 +54,9 @@ class PTP_Reports_Export {
 			$line = array();
 
 			foreach ( $columns as $column ) {
-				$value = $row[ $column ] ?? '';
-				$line[] = is_array( $value ) ? wp_json_encode( $value ) : $value;
+				$value    = $row[ $column ] ?? '';
+				$value    = is_array( $value ) ? wp_json_encode( $value ) : $value;
+				$line[] = self::escape_csv_formula( $value );
 			}
 
 			fputcsv( $handle, $line, ',', '"', '\\' );
@@ -66,6 +67,33 @@ class PTP_Reports_Export {
 		fclose( $handle );
 
 		return false !== $csv ? $csv : '';
+	}
+
+	/**
+	 * Neutralize CSV/formula injection: a cell beginning with =, +, -, @, or
+	 * a tab/CR is treated as a formula by Excel/LibreOffice/Google Sheets
+	 * when the exported file is opened, which can execute arbitrary
+	 * formulas (e.g. =HYPERLINK(...) exfiltrating data, or legacy DDE) —
+	 * this data can originate from any free-text field a user typed (a
+	 * task/project title, a note, a description), so it must be neutralized
+	 * here, the one place both Reports and the Backup module's CSV export
+	 * (PTP_Export_Service, which reuses this same method) write a cell.
+	 * Prefixing with a single quote is the standard OWASP-recommended
+	 * mitigation: spreadsheet apps then render the value as literal text.
+	 *
+	 * @param mixed $value Raw cell value.
+	 * @return mixed Original value, or a formula-neutralized string.
+	 */
+	private static function escape_csv_formula( $value ) {
+		if ( ! is_string( $value ) || '' === $value ) {
+			return $value;
+		}
+
+		if ( in_array( $value[0], array( '=', '+', '-', '@', "\t", "\r" ), true ) ) {
+			return "'" . $value;
+		}
+
+		return $value;
 	}
 
 	/**
