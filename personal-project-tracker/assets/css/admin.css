@@ -657,3 +657,21 @@
 	border: 1px solid #dcdcde;
 	border-radius: 4px;
 }
+
+/* Finance alert badges (budget warning / over budget / negative profit). */
+.ptp-finance-alert {
+	padding: 8px 12px;
+	border-radius: 4px;
+	font-weight: 600;
+	margin: 0 0 12px;
+}
+
+.ptp-finance-alert-warning {
+	background: #fef8ee;
+	color: #9a6700;
+}
+
+.ptp-finance-alert-danger {
+	background: #fcebea;
+	color: #b32d2e;
+}

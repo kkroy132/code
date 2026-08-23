@@ -1,0 +1,99 @@
+<?php
+/**
+ * Expense detail page.
+ *
+ * @package Personal_Project_Tracker
+ *
+ * @var object|null $expense Expense row, or null when not found.
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+if ( ! $expense ) :
+	?>
+	<h1><?php esc_html_e( 'Expense Not Found', 'personal-project-tracker' ); ?></h1>
+	<div class="ptp-card">
+		<p><?php esc_html_e( 'That expense does not exist or may have been deleted.', 'personal-project-tracker' ); ?></p>
+		<a class="button" href="<?php echo esc_url( add_query_arg( array( 'page' => 'ptp-finance' ), admin_url( 'admin.php' ) ) ); ?>">
+			<?php esc_html_e( '&laquo; Back to Finance', 'personal-project-tracker' ); ?>
+		</a>
+	</div>
+	<?php
+	return;
+endif;
+
+$ptp_project  = $expense->project_id ? PTP_Projects_Repository::get( $expense->project_id ) : null;
+$ptp_list_url = add_query_arg( array( 'page' => 'ptp-finance' ), admin_url( 'admin.php' ) );
+$ptp_edit_url = add_query_arg( array( 'page' => 'ptp-finance', 'action' => 'edit_expense', 'id' => $expense->id ), admin_url( 'admin.php' ) );
+$ptp_activity = PTP_Activity_Log::get_for_object( 'expense', $expense->id, 15 );
+?>
+<div class="ptp-page-header">
+	<h1><?php echo esc_html( ptp_format_currency( $expense->amount, $expense->currency ) ); ?></h1>
+	<div class="ptp-quick-actions">
+		<a class="button" href="<?php echo esc_url( $ptp_list_url ); ?>"><?php esc_html_e( '&laquo; Back to Finance', 'personal-project-tracker' ); ?></a>
+		<a class="button button-primary" href="<?php echo esc_url( $ptp_edit_url ); ?>"><?php esc_html_e( 'Edit', 'personal-project-tracker' ); ?></a>
+		<button type="button" class="button button-link-delete ptp-js-expense-delete" data-id="<?php echo esc_attr( $expense->id ); ?>" data-redirect="<?php echo esc_url( $ptp_list_url ); ?>">
+			<?php esc_html_e( 'Delete', 'personal-project-tracker' ); ?>
+		</button>
+	</div>
+</div>
+
+<div class="ptp-detail-grid">
+	<div class="ptp-detail-main">
+
+		<div class="ptp-card">
+			<h2><?php esc_html_e( 'Overview', 'personal-project-tracker' ); ?></h2>
+			<?php if ( $expense->description ) : ?>
+				<div class="ptp-project-description"><?php echo esc_html( $expense->description ); ?></div>
+			<?php else : ?>
+				<p class="description"><?php esc_html_e( 'No description provided.', 'personal-project-tracker' ); ?></p>
+			<?php endif; ?>
+
+			<table class="widefat striped ptp-status-table">
+				<tbody>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Date', 'personal-project-tracker' ); ?></th>
+						<td><?php echo esc_html( mysql2date( get_option( 'date_format' ), $expense->expense_date ) ); ?></td>
+					</tr>
+					<?php if ( $expense->category ) : ?>
+						<tr>
+							<th scope="row"><?php esc_html_e( 'Category', 'personal-project-tracker' ); ?></th>
+							<td><?php echo esc_html( $expense->category ); ?></td>
+						</tr>
+					<?php endif; ?>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Project', 'personal-project-tracker' ); ?></th>
+						<td>
+							<?php if ( $ptp_project ) : ?>
+								<a href="<?php echo esc_url( add_query_arg( array( 'page' => 'ptp-projects', 'action' => 'view', 'id' => $ptp_project->id ), admin_url( 'admin.php' ) ) ); ?>">
+									<?php echo esc_html( $ptp_project->title ); ?>
+								</a>
+							<?php else : ?>
+								&#8212;
+							<?php endif; ?>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div class="ptp-card">
+			<h2><?php esc_html_e( 'Recent Activity', 'personal-project-tracker' ); ?></h2>
+			<?php if ( empty( $ptp_activity ) ) : ?>
+				<p class="description"><?php esc_html_e( 'No activity recorded yet.', 'personal-project-tracker' ); ?></p>
+			<?php else : ?>
+				<ul class="ptp-activity-list">
+					<?php foreach ( $ptp_activity as $ptp_entry ) : ?>
+						<li>
+							<span class="ptp-activity-desc"><?php echo esc_html( $ptp_entry->description ? $ptp_entry->description : $ptp_entry->action ); ?></span>
+							<span class="ptp-activity-date"><?php echo esc_html( mysql2date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $ptp_entry->created_at ) ); ?></span>
+						</li>
+					<?php endforeach; ?>
+				</ul>
+			<?php endif; ?>
+		</div>
+
+	</div>
+</div>

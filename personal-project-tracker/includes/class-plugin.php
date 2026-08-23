@@ -76,6 +76,7 @@ class PTP_Plugin {
 			'PTP_Notes_Module',
 			'PTP_Links_Module',
 			'PTP_Files_Module',
+			'PTP_Finance_Module',
 		);
 
 		foreach ( $modules as $module_class ) {

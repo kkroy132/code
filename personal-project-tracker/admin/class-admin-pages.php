@@ -373,7 +373,83 @@ class PTP_Admin_Pages {
 	}
 
 	public function render_finance() {
-		$this->render_placeholder( __( 'Finance', 'personal-project-tracker' ), 'ptp_manage_finance' );
+		PTP_Security::require_capability( 'ptp_manage_finance' );
+
+		$action = isset( $_GET['action'] ) ? sanitize_key( wp_unslash( $_GET['action'] ) ) : 'list'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		switch ( $action ) {
+			case 'new_expense':
+				$this->render_view(
+					'finance/expense-form',
+					'ptp_manage_finance',
+					array(
+						'expense' => null,
+						'is_edit' => false,
+						'flash'   => PTP_Finance_Controller::get_expense_flash(),
+					)
+				);
+				break;
+
+			case 'edit_expense':
+				$id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$this->render_view(
+					'finance/expense-form',
+					'ptp_manage_finance',
+					array(
+						'expense' => $id ? PTP_Expenses_Repository::get( $id ) : null,
+						'is_edit' => true,
+						'flash'   => PTP_Finance_Controller::get_expense_flash(),
+					)
+				);
+				break;
+
+			case 'view_expense':
+				$id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$this->render_view(
+					'finance/expense-view',
+					'ptp_manage_finance',
+					array( 'expense' => $id ? PTP_Expenses_Repository::get( $id ) : null )
+				);
+				break;
+
+			case 'new_revenue':
+				$this->render_view(
+					'finance/revenue-form',
+					'ptp_manage_finance',
+					array(
+						'revenue' => null,
+						'is_edit' => false,
+						'flash'   => PTP_Finance_Controller::get_revenue_flash(),
+					)
+				);
+				break;
+
+			case 'edit_revenue':
+				$id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$this->render_view(
+					'finance/revenue-form',
+					'ptp_manage_finance',
+					array(
+						'revenue' => $id ? PTP_Revenue_Repository::get( $id ) : null,
+						'is_edit' => true,
+						'flash'   => PTP_Finance_Controller::get_revenue_flash(),
+					)
+				);
+				break;
+
+			case 'view_revenue':
+				$id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$this->render_view(
+					'finance/revenue-view',
+					'ptp_manage_finance',
+					array( 'revenue' => $id ? PTP_Revenue_Repository::get( $id ) : null )
+				);
+				break;
+
+			default:
+				$this->render_view( 'finance/finance-page', 'ptp_manage_finance', array() );
+				break;
+		}
 	}
 
 	public function render_reports() {

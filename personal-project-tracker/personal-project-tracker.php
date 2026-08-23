@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Core plugin constants.
  */
-define( 'PTP_VERSION', '1.5.0' );
+define( 'PTP_VERSION', '1.6.0' );
 define( 'PTP_DB_VERSION', 5 );
 define( 'PTP_TEXT_DOMAIN', 'personal-project-tracker' );
 define( 'PTP_PLUGIN_FILE', __FILE__ );
@@ -124,6 +124,13 @@ require_once PTP_PLUGIN_DIR . 'modules/files/class-files-repository.php';
 require_once PTP_PLUGIN_DIR . 'modules/files/class-files-controller.php';
 require_once PTP_PLUGIN_DIR . 'modules/files/class-files-rest.php';
 require_once PTP_PLUGIN_DIR . 'modules/files/class-files-module.php';
+
+require_once PTP_PLUGIN_DIR . 'modules/finance/class-expenses-repository.php';
+require_once PTP_PLUGIN_DIR . 'modules/finance/class-revenue-repository.php';
+require_once PTP_PLUGIN_DIR . 'modules/finance/class-finance-service.php';
+require_once PTP_PLUGIN_DIR . 'modules/finance/class-finance-controller.php';
+require_once PTP_PLUGIN_DIR . 'modules/finance/class-finance-rest.php';
+require_once PTP_PLUGIN_DIR . 'modules/finance/class-finance-module.php';
 
 register_activation_hook( __FILE__, array( 'PTP_Activator', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'PTP_Deactivator', 'deactivate' ) );
