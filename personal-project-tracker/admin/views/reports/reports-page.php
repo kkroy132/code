@@ -67,6 +67,11 @@ $ptp_export_url = add_query_arg(
 		<button type="button" class="button" disabled="disabled" title="<?php esc_attr_e( 'Available in a future phase.', 'personal-project-tracker' ); ?>">
 			<?php esc_html_e( 'Export PDF', 'personal-project-tracker' ); ?>
 		</button>
+		<?php if ( current_user_can( 'ptp_manage_data' ) ) : ?>
+			<a class="button" href="<?php echo esc_url( add_query_arg( array( 'page' => 'ptp-ai-prompts', 'action' => 'new', 'context_type' => 'report', 'project_id' => $ptp_project_id, 'include_reports' => 1, 'include_finance' => $ptp_can_view_finance ? 1 : 0 ), admin_url( 'admin.php' ) ) ); ?>">
+				<?php esc_html_e( 'Generate AI Analysis Prompt', 'personal-project-tracker' ); ?>
+			</a>
+		<?php endif; ?>
 	</div>
 </div>
 

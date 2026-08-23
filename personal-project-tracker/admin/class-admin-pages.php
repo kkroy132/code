@@ -461,7 +461,78 @@ class PTP_Admin_Pages {
 	}
 
 	public function render_ai_prompts() {
-		$this->render_placeholder( __( 'AI Prompt Studio', 'personal-project-tracker' ), 'ptp_manage_data' );
+		PTP_Security::require_capability( 'ptp_manage_data' );
+
+		$action = isset( $_GET['action'] ) ? sanitize_key( wp_unslash( $_GET['action'] ) ) : 'list'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		switch ( $action ) {
+			case 'new':
+				$this->render_view(
+					'prompts/prompt-form',
+					'ptp_manage_data',
+					array(
+						'prompt'  => null,
+						'is_edit' => false,
+						'flash'   => PTP_Prompts_Controller::get_prompt_flash(),
+					)
+				);
+				break;
+
+			case 'edit':
+				$id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$this->render_view(
+					'prompts/prompt-form',
+					'ptp_manage_data',
+					array(
+						'prompt'  => $id ? PTP_Prompt_Documents_Repository::get( $id ) : null,
+						'is_edit' => true,
+						'flash'   => PTP_Prompts_Controller::get_prompt_flash(),
+					)
+				);
+				break;
+
+			case 'view':
+				$id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$this->render_view(
+					'prompts/prompt-view',
+					'ptp_manage_data',
+					array( 'prompt' => $id ? PTP_Prompt_Documents_Repository::get( $id ) : null )
+				);
+				break;
+
+			case 'templates':
+				$this->render_view( 'prompts/templates-list', 'ptp_manage_data', array() );
+				break;
+
+			case 'new_template':
+				$this->render_view(
+					'prompts/template-form',
+					'ptp_manage_data',
+					array(
+						'template' => null,
+						'is_edit'  => false,
+						'flash'    => PTP_Prompts_Controller::get_template_flash(),
+					)
+				);
+				break;
+
+			case 'edit_template':
+				$id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$this->render_view(
+					'prompts/template-form',
+					'ptp_manage_data',
+					array(
+						'template' => $id ? PTP_Prompt_Templates_Repository::get( $id ) : null,
+						'is_edit'  => true,
+						'flash'    => PTP_Prompts_Controller::get_template_flash(),
+					)
+				);
+				break;
+
+			default:
+				$this->render_view( 'prompts/prompts-list', 'ptp_manage_data', array() );
+				break;
+		}
 	}
 
 	public function render_notifications() {

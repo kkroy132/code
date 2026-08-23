@@ -709,3 +709,45 @@
 	color: #646970;
 	white-space: nowrap;
 }
+
+/* AI Prompt Studio: task/milestone pickers and inline context checkboxes. */
+.ptp-checkbox-list {
+	max-height: 180px;
+	overflow-y: auto;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	padding: 8px 10px;
+	background: #fff;
+}
+
+.ptp-checkbox-list-item {
+	display: block;
+	padding: 3px 0;
+}
+
+.ptp-checkbox-inline-list {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px 16px;
+}
+
+.ptp-checkbox-inline-list label {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	font-weight: normal;
+}
+
+.ptp-checkbox-disabled {
+	color: #a7aaad;
+}
+
+.ptp-prompt-readonly {
+	width: 100%;
+	font-family: Consolas, Monaco, monospace;
+	background: #f6f7f7;
+}
+
+.dashicons-star-filled {
+	color: #dba617;
+}

@@ -4,8 +4,8 @@
  *
  * Sections: Overview, Progress, Related Tasks (view/add/remove existing
  * tasks — never duplicates task records), Deadline, Project, Activity,
- * plus a "Generate AI Prompt" placeholder button for the future AI
- * Prompt Studio module.
+ * plus a "Generate AI Prompt" quick action that opens AI Prompt Studio
+ * pre-filled with this milestone's context.
  *
  * @package Personal_Project_Tracker
  *
@@ -204,12 +204,14 @@ $ptp_activity    = PTP_Activity_Log::get_for_object( 'milestone', $milestone->id
 	</div>
 
 	<div class="ptp-detail-side">
-		<div class="ptp-card">
-			<h2><?php esc_html_e( 'AI Prompt Studio', 'personal-project-tracker' ); ?></h2>
-			<p class="description"><?php esc_html_e( 'Generate a structured prompt from this milestone for an external AI tool.', 'personal-project-tracker' ); ?></p>
-			<button type="button" class="button" disabled="disabled" title="<?php esc_attr_e( 'Available once the AI Prompt Studio module is built.', 'personal-project-tracker' ); ?>">
-				<?php esc_html_e( 'Generate AI Prompt', 'personal-project-tracker' ); ?>
-			</button>
-		</div>
+		<?php if ( current_user_can( 'ptp_manage_data' ) ) : ?>
+			<div class="ptp-card">
+				<h2><?php esc_html_e( 'AI Prompt Studio', 'personal-project-tracker' ); ?></h2>
+				<p class="description"><?php esc_html_e( 'Generate a structured prompt from this milestone for an external AI tool.', 'personal-project-tracker' ); ?></p>
+				<a class="button" href="<?php echo esc_url( add_query_arg( array( 'page' => 'ptp-ai-prompts', 'action' => 'new', 'context_type' => 'milestone', 'project_id' => $milestone->project_id, 'milestone_ids' => array( $milestone->id ) ), admin_url( 'admin.php' ) ) ); ?>">
+					<?php esc_html_e( 'Generate AI Prompt', 'personal-project-tracker' ); ?>
+				</a>
+			</div>
+		<?php endif; ?>
 	</div>
 </div>

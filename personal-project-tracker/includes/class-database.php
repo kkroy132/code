@@ -102,6 +102,12 @@ class PTP_Database {
 	 *   began; NULL while paused/stopped — lets Pause/Resume/Stop compute
 	 *   accumulated duration without ever losing the entry's original
 	 *   start_time).
+	 * - v6: prompt_documents.role, prompt_documents.goal,
+	 *   prompt_documents.output_format (AI Prompt Studio's structured
+	 *   inputs) and prompt_documents.config (JSON-encoded context
+	 *   selections, requirements/constraints, and custom role/output
+	 *   labels — kept as one JSON blob rather than a column per option so
+	 *   future context types don't require another migration).
 	 *
 	 * @param string $charset_collate Charset/collation clause.
 	 * @return string[] List of CREATE TABLE statements.
@@ -356,11 +362,16 @@ class PTP_Database {
 			context_type VARCHAR(50) NOT NULL DEFAULT 'custom',
 			project_id BIGINT UNSIGNED NULL,
 			favorite TINYINT(1) NOT NULL DEFAULT 0,
+			role VARCHAR(255) NULL,
+			goal TEXT NULL,
+			output_format VARCHAR(50) NULL,
+			config LONGTEXT NULL,
 			created_at DATETIME NOT NULL,
 			updated_at DATETIME NOT NULL,
 			PRIMARY KEY  (id),
 			KEY project_id (project_id),
-			KEY favorite (favorite)
+			KEY favorite (favorite),
+			KEY context_type (context_type)
 		) {$charset_collate};";
 
 		$sql[] = "CREATE TABLE {$prefix}prompt_templates (

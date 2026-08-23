@@ -42,6 +42,11 @@ $ptp_revenue  = PTP_Revenue_Repository::get_list( array_merge( $ptp_report_args,
 		<a class="button button-primary" href="<?php echo esc_url( add_query_arg( array( 'page' => 'ptp-finance', 'action' => 'new_revenue' ), admin_url( 'admin.php' ) ) ); ?>">
 			<?php esc_html_e( '+ Add Revenue', 'personal-project-tracker' ); ?>
 		</a>
+		<?php if ( $ptp_project_id && current_user_can( 'ptp_manage_data' ) ) : ?>
+			<a class="button" href="<?php echo esc_url( add_query_arg( array( 'page' => 'ptp-ai-prompts', 'action' => 'new', 'context_type' => 'finance', 'project_id' => $ptp_project_id, 'include_finance' => 1 ), admin_url( 'admin.php' ) ) ); ?>">
+				<?php esc_html_e( 'Generate Financial Analysis Prompt', 'personal-project-tracker' ); ?>
+			</a>
+		<?php endif; ?>
 	</div>
 </div>
 
