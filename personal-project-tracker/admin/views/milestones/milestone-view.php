@@ -189,6 +189,18 @@ $ptp_activity    = PTP_Activity_Log::get_for_object( 'milestone', $milestone->id
 			<?php endif; ?>
 		</div>
 
+		<?php
+		/**
+		 * Fires after the built-in Milestone detail sections, so future
+		 * modules (Notes, Files, Links, ...) can attach their own sections
+		 * to this page without modifying this file. Mirrors the
+		 * ptp_project_detail_sections / ptp_task_detail_sections hooks.
+		 *
+		 * @param object $milestone The milestone being viewed.
+		 */
+		do_action( 'ptp_milestone_detail_sections', $milestone );
+		?>
+
 	</div>
 
 	<div class="ptp-detail-side">

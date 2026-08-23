@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Core plugin constants.
  */
-define( 'PTP_VERSION', '1.4.0' );
+define( 'PTP_VERSION', '1.5.0' );
 define( 'PTP_DB_VERSION', 5 );
 define( 'PTP_TEXT_DOMAIN', 'personal-project-tracker' );
 define( 'PTP_PLUGIN_FILE', __FILE__ );
@@ -109,6 +109,21 @@ require_once PTP_PLUGIN_DIR . 'modules/time/class-time-repository.php';
 require_once PTP_PLUGIN_DIR . 'modules/time/class-time-controller.php';
 require_once PTP_PLUGIN_DIR . 'modules/time/class-time-rest.php';
 require_once PTP_PLUGIN_DIR . 'modules/time/class-time-module.php';
+
+require_once PTP_PLUGIN_DIR . 'modules/notes/class-notes-repository.php';
+require_once PTP_PLUGIN_DIR . 'modules/notes/class-notes-controller.php';
+require_once PTP_PLUGIN_DIR . 'modules/notes/class-notes-rest.php';
+require_once PTP_PLUGIN_DIR . 'modules/notes/class-notes-module.php';
+
+require_once PTP_PLUGIN_DIR . 'modules/links/class-links-repository.php';
+require_once PTP_PLUGIN_DIR . 'modules/links/class-links-controller.php';
+require_once PTP_PLUGIN_DIR . 'modules/links/class-links-rest.php';
+require_once PTP_PLUGIN_DIR . 'modules/links/class-links-module.php';
+
+require_once PTP_PLUGIN_DIR . 'modules/files/class-files-repository.php';
+require_once PTP_PLUGIN_DIR . 'modules/files/class-files-controller.php';
+require_once PTP_PLUGIN_DIR . 'modules/files/class-files-rest.php';
+require_once PTP_PLUGIN_DIR . 'modules/files/class-files-module.php';
 
 register_activation_hook( __FILE__, array( 'PTP_Activator', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'PTP_Deactivator', 'deactivate' ) );

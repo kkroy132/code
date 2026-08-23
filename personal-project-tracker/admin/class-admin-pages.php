@@ -252,15 +252,124 @@ class PTP_Admin_Pages {
 	}
 
 	public function render_notes() {
-		$this->render_placeholder( __( 'Notes', 'personal-project-tracker' ), 'ptp_manage_data' );
+		PTP_Security::require_capability( 'ptp_manage_data' );
+
+		$action = isset( $_GET['action'] ) ? sanitize_key( wp_unslash( $_GET['action'] ) ) : 'list'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		switch ( $action ) {
+			case 'new':
+				$this->render_view(
+					'notes/note-form',
+					'ptp_manage_data',
+					array(
+						'note'    => null,
+						'is_edit' => false,
+						'flash'   => PTP_Notes_Controller::get_flash(),
+					)
+				);
+				break;
+
+			case 'edit':
+				$id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$this->render_view(
+					'notes/note-form',
+					'ptp_manage_data',
+					array(
+						'note'    => $id ? PTP_Notes_Repository::get( $id ) : null,
+						'is_edit' => true,
+						'flash'   => PTP_Notes_Controller::get_flash(),
+					)
+				);
+				break;
+
+			case 'view':
+				$id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$this->render_view(
+					'notes/note-view',
+					'ptp_manage_data',
+					array( 'note' => $id ? PTP_Notes_Repository::get( $id ) : null )
+				);
+				break;
+
+			default:
+				$this->render_view( 'notes/notes-list', 'ptp_manage_data', array() );
+				break;
+		}
 	}
 
 	public function render_files() {
-		$this->render_placeholder( __( 'Files', 'personal-project-tracker' ), 'ptp_manage_data' );
+		PTP_Security::require_capability( 'ptp_manage_data' );
+
+		$action = isset( $_GET['action'] ) ? sanitize_key( wp_unslash( $_GET['action'] ) ) : 'list'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		switch ( $action ) {
+			case 'new':
+				$this->render_view(
+					'files/file-attach',
+					'ptp_manage_data',
+					array( 'flash' => PTP_Files_Controller::get_flash() )
+				);
+				break;
+
+			case 'view':
+				$id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$this->render_view(
+					'files/file-view',
+					'ptp_manage_data',
+					array( 'file' => $id ? PTP_Files_Repository::get( $id ) : null )
+				);
+				break;
+
+			default:
+				$this->render_view( 'files/files-list', 'ptp_manage_data', array() );
+				break;
+		}
 	}
 
 	public function render_links() {
-		$this->render_placeholder( __( 'Links', 'personal-project-tracker' ), 'ptp_manage_data' );
+		PTP_Security::require_capability( 'ptp_manage_data' );
+
+		$action = isset( $_GET['action'] ) ? sanitize_key( wp_unslash( $_GET['action'] ) ) : 'list'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		switch ( $action ) {
+			case 'new':
+				$this->render_view(
+					'links/link-form',
+					'ptp_manage_data',
+					array(
+						'link'    => null,
+						'is_edit' => false,
+						'flash'   => PTP_Links_Controller::get_flash(),
+					)
+				);
+				break;
+
+			case 'edit':
+				$id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$this->render_view(
+					'links/link-form',
+					'ptp_manage_data',
+					array(
+						'link'    => $id ? PTP_Links_Repository::get( $id ) : null,
+						'is_edit' => true,
+						'flash'   => PTP_Links_Controller::get_flash(),
+					)
+				);
+				break;
+
+			case 'view':
+				$id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$this->render_view(
+					'links/link-view',
+					'ptp_manage_data',
+					array( 'link' => $id ? PTP_Links_Repository::get( $id ) : null )
+				);
+				break;
+
+			default:
+				$this->render_view( 'links/links-list', 'ptp_manage_data', array() );
+				break;
+		}
 	}
 
 	public function render_finance() {

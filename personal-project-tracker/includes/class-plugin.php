@@ -73,6 +73,9 @@ class PTP_Plugin {
 			'PTP_Milestones_Module',
 			'PTP_Calendar_Module',
 			'PTP_Time_Module',
+			'PTP_Notes_Module',
+			'PTP_Links_Module',
+			'PTP_Files_Module',
 		);
 
 		foreach ( $modules as $module_class ) {
