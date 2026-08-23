@@ -536,7 +536,48 @@ class PTP_Admin_Pages {
 	}
 
 	public function render_notifications() {
-		$this->render_placeholder( __( 'Notifications', 'personal-project-tracker' ), 'ptp_manage_data' );
+		PTP_Security::require_capability( 'ptp_manage_data' );
+
+		$action = isset( $_GET['action'] ) ? sanitize_key( wp_unslash( $_GET['action'] ) ) : 'list'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		switch ( $action ) {
+			case 'reminders':
+				$this->render_view( 'notifications/reminders-list', 'ptp_manage_data', array() );
+				break;
+
+			case 'new_reminder':
+				$this->render_view(
+					'notifications/reminder-form',
+					'ptp_manage_data',
+					array(
+						'reminder' => null,
+						'is_edit'  => false,
+						'flash'    => PTP_Notifications_Controller::get_reminder_flash(),
+					)
+				);
+				break;
+
+			case 'edit_reminder':
+				$id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$this->render_view(
+					'notifications/reminder-form',
+					'ptp_manage_data',
+					array(
+						'reminder' => $id ? PTP_Reminders_Repository::get( $id ) : null,
+						'is_edit'  => true,
+						'flash'    => PTP_Notifications_Controller::get_reminder_flash(),
+					)
+				);
+				break;
+
+			case 'preferences':
+				$this->render_view( 'notifications/preferences', 'ptp_manage_data', array() );
+				break;
+
+			default:
+				$this->render_view( 'notifications/notifications-page', 'ptp_manage_data', array() );
+				break;
+		}
 	}
 
 	public function render_search() {

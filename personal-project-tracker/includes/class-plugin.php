@@ -79,6 +79,7 @@ class PTP_Plugin {
 			'PTP_Finance_Module',
 			'PTP_Reports_Module',
 			'PTP_Prompts_Module',
+			'PTP_Notifications_Module',
 		);
 
 		foreach ( $modules as $module_class ) {

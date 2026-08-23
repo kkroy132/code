@@ -589,6 +589,30 @@ class PTP_Projects_Repository {
 	}
 
 	/**
+	 * Get active (not completed/cancelled/archived) projects that have not
+	 * been updated in at least $days days, for the Smart Alerts engine's
+	 * "Project inactivity" rule. Uses the project's own updated_at — already
+	 * bumped by every write this repository makes — rather than querying
+	 * the activity log, so this stays a single indexed-ish comparison.
+	 *
+	 * @param int $days Inactivity threshold in days.
+	 * @return object[]
+	 */
+	public static function get_inactive( $days ) {
+		global $wpdb;
+
+		$table  = self::get_table();
+		$cutoff = gmdate( 'Y-m-d H:i:s', strtotime( current_time( 'mysql' ) . ' -' . max( 1, (int) $days ) . ' days' ) );
+
+		return $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT * FROM {$table} WHERE status NOT IN ('completed','cancelled','archived') AND updated_at < %s ORDER BY updated_at ASC LIMIT 200", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				$cutoff
+			)
+		);
+	}
+
+	/**
 	 * Get summary statistics used by the Projects list page and the Dashboard.
 	 *
 	 * @return array{total: int, active: int, completed: int, overdue: int, by_status: array<string,int>}

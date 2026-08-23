@@ -751,3 +751,66 @@
 .dashicons-star-filled {
 	color: #dba617;
 }
+
+/* Notification Center. */
+.ptp-notification-bucket-heading {
+	margin: 20px 0 8px;
+}
+
+.ptp-notification-list {
+	margin: 0;
+	list-style: none;
+}
+
+.ptp-notification-item {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 12px;
+	padding: 10px 0;
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.ptp-notification-item:last-child {
+	border-bottom: none;
+}
+
+.ptp-notification-item.ptp-is-unread {
+	border-left: 3px solid #2271b1;
+	padding-left: 10px;
+}
+
+.ptp-notification-item.ptp-is-read {
+	opacity: 0.7;
+}
+
+.ptp-notification-main {
+	flex: 1 1 320px;
+}
+
+.ptp-notification-title {
+	font-weight: 600;
+	margin-left: 6px;
+}
+
+.ptp-notification-message {
+	margin: 4px 0 0;
+	color: #50575e;
+}
+
+.ptp-notification-date {
+	display: block;
+	margin-top: 4px;
+	font-size: 12px;
+	color: #787c82;
+}
+
+.ptp-badge-category-finance { background: #fcebea; color: #b32d2e; }
+.ptp-badge-category-smart_alerts { background: #fef8ee; color: #9a6700; }
+.ptp-badge-category-tasks { background: #e7f2fd; color: #0a4b78; }
+.ptp-badge-category-milestones { background: #edfaef; color: #1a7f37; }
+.ptp-badge-category-projects { background: #f0f0f1; color: #50575e; }
+.ptp-badge-category-calendar { background: #f3e8fd; color: #6a2fb0; }
+.ptp-badge-category-time { background: #e7f2fd; color: #0a4b78; }
+.ptp-badge-category-custom { background: #f0f0f1; color: #50575e; }

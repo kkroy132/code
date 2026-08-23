@@ -108,6 +108,17 @@ class PTP_Database {
 	 *   selections, requirements/constraints, and custom role/output
 	 *   labels — kept as one JSON blob rather than a column per option so
 	 *   future context types don't require another migration).
+	 * - v7: notifications.category (the preference bucket a notification
+	 *   belongs to — tasks/milestones/projects/calendar/time/finance/
+	 *   custom/smart_alerts — also used to hide finance-flavored alerts
+	 *   from users without ptp_manage_finance, the same way Finance data
+	 *   stays private everywhere else), notifications.dedup_key (a stable,
+	 *   rule/occurrence-scoped string checked before every insert so a
+	 *   reminder firing twice or a smart alert re-evaluating hourly never
+	 *   creates duplicate rows), notifications.snoozed_until (Notification
+	 *   Center snooze, independent of reminders.snoozed_until which snoozes
+	 *   the *reminder*, not an already-delivered notification), and
+	 *   notifications.updated_at.
 	 *
 	 * @param string $charset_collate Charset/collation clause.
 	 * @return string[] List of CREATE TABLE statements.
@@ -332,10 +343,16 @@ class PTP_Database {
 			related_type VARCHAR(50) NULL,
 			related_id BIGINT UNSIGNED NULL,
 			is_read TINYINT(1) NOT NULL DEFAULT 0,
+			category VARCHAR(30) NULL,
+			dedup_key VARCHAR(191) NULL,
+			snoozed_until DATETIME NULL,
 			created_at DATETIME NOT NULL,
+			updated_at DATETIME NULL,
 			PRIMARY KEY  (id),
 			KEY is_read (is_read),
-			KEY type (type)
+			KEY type (type),
+			KEY category (category),
+			KEY dedup_key (dedup_key)
 		) {$charset_collate};";
 
 		$sql[] = "CREATE TABLE {$prefix}reminders (

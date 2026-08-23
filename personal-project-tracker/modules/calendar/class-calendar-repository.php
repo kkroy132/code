@@ -335,6 +335,26 @@ class PTP_Calendar_Repository {
 	}
 
 	/**
+	 * Get every custom event that has a reminder configured
+	 * (reminder_minutes IS NOT NULL), for the Notifications module to sync
+	 * into actual `reminders` rows. Calendar still owns event data and the
+	 * reminder_minutes column itself (added in v4 specifically as this
+	 * integration point) — this is a read-only query; turning it into a
+	 * scheduled reminder is the Notifications module's job.
+	 *
+	 * @return object[]
+	 */
+	public static function get_events_with_reminders() {
+		global $wpdb;
+
+		$table = self::get_table();
+
+		return $wpdb->get_results(
+			"SELECT * FROM {$table} WHERE reminder_minutes IS NOT NULL AND event_type = 'custom' ORDER BY start_datetime ASC LIMIT 500" // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		);
+	}
+
+	/**
 	 * Get custom events whose [start, end] span overlaps a date range.
 	 *
 	 * @param string $start      'Y-m-d' range start (inclusive).

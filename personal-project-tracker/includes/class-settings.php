@@ -47,6 +47,22 @@ class PTP_Settings {
 			'budget_warning_threshold'     => 80,
 			'delete_data_on_uninstall'     => false,
 			'ai_prompt_default_tool'       => 'generic',
+			'notification_categories'      => array(
+				'tasks'        => true,
+				'milestones'   => true,
+				'projects'     => true,
+				'calendar'     => true,
+				'time'         => true,
+				'finance'      => true,
+				'custom'       => true,
+				'smart_alerts' => true,
+			),
+			'quiet_hours_enabled'          => false,
+			'quiet_hours_start'            => '22:00',
+			'quiet_hours_end'              => '07:00',
+			'project_inactivity_days'      => 14,
+			'long_running_timer_hours'     => 4,
+			'too_many_overdue_threshold'   => 5,
 		);
 	}
 

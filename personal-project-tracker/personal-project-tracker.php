@@ -23,8 +23,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Core plugin constants.
  */
-define( 'PTP_VERSION', '1.8.0' );
-define( 'PTP_DB_VERSION', 6 );
+define( 'PTP_VERSION', '1.9.0' );
+define( 'PTP_DB_VERSION', 7 );
 define( 'PTP_TEXT_DOMAIN', 'personal-project-tracker' );
 define( 'PTP_PLUGIN_FILE', __FILE__ );
 define( 'PTP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
@@ -146,6 +146,14 @@ require_once PTP_PLUGIN_DIR . 'modules/prompts/class-prompt-generator.php';
 require_once PTP_PLUGIN_DIR . 'modules/prompts/class-prompts-controller.php';
 require_once PTP_PLUGIN_DIR . 'modules/prompts/class-prompts-rest.php';
 require_once PTP_PLUGIN_DIR . 'modules/prompts/class-prompts-module.php';
+
+require_once PTP_PLUGIN_DIR . 'modules/notifications/class-notifications-repository.php';
+require_once PTP_PLUGIN_DIR . 'modules/notifications/class-reminders-repository.php';
+require_once PTP_PLUGIN_DIR . 'modules/notifications/class-notifications-service.php';
+require_once PTP_PLUGIN_DIR . 'modules/notifications/class-smart-alerts-service.php';
+require_once PTP_PLUGIN_DIR . 'modules/notifications/class-notifications-controller.php';
+require_once PTP_PLUGIN_DIR . 'modules/notifications/class-notifications-rest.php';
+require_once PTP_PLUGIN_DIR . 'modules/notifications/class-notifications-module.php';
 
 register_activation_hook( __FILE__, array( 'PTP_Activator', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'PTP_Deactivator', 'deactivate' ) );

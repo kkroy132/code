@@ -739,6 +739,28 @@ class PTP_Tasks_Repository {
 	}
 
 	/**
+	 * Get every non-archived, not-done task that is currently overdue, for
+	 * the Smart Alerts engine's "Task overdue" rule. Read-only; Smart Alerts
+	 * decides what to do with each row (cooldown, notification text) — this
+	 * method only owns the query, same as every other cross-module read
+	 * method on this repository.
+	 *
+	 * @return object[]
+	 */
+	public static function get_overdue() {
+		global $wpdb;
+
+		$table = self::get_table();
+
+		return $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT * FROM {$table} WHERE archived_at IS NULL AND due_date IS NOT NULL AND due_date < %s AND status NOT IN ('completed','cancelled') ORDER BY due_date ASC LIMIT 200", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				current_time( 'Y-m-d' )
+			)
+		);
+	}
+
+	/**
 	 * Get summary statistics used by the Tasks list page and the Dashboard.
 	 *
 	 * @return array{total: int, today: int, overdue: int, in_progress: int, completed: int, by_status: array<string,int>}

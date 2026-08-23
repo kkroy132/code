@@ -839,6 +839,31 @@ class PTP_Time_Repository {
 	}
 
 	/**
+	 * Get every currently-running timer whose current segment started more
+	 * than $hours ago, for the Smart Alerts engine's "Long-running timer"
+	 * rule. Deliberately checks resumed_at (the current segment's start),
+	 * not the entry's original start_time — a timer that was paused and
+	 * resumed recently is not "long-running" even if it was first started
+	 * days ago.
+	 *
+	 * @param int $hours Threshold in whole hours.
+	 * @return object[]
+	 */
+	public static function get_long_running( $hours ) {
+		global $wpdb;
+
+		$table  = self::get_table();
+		$cutoff = gmdate( 'Y-m-d H:i:s', strtotime( current_time( 'mysql' ) . ' -' . max( 1, (int) $hours ) . ' hours' ) );
+
+		return $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT * FROM {$table} WHERE status = 'running' AND resumed_at IS NOT NULL AND resumed_at < %s ORDER BY resumed_at ASC LIMIT 200", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				$cutoff
+			)
+		);
+	}
+
+	/**
 	 * Total tracked seconds for a project, across every user and every
 	 * status (a running timer's live elapsed time is included). Used by the
 	 * Project detail page's "Total Tracked Time" card.

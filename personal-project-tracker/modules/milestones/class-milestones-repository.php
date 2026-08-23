@@ -701,6 +701,26 @@ class PTP_Milestones_Repository {
 	}
 
 	/**
+	 * Get every non-archived, not-done milestone that is currently overdue,
+	 * for the Smart Alerts engine's "Milestone deadline approaching" /
+	 * overdue detection. Mirrors PTP_Tasks_Repository::get_overdue().
+	 *
+	 * @return object[]
+	 */
+	public static function get_overdue() {
+		global $wpdb;
+
+		$table = self::get_table();
+
+		return $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT * FROM {$table} WHERE archived_at IS NULL AND due_date IS NOT NULL AND due_date < %s AND status NOT IN ('completed','cancelled') ORDER BY due_date ASC LIMIT 200", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				current_time( 'Y-m-d' )
+			)
+		);
+	}
+
+	/**
 	 * Get summary statistics used by the Milestones list page and the Dashboard.
 	 *
 	 * @return array{total: int, upcoming: int, overdue: int, completed: int, by_status: array<string,int>}
