@@ -96,6 +96,12 @@ class PTP_Database {
 	 *   calendar_events.reminder_minutes (an inert integration point for
 	 *   the future Reminders/Notifications module — no cron or delivery
 	 *   logic is implemented yet, just the data column to hang it off of).
+	 * - v5: time_entries.user_id (each entry is owned by the user who
+	 *   tracked it — needed to enforce "one active timer per user") and
+	 *   time_entries.resumed_at (timestamp the current running segment
+	 *   began; NULL while paused/stopped — lets Pause/Resume/Stop compute
+	 *   accumulated duration without ever losing the entry's original
+	 *   start_time).
 	 *
 	 * @param string $charset_collate Charset/collation clause.
 	 * @return string[] List of CREATE TABLE statements.
@@ -216,9 +222,11 @@ class PTP_Database {
 			id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
 			project_id BIGINT UNSIGNED NULL,
 			task_id BIGINT UNSIGNED NULL,
+			user_id BIGINT UNSIGNED NOT NULL DEFAULT 0,
 			description VARCHAR(500) NULL,
 			start_time DATETIME NULL,
 			end_time DATETIME NULL,
+			resumed_at DATETIME NULL,
 			duration INT UNSIGNED NULL,
 			entry_date DATE NOT NULL,
 			status VARCHAR(20) NOT NULL DEFAULT 'stopped',
@@ -227,6 +235,7 @@ class PTP_Database {
 			PRIMARY KEY  (id),
 			KEY project_id (project_id),
 			KEY task_id (task_id),
+			KEY user_id (user_id),
 			KEY entry_date (entry_date)
 		) {$charset_collate};";
 

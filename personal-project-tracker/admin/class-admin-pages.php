@@ -215,7 +215,40 @@ class PTP_Admin_Pages {
 	}
 
 	public function render_time_tracking() {
-		$this->render_placeholder( __( 'Time Tracking', 'personal-project-tracker' ), 'ptp_manage_tasks' );
+		PTP_Security::require_capability( 'ptp_manage_tasks' );
+
+		$action = isset( $_GET['action'] ) ? sanitize_key( wp_unslash( $_GET['action'] ) ) : 'list'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		switch ( $action ) {
+			case 'new':
+				$this->render_view(
+					'time/time-entry-form',
+					'ptp_manage_tasks',
+					array(
+						'entry'   => null,
+						'is_edit' => false,
+						'flash'   => PTP_Time_Controller::get_flash(),
+					)
+				);
+				break;
+
+			case 'edit':
+				$id = isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				$this->render_view(
+					'time/time-entry-form',
+					'ptp_manage_tasks',
+					array(
+						'entry'   => $id ? PTP_Time_Repository::get( $id ) : null,
+						'is_edit' => true,
+						'flash'   => PTP_Time_Controller::get_flash(),
+					)
+				);
+				break;
+
+			default:
+				$this->render_view( 'time/time-page', 'ptp_manage_tasks', array() );
+				break;
+		}
 	}
 
 	public function render_notes() {

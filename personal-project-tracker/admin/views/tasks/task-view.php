@@ -203,6 +203,18 @@ $ptp_activity   = PTP_Activity_Log::get_for_object( 'task', $task->id, 15 );
 			<?php endif; ?>
 		</div>
 
+		<?php
+		/**
+		 * Fires after the built-in Task detail sections, so future modules
+		 * (Time Tracking, Notes, Files, Reminders, ...) can attach their own
+		 * sections to this page without modifying this file. Mirrors the
+		 * ptp_project_detail_sections hook Projects already exposes.
+		 *
+		 * @param object $task The task being viewed.
+		 */
+		do_action( 'ptp_task_detail_sections', $task );
+		?>
+
 	</div>
 
 	<div class="ptp-detail-side">
@@ -210,7 +222,6 @@ $ptp_activity   = PTP_Activity_Log::get_for_object( 'task', $task->id, 15 );
 			<h2><?php esc_html_e( 'Coming Soon', 'personal-project-tracker' ); ?></h2>
 			<p class="description"><?php esc_html_e( 'These sections light up as their modules are built in later phases.', 'personal-project-tracker' ); ?></p>
 			<ul class="ptp-coming-soon-list">
-				<li><span class="dashicons dashicons-clock"></span> <?php esc_html_e( 'Time Tracking', 'personal-project-tracker' ); ?></li>
 				<li><span class="dashicons dashicons-edit"></span> <?php esc_html_e( 'Notes', 'personal-project-tracker' ); ?></li>
 				<li><span class="dashicons dashicons-media-default"></span> <?php esc_html_e( 'Files', 'personal-project-tracker' ); ?></li>
 				<li><span class="dashicons dashicons-admin-links"></span> <?php esc_html_e( 'Links', 'personal-project-tracker' ); ?></li>

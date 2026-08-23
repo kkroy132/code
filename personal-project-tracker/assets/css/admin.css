@@ -236,6 +236,7 @@
 
 .ptp-form-field input[type="text"],
 .ptp-form-field input[type="date"],
+.ptp-form-field input[type="time"],
 .ptp-form-field input[type="number"],
 .ptp-form-field select,
 .ptp-form-field textarea {
@@ -313,6 +314,11 @@
 .ptp-badge-status-in_progress { background: #e7f2fd; color: #0a4b78; }
 .ptp-badge-status-blocked { background: #fcebea; color: #b32d2e; }
 .ptp-badge-status-review { background: #fef8ee; color: #9a6700; }
+
+/* Time entry statuses. */
+.ptp-badge-status-running { background: #edfaef; color: #1a7f37; }
+.ptp-badge-status-paused { background: #fef8ee; color: #9a6700; }
+.ptp-badge-status-stopped { background: #f0f0f1; color: #50575e; }
 
 /* A compact "Tasks for this project" list on the Project detail page. */
 .ptp-simple-list {
@@ -597,5 +603,49 @@
 	.ptp-calendar-toolbar {
 		flex-direction: column;
 		align-items: flex-start;
+	}
+}
+
+/* Active Timer widget. */
+.ptp-timer-widget {
+	text-align: center;
+}
+
+.ptp-timer-widget h2 {
+	text-align: left;
+}
+
+.ptp-timer-display {
+	font-size: 48px;
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+	letter-spacing: 1px;
+	margin: 8px 0;
+}
+
+.ptp-timer-meta {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 6px 16px;
+	margin-bottom: 16px;
+	color: #50575e;
+}
+
+.ptp-timer-description {
+	font-style: italic;
+}
+
+.ptp-timer-widget .ptp-quick-actions {
+	justify-content: center;
+}
+
+.ptp-timer-widget .ptp-form-grid {
+	text-align: left;
+}
+
+@media screen and (max-width: 782px) {
+	.ptp-timer-display {
+		font-size: 36px;
 	}
 }

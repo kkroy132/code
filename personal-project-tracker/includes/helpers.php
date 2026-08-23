@@ -92,6 +92,28 @@ if ( ! function_exists( 'ptp_safe_redirect_admin' ) ) {
 	}
 }
 
+if ( ! function_exists( 'ptp_format_duration' ) ) {
+	/**
+	 * Format a duration in seconds as a compact "Xh Ym" (or "Ym") string.
+	 *
+	 * @param int $seconds Duration in seconds.
+	 * @return string
+	 */
+	function ptp_format_duration( $seconds ) {
+		$seconds = max( 0, (int) $seconds );
+		$hours   = (int) floor( $seconds / 3600 );
+		$minutes = (int) floor( ( $seconds % 3600 ) / 60 );
+
+		if ( $hours > 0 ) {
+			/* translators: 1: hours, 2: minutes. */
+			return sprintf( __( '%1$dh %2$dm', 'personal-project-tracker' ), $hours, $minutes );
+		}
+
+		/* translators: %d: minutes. */
+		return sprintf( __( '%dm', 'personal-project-tracker' ), $minutes );
+	}
+}
+
 if ( ! function_exists( 'ptp_log_error' ) ) {
 	/**
 	 * Log a technical error for debugging without exposing details to end users.
