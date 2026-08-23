@@ -585,7 +585,7 @@ class PTP_Admin_Pages {
 	}
 
 	public function render_settings() {
-		$this->render_placeholder( __( 'Settings', 'personal-project-tracker' ), 'ptp_manage_settings' );
+		$this->render_view( 'settings/settings-page', 'ptp_manage_settings', array() );
 	}
 
 	/**

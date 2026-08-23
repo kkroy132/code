@@ -3,21 +3,67 @@
  * Minimal, WordPress-native look; responsive for tablet/mobile admin use.
  */
 
+/*
+ * Appearance (Settings > Appearance): Light/Dark/System. Only this
+ * plugin's own screens are themed — WP core admin chrome (menu, toolbar)
+ * is intentionally left alone. data-ptp-theme is set once, server-side,
+ * by admin/views/partials/header.php from the appearance_mode setting;
+ * "system" defers to the browser's prefers-color-scheme instead of
+ * forcing a value.
+ */
 .ptp-wrap {
 	max-width: 1200px;
+	--ptp-bg: #f0f0f1;
+	--ptp-card-bg: #fff;
+	--ptp-card-border: #dcdcde;
+	--ptp-text: #1d2327;
+	--ptp-text-muted: #646970;
+	--ptp-shadow: rgba(0, 0, 0, 0.04);
+}
+
+.ptp-wrap[data-ptp-theme="dark"] {
+	--ptp-bg: #1d2327;
+	--ptp-card-bg: #2c3338;
+	--ptp-card-border: #3c434a;
+	--ptp-text: #f0f0f1;
+	--ptp-text-muted: #a7aaad;
+	--ptp-shadow: rgba(0, 0, 0, 0.3);
+}
+
+@media (prefers-color-scheme: dark) {
+	.ptp-wrap[data-ptp-theme="system"] {
+		--ptp-bg: #1d2327;
+		--ptp-card-bg: #2c3338;
+		--ptp-card-border: #3c434a;
+		--ptp-text: #f0f0f1;
+		--ptp-text-muted: #a7aaad;
+		--ptp-shadow: rgba(0, 0, 0, 0.3);
+	}
+}
+
+.ptp-wrap h1,
+.ptp-wrap h2,
+.ptp-wrap h3 {
+	color: var(--ptp-text);
 }
 
 .ptp-card {
-	background: #fff;
-	border: 1px solid #dcdcde;
+	background: var(--ptp-card-bg);
+	border: 1px solid var(--ptp-card-border);
 	border-radius: 4px;
 	padding: 16px 20px;
 	margin: 16px 0;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+	box-shadow: 0 1px 1px var(--ptp-shadow);
+	color: var(--ptp-text);
 }
 
 .ptp-card h2 {
 	margin-top: 0;
+}
+
+.ptp-card table.widefat {
+	background: var(--ptp-card-bg);
+	color: var(--ptp-text);
 }
 
 .ptp-status-table th,
@@ -47,7 +93,7 @@
 .ptp-placeholder {
 	text-align: center;
 	padding: 48px 20px;
-	color: #646970;
+	color: var(--ptp-text-muted);
 }
 
 .ptp-placeholder .dashicons {
@@ -119,7 +165,7 @@
 
 .ptp-stat-label {
 	display: block;
-	color: #646970;
+	color: var(--ptp-text-muted);
 	font-size: 13px;
 }
 
@@ -169,7 +215,7 @@
 .ptp-progress-label {
 	margin-left: 6px;
 	font-size: 12px;
-	color: #646970;
+	color: var(--ptp-text-muted);
 }
 
 .ptp-color-dot {
@@ -205,7 +251,7 @@
 .ptp-empty-state {
 	text-align: center;
 	padding: 40px 20px;
-	color: #646970;
+	color: var(--ptp-text-muted);
 }
 
 .ptp-empty-state .dashicons {
@@ -285,7 +331,7 @@
 }
 
 .ptp-activity-date {
-	color: #646970;
+	color: var(--ptp-text-muted);
 	font-size: 12px;
 	white-space: nowrap;
 }
@@ -341,7 +387,7 @@
 /* "Coming soon" module list on the Task detail sidebar. */
 .ptp-coming-soon-list {
 	margin: 0;
-	color: #646970;
+	color: var(--ptp-text-muted);
 }
 
 .ptp-coming-soon-list li {
@@ -363,7 +409,7 @@
 }
 
 .ptp-subtask-completion {
-	color: #646970;
+	color: var(--ptp-text-muted);
 	font-size: 13px;
 }
 
@@ -706,7 +752,7 @@
 .ptp-bar-chart-label {
 	margin-top: 4px;
 	font-size: 10px;
-	color: #646970;
+	color: var(--ptp-text-muted);
 	white-space: nowrap;
 }
 

@@ -52,6 +52,27 @@ delete_option( 'ptp_settings' );
 delete_option( 'ptp_version' );
 delete_option( 'ptp_db_version' );
 
+// Backup files live outside the wp_options table (see PTP_Backup_Service),
+// so deleting the manifest option alone would leave them orphaned on disk.
+$ptp_backup_manifest = get_option( 'ptp_backup_manifest', array() );
+
+if ( is_array( $ptp_backup_manifest ) && ! empty( $ptp_backup_manifest ) ) {
+	require_once ABSPATH . 'wp-admin/includes/file.php';
+
+	if ( WP_Filesystem() ) {
+		global $wp_filesystem;
+
+		$ptp_upload_dir  = wp_upload_dir();
+		$ptp_backups_dir = trailingslashit( $ptp_upload_dir['basedir'] ) . 'ptp-backups';
+
+		if ( $wp_filesystem->is_dir( $ptp_backups_dir ) ) {
+			$wp_filesystem->delete( $ptp_backups_dir, true );
+		}
+	}
+}
+
+delete_option( 'ptp_backup_manifest' );
+
 $ptp_role = get_role( 'administrator' );
 
 if ( $ptp_role ) {

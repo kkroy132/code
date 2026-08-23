@@ -13,11 +13,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Class PTP_Settings
  *
  * Thin wrapper around a single autoloaded wp_options entry holding all
- * plugin settings as an associative array. The full Settings admin page
- * (General/Appearance/Notifications/Finance/AI/Backup/Import-Export/
- * Privacy/Advanced tabs) is built on top of this in a later phase; this
- * class only owns the storage contract and defaults so activation and
- * other modules have a single source of truth to read/write.
+ * plugin settings as an associative array. The Settings admin page
+ * (General/Appearance/Notifications/Finance/AI/Backup/Privacy/Advanced
+ * tabs, built in Phase 12 — see PTP_Settings_Module) is a UI on top of
+ * this; this class only owns the storage contract and defaults so
+ * activation and every other module have a single source of truth to
+ * read/write. The Notifications tab is deliberately a thin pointer to the
+ * dedicated Preferences page (modules/notifications) rather than a second
+ * copy of that form — its settings (notifications_enabled,
+ * notification_categories, quiet_hours_*) still live here either way.
  */
 class PTP_Settings {
 
@@ -63,6 +67,10 @@ class PTP_Settings {
 			'project_inactivity_days'      => 14,
 			'long_running_timer_hours'     => 4,
 			'too_many_overdue_threshold'   => 5,
+			'default_project_status'       => 'planning',
+			'default_task_priority'        => 'medium',
+			'default_task_status'          => 'todo',
+			'appearance_mode'              => 'system',
 		);
 	}
 
