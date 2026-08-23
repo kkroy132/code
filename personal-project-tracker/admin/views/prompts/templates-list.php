@@ -40,12 +40,12 @@ $ptp_result = PTP_Prompt_Templates_Repository::get_list(
 
 	<?php if ( empty( $ptp_result['items'] ) ) : ?>
 		<div class="ptp-empty-state">
-			<span class="dashicons dashicons-media-text"></span>
+			<span class="dashicons dashicons-media-text" aria-hidden="true"></span>
 			<p><?php esc_html_e( 'No templates yet. Save your first prompt setup as a template to reuse it later.', 'personal-project-tracker' ); ?></p>
 		</div>
 	<?php else : ?>
 		<div class="ptp-table-responsive">
-			<table class="widefat striped ptp-prompt-templates-table">
+			<table class="widefat striped ptp-prompt-templates-table ptp-responsive-table">
 				<thead>
 					<tr>
 						<th><?php esc_html_e( 'Name', 'personal-project-tracker' ); ?></th>
@@ -62,10 +62,10 @@ $ptp_result = PTP_Prompt_Templates_Repository::get_list(
 						$ptp_use_url   = add_query_arg( array( 'page' => 'ptp-ai-prompts', 'action' => 'new', 'template_id' => $ptp_template->id ), admin_url( 'admin.php' ) );
 						?>
 						<tr>
-							<td><strong><?php echo esc_html( $ptp_template->name ); ?></strong></td>
-							<td class="ptp-col-optional"><?php echo esc_html( $ptp_template->category ? $ptp_template->category : '—' ); ?></td>
-							<td class="ptp-col-optional"><?php echo esc_html( PTP_Prompt_Generator::ROLES[ $ptp_role_slug ] ?? $ptp_role_slug ); ?></td>
-							<td>
+							<td data-label="<?php esc_attr_e( 'Name', 'personal-project-tracker' ); ?>"><strong><?php echo esc_html( $ptp_template->name ); ?></strong></td>
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Category', 'personal-project-tracker' ); ?>"><?php echo esc_html( $ptp_template->category ? $ptp_template->category : '—' ); ?></td>
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Role', 'personal-project-tracker' ); ?>"><?php echo esc_html( PTP_Prompt_Generator::ROLES[ $ptp_role_slug ] ?? $ptp_role_slug ); ?></td>
+							<td class="ptp-td-actions">
 								<div class="ptp-quick-actions">
 									<a class="button button-small" href="<?php echo esc_url( $ptp_use_url ); ?>"><?php esc_html_e( 'Use', 'personal-project-tracker' ); ?></a>
 									<a class="button button-small" href="<?php echo esc_url( add_query_arg( array( 'page' => 'ptp-ai-prompts', 'action' => 'edit_template', 'id' => $ptp_template->id ), admin_url( 'admin.php' ) ) ); ?>"><?php esc_html_e( 'Edit', 'personal-project-tracker' ); ?></a>

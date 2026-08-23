@@ -170,12 +170,12 @@ $ptp_revenue  = PTP_Revenue_Repository::get_list( array_merge( $ptp_report_args,
 	</div>
 	<?php if ( empty( $ptp_expenses['items'] ) ) : ?>
 		<div class="ptp-empty-state">
-			<span class="dashicons dashicons-money-alt"></span>
+			<span class="dashicons dashicons-money-alt" aria-hidden="true"></span>
 			<p><?php esc_html_e( 'No expenses recorded yet.', 'personal-project-tracker' ); ?></p>
 		</div>
 	<?php else : ?>
 		<div class="ptp-table-responsive">
-			<table class="widefat striped ptp-expenses-table">
+			<table class="widefat striped ptp-expenses-table ptp-responsive-table">
 				<thead>
 					<tr>
 						<th><?php esc_html_e( 'Date', 'personal-project-tracker' ); ?></th>
@@ -189,12 +189,12 @@ $ptp_revenue  = PTP_Revenue_Repository::get_list( array_merge( $ptp_report_args,
 				<tbody>
 					<?php foreach ( $ptp_expenses['items'] as $ptp_expense ) : ?>
 						<tr>
-							<td><?php echo esc_html( mysql2date( get_option( 'date_format' ), $ptp_expense->expense_date ) ); ?></td>
-							<td><?php echo esc_html( ptp_format_currency( $ptp_expense->amount, $ptp_expense->currency ) ); ?></td>
-							<td class="ptp-col-optional"><?php echo esc_html( $ptp_expense->category ? $ptp_expense->category : '—' ); ?></td>
-							<td class="ptp-col-optional"><?php echo esc_html( $ptp_expense->project_id && isset( $ptp_projects[ (int) $ptp_expense->project_id ] ) ? $ptp_projects[ (int) $ptp_expense->project_id ] : '—' ); ?></td>
-							<td class="ptp-col-optional"><?php echo esc_html( $ptp_expense->description ? $ptp_expense->description : '—' ); ?></td>
-							<td>
+							<td data-label="<?php esc_attr_e( 'Date', 'personal-project-tracker' ); ?>"><?php echo esc_html( mysql2date( get_option( 'date_format' ), $ptp_expense->expense_date ) ); ?></td>
+							<td data-label="<?php esc_attr_e( 'Amount', 'personal-project-tracker' ); ?>"><?php echo esc_html( ptp_format_currency( $ptp_expense->amount, $ptp_expense->currency ) ); ?></td>
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Category', 'personal-project-tracker' ); ?>"><?php echo esc_html( $ptp_expense->category ? $ptp_expense->category : '—' ); ?></td>
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Project', 'personal-project-tracker' ); ?>"><?php echo esc_html( $ptp_expense->project_id && isset( $ptp_projects[ (int) $ptp_expense->project_id ] ) ? $ptp_projects[ (int) $ptp_expense->project_id ] : '—' ); ?></td>
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Description', 'personal-project-tracker' ); ?>"><?php echo esc_html( $ptp_expense->description ? $ptp_expense->description : '—' ); ?></td>
+							<td class="ptp-td-actions">
 								<div class="ptp-quick-actions">
 									<a class="button button-small" href="<?php echo esc_url( add_query_arg( array( 'page' => 'ptp-finance', 'action' => 'edit_expense', 'id' => $ptp_expense->id ), admin_url( 'admin.php' ) ) ); ?>"><?php esc_html_e( 'Edit', 'personal-project-tracker' ); ?></a>
 									<button type="button" class="button button-small button-link-delete ptp-js-expense-delete" data-id="<?php echo esc_attr( $ptp_expense->id ); ?>">
@@ -234,12 +234,12 @@ $ptp_revenue  = PTP_Revenue_Repository::get_list( array_merge( $ptp_report_args,
 	</div>
 	<?php if ( empty( $ptp_revenue['items'] ) ) : ?>
 		<div class="ptp-empty-state">
-			<span class="dashicons dashicons-chart-line"></span>
+			<span class="dashicons dashicons-chart-line" aria-hidden="true"></span>
 			<p><?php esc_html_e( 'No revenue recorded yet.', 'personal-project-tracker' ); ?></p>
 		</div>
 	<?php else : ?>
 		<div class="ptp-table-responsive">
-			<table class="widefat striped ptp-revenue-table">
+			<table class="widefat striped ptp-revenue-table ptp-responsive-table">
 				<thead>
 					<tr>
 						<th><?php esc_html_e( 'Date', 'personal-project-tracker' ); ?></th>
@@ -253,12 +253,12 @@ $ptp_revenue  = PTP_Revenue_Repository::get_list( array_merge( $ptp_report_args,
 				<tbody>
 					<?php foreach ( $ptp_revenue['items'] as $ptp_rev ) : ?>
 						<tr>
-							<td><?php echo esc_html( mysql2date( get_option( 'date_format' ), $ptp_rev->revenue_date ) ); ?></td>
-							<td><?php echo esc_html( ptp_format_currency( $ptp_rev->amount, $ptp_rev->currency ) ); ?></td>
-							<td class="ptp-col-optional"><?php echo esc_html( $ptp_rev->category ? $ptp_rev->category : '—' ); ?></td>
-							<td class="ptp-col-optional"><?php echo esc_html( $ptp_rev->project_id && isset( $ptp_projects[ (int) $ptp_rev->project_id ] ) ? $ptp_projects[ (int) $ptp_rev->project_id ] : '—' ); ?></td>
-							<td class="ptp-col-optional"><?php echo esc_html( $ptp_rev->description ? $ptp_rev->description : '—' ); ?></td>
-							<td>
+							<td data-label="<?php esc_attr_e( 'Date', 'personal-project-tracker' ); ?>"><?php echo esc_html( mysql2date( get_option( 'date_format' ), $ptp_rev->revenue_date ) ); ?></td>
+							<td data-label="<?php esc_attr_e( 'Amount', 'personal-project-tracker' ); ?>"><?php echo esc_html( ptp_format_currency( $ptp_rev->amount, $ptp_rev->currency ) ); ?></td>
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Category', 'personal-project-tracker' ); ?>"><?php echo esc_html( $ptp_rev->category ? $ptp_rev->category : '—' ); ?></td>
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Project', 'personal-project-tracker' ); ?>"><?php echo esc_html( $ptp_rev->project_id && isset( $ptp_projects[ (int) $ptp_rev->project_id ] ) ? $ptp_projects[ (int) $ptp_rev->project_id ] : '—' ); ?></td>
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Description', 'personal-project-tracker' ); ?>"><?php echo esc_html( $ptp_rev->description ? $ptp_rev->description : '—' ); ?></td>
+							<td class="ptp-td-actions">
 								<div class="ptp-quick-actions">
 									<a class="button button-small" href="<?php echo esc_url( add_query_arg( array( 'page' => 'ptp-finance', 'action' => 'edit_revenue', 'id' => $ptp_rev->id ), admin_url( 'admin.php' ) ) ); ?>"><?php esc_html_e( 'Edit', 'personal-project-tracker' ); ?></a>
 									<button type="button" class="button button-small button-link-delete ptp-js-revenue-delete" data-id="<?php echo esc_attr( $ptp_rev->id ); ?>">

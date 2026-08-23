@@ -57,7 +57,7 @@ require PTP_PLUGIN_DIR . 'admin/views/partials/breadcrumbs.php';
 <h1><?php echo ! empty( $is_edit ) ? esc_html__( 'Edit Reminder', 'personal-project-tracker' ) : esc_html__( 'New Reminder', 'personal-project-tracker' ); ?></h1>
 
 <?php if ( ! empty( $flash['errors'] ) ) : ?>
-	<div class="notice notice-error">
+	<div class="notice notice-error" role="alert">
 		<ul class="ptp-error-list">
 			<?php foreach ( $flash['errors'] as $ptp_error_message ) : ?>
 				<li><?php echo esc_html( $ptp_error_message ); ?></li>

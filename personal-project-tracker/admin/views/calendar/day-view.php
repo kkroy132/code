@@ -22,7 +22,7 @@ usort( $ptp_timed_items, fn( $a, $b ) => strcmp( (string) $a['datetime'], (strin
 ?>
 <?php if ( empty( $ptp_day_items ) ) : ?>
 	<div class="ptp-empty-state">
-		<span class="dashicons dashicons-calendar-alt"></span>
+		<span class="dashicons dashicons-calendar-alt" aria-hidden="true"></span>
 		<p><?php esc_html_e( 'Nothing scheduled for this day.', 'personal-project-tracker' ); ?></p>
 	</div>
 <?php else : ?>

@@ -35,12 +35,12 @@ $ptp_projects = PTP_Projects_Repository::get_options_for_select();
 
 <?php if ( empty( $ptp_backups ) ) : ?>
 	<div class="ptp-empty-state">
-		<span class="dashicons dashicons-database"></span>
+		<span class="dashicons dashicons-database" aria-hidden="true"></span>
 		<p><?php esc_html_e( 'No backups yet.', 'personal-project-tracker' ); ?></p>
 	</div>
 <?php else : ?>
 	<div class="ptp-table-responsive">
-		<table class="widefat striped">
+		<table class="widefat striped ptp-responsive-table">
 			<thead>
 				<tr>
 					<th><?php esc_html_e( 'Created', 'personal-project-tracker' ); ?></th>
@@ -59,10 +59,10 @@ $ptp_projects = PTP_Projects_Repository::get_options_for_select();
 					);
 					?>
 					<tr>
-						<td><?php echo esc_html( mysql2date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $ptp_backup['created_at'] ) ); ?></td>
-						<td class="ptp-col-optional"><?php echo esc_html( $ptp_backup['plugin_version'] ); ?></td>
-						<td class="ptp-col-optional"><?php echo esc_html( size_format( (int) $ptp_backup['size'] ) ); ?></td>
-						<td>
+						<td data-label="<?php esc_attr_e( 'Created', 'personal-project-tracker' ); ?>"><?php echo esc_html( mysql2date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $ptp_backup['created_at'] ) ); ?></td>
+						<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Plugin Version', 'personal-project-tracker' ); ?>"><?php echo esc_html( $ptp_backup['plugin_version'] ); ?></td>
+						<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Size', 'personal-project-tracker' ); ?>"><?php echo esc_html( size_format( (int) $ptp_backup['size'] ) ); ?></td>
+						<td class="ptp-td-actions">
 							<div class="ptp-quick-actions">
 								<a class="button button-small" href="<?php echo esc_url( $ptp_download_url ); ?>"><?php esc_html_e( 'Download', 'personal-project-tracker' ); ?></a>
 

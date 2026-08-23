@@ -42,7 +42,7 @@ $ptp_any    = false;
 
 <?php if ( ! $ptp_any ) : ?>
 	<div class="ptp-empty-state">
-		<span class="dashicons dashicons-calendar-alt"></span>
+		<span class="dashicons dashicons-calendar-alt" aria-hidden="true"></span>
 		<p><?php esc_html_e( 'Nothing scheduled in the next 30 days.', 'personal-project-tracker' ); ?></p>
 	</div>
 <?php endif; ?>

@@ -19,7 +19,7 @@ $ptp_report = PTP_Reports_Service::get_project_report( array_merge( $ptp_filter_
 
 	<?php if ( empty( $ptp_report['items'] ) ) : ?>
 		<div class="ptp-empty-state">
-			<span class="dashicons dashicons-portfolio"></span>
+			<span class="dashicons dashicons-portfolio" aria-hidden="true"></span>
 			<p><?php esc_html_e( 'No projects match the current filters.', 'personal-project-tracker' ); ?></p>
 		</div>
 	<?php else : ?>

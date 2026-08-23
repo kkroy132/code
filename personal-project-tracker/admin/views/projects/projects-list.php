@@ -135,7 +135,7 @@ if ( ! function_exists( 'ptp_projects_sort_link' ) ) {
 	<?php if ( empty( $ptp_result['items'] ) ) : ?>
 
 		<div class="ptp-empty-state">
-			<span class="dashicons dashicons-portfolio"></span>
+			<span class="dashicons dashicons-portfolio" aria-hidden="true"></span>
 			<?php if ( $ptp_search || $ptp_status || $ptp_priority ) : ?>
 				<p><?php esc_html_e( 'No projects match your search or filters.', 'personal-project-tracker' ); ?></p>
 			<?php else : ?>
@@ -151,7 +151,7 @@ if ( ! function_exists( 'ptp_projects_sort_link' ) ) {
 	<?php else : ?>
 
 		<div class="ptp-table-responsive">
-			<table class="widefat striped ptp-projects-table">
+			<table class="widefat striped ptp-projects-table ptp-responsive-table">
 				<thead>
 					<tr>
 						<th><?php ptp_projects_sort_link( 'title', __( 'Title', 'personal-project-tracker' ), $ptp_orderby, $ptp_order ); ?></th>
@@ -171,15 +171,15 @@ if ( ! function_exists( 'ptp_projects_sort_link' ) ) {
 						$ptp_is_overdue = $ptp_project->deadline && $ptp_project->deadline < current_time( 'Y-m-d' ) && ! in_array( $ptp_project->status, array( 'completed', 'cancelled', 'archived' ), true );
 						?>
 						<tr>
-							<td>
+							<td data-label="<?php esc_attr_e( 'Title', 'personal-project-tracker' ); ?>">
 								<?php if ( $ptp_project->color ) : ?>
 									<span class="ptp-color-dot" style="background:<?php echo esc_attr( $ptp_project->color ); ?>"></span>
 								<?php endif; ?>
 								<a href="<?php echo esc_url( $ptp_view_url ); ?>"><strong><?php echo esc_html( $ptp_project->title ); ?></strong></a>
 							</td>
-							<td><span class="ptp-badge ptp-badge-status-<?php echo esc_attr( $ptp_project->status ); ?>"><?php echo esc_html( $ptp_statuses[ $ptp_project->status ] ?? $ptp_project->status ); ?></span></td>
-							<td><span class="ptp-badge ptp-badge-priority-<?php echo esc_attr( $ptp_project->priority ); ?>"><?php echo esc_html( $ptp_priorities[ $ptp_project->priority ] ?? $ptp_project->priority ); ?></span></td>
-							<td class="ptp-col-optional">
+							<td data-label="<?php esc_attr_e( 'Status', 'personal-project-tracker' ); ?>"><span class="ptp-badge ptp-badge-status-<?php echo esc_attr( $ptp_project->status ); ?>"><?php echo esc_html( $ptp_statuses[ $ptp_project->status ] ?? $ptp_project->status ); ?></span></td>
+							<td data-label="<?php esc_attr_e( 'Priority', 'personal-project-tracker' ); ?>"><span class="ptp-badge ptp-badge-priority-<?php echo esc_attr( $ptp_project->priority ); ?>"><?php echo esc_html( $ptp_priorities[ $ptp_project->priority ] ?? $ptp_project->priority ); ?></span></td>
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Deadline', 'personal-project-tracker' ); ?>">
 								<?php if ( $ptp_project->deadline ) : ?>
 									<span class="<?php echo esc_attr( $ptp_is_overdue ? 'ptp-text-danger' : '' ); ?>">
 										<?php echo esc_html( mysql2date( get_option( 'date_format' ), $ptp_project->deadline ) ); ?>
@@ -191,16 +191,16 @@ if ( ! function_exists( 'ptp_projects_sort_link' ) ) {
 									&#8212;
 								<?php endif; ?>
 							</td>
-							<td class="ptp-col-optional">
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Progress', 'personal-project-tracker' ); ?>">
 								<div class="ptp-progress" aria-hidden="true">
 									<div class="ptp-progress-bar" style="width:<?php echo esc_attr( (int) $ptp_project->progress ); ?>%"></div>
 								</div>
 								<span class="ptp-progress-label"><?php echo esc_html( (int) $ptp_project->progress ); ?>%</span>
 							</td>
-							<td class="ptp-col-optional">
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Budget', 'personal-project-tracker' ); ?>">
 								<?php echo $ptp_project->budget ? esc_html( ptp_format_currency( $ptp_project->budget, $ptp_project->currency ) ) : '&#8212;'; ?>
 							</td>
-							<td>
+							<td class="ptp-td-actions">
 								<div class="ptp-quick-actions">
 									<a class="button button-small" href="<?php echo esc_url( $ptp_edit_url ); ?>"><?php esc_html_e( 'Edit', 'personal-project-tracker' ); ?></a>
 									<?php if ( 'archived' === $ptp_project->status ) : ?>

@@ -93,7 +93,7 @@ $ptp_has_filters   = $ptp_search || $ptp_project_id || $ptp_context_type || '' !
 	<?php if ( empty( $ptp_result['items'] ) ) : ?>
 
 		<div class="ptp-empty-state">
-			<span class="dashicons dashicons-format-chat"></span>
+			<span class="dashicons dashicons-format-chat" aria-hidden="true"></span>
 			<?php if ( $ptp_has_filters ) : ?>
 				<p><?php esc_html_e( 'No prompts match your search or filters.', 'personal-project-tracker' ); ?></p>
 			<?php else : ?>
@@ -104,7 +104,7 @@ $ptp_has_filters   = $ptp_search || $ptp_project_id || $ptp_context_type || '' !
 	<?php else : ?>
 
 		<div class="ptp-table-responsive">
-			<table class="widefat striped ptp-prompts-table">
+			<table class="widefat striped ptp-prompts-table ptp-responsive-table">
 				<thead>
 					<tr>
 						<th><?php esc_html_e( 'Title', 'personal-project-tracker' ); ?></th>
@@ -121,16 +121,16 @@ $ptp_has_filters   = $ptp_search || $ptp_project_id || $ptp_context_type || '' !
 						$ptp_edit_url = add_query_arg( array( 'page' => 'ptp-ai-prompts', 'action' => 'edit', 'id' => $ptp_prompt->id ), admin_url( 'admin.php' ) );
 						?>
 						<tr>
-							<td>
+							<td data-label="<?php esc_attr_e( 'Title', 'personal-project-tracker' ); ?>">
 								<?php if ( $ptp_prompt->favorite ) : ?>
 									<span class="dashicons dashicons-star-filled" title="<?php esc_attr_e( 'Favorite', 'personal-project-tracker' ); ?>"></span>
 								<?php endif; ?>
 								<a href="<?php echo esc_url( $ptp_view_url ); ?>"><strong><?php echo esc_html( $ptp_prompt->title ); ?></strong></a>
 							</td>
-							<td class="ptp-col-optional"><?php echo esc_html( $ptp_context_types[ $ptp_prompt->context_type ] ?? $ptp_prompt->context_type ); ?></td>
-							<td class="ptp-col-optional"><?php echo esc_html( $ptp_prompt->project_id && isset( $ptp_projects[ (int) $ptp_prompt->project_id ] ) ? $ptp_projects[ (int) $ptp_prompt->project_id ] : '—' ); ?></td>
-							<td class="ptp-col-optional"><?php echo esc_html( mysql2date( get_option( 'date_format' ), $ptp_prompt->updated_at ) ); ?></td>
-							<td>
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Context', 'personal-project-tracker' ); ?>"><?php echo esc_html( $ptp_context_types[ $ptp_prompt->context_type ] ?? $ptp_prompt->context_type ); ?></td>
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Project', 'personal-project-tracker' ); ?>"><?php echo esc_html( $ptp_prompt->project_id && isset( $ptp_projects[ (int) $ptp_prompt->project_id ] ) ? $ptp_projects[ (int) $ptp_prompt->project_id ] : '—' ); ?></td>
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Updated', 'personal-project-tracker' ); ?>"><?php echo esc_html( mysql2date( get_option( 'date_format' ), $ptp_prompt->updated_at ) ); ?></td>
+							<td class="ptp-td-actions">
 								<div class="ptp-quick-actions">
 									<a class="button button-small" href="<?php echo esc_url( $ptp_edit_url ); ?>"><?php esc_html_e( 'Edit', 'personal-project-tracker' ); ?></a>
 									<?php if ( $ptp_prompt->favorite ) : ?>

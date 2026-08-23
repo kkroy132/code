@@ -132,14 +132,14 @@ require PTP_PLUGIN_DIR . 'admin/views/partials/breadcrumbs.php';
 	<?php if ( ! $ptp_has_query ) : ?>
 
 		<div class="ptp-empty-state">
-			<span class="dashicons dashicons-search"></span>
+			<span class="dashicons dashicons-search" aria-hidden="true"></span>
 			<p><?php esc_html_e( 'Search across Projects, Tasks, Subtasks, Milestones, Notes, Links, Files, Finance, Prompts, Reminders, and Activity.', 'personal-project-tracker' ); ?></p>
 		</div>
 
 	<?php elseif ( empty( $ptp_result['items'] ) ) : ?>
 
 		<div class="ptp-empty-state">
-			<span class="dashicons dashicons-search"></span>
+			<span class="dashicons dashicons-search" aria-hidden="true"></span>
 			<p><?php esc_html_e( 'No results match your search or filters.', 'personal-project-tracker' ); ?></p>
 		</div>
 
@@ -156,7 +156,7 @@ require PTP_PLUGIN_DIR . 'admin/views/partials/breadcrumbs.php';
 		</p>
 
 		<div class="ptp-table-responsive">
-			<table class="widefat striped ptp-search-table">
+			<table class="widefat striped ptp-search-table ptp-responsive-table">
 				<thead>
 					<tr>
 						<th><?php esc_html_e( 'Type', 'personal-project-tracker' ); ?></th>
@@ -169,23 +169,23 @@ require PTP_PLUGIN_DIR . 'admin/views/partials/breadcrumbs.php';
 				<tbody>
 					<?php foreach ( $ptp_result['items'] as $ptp_item ) : ?>
 						<tr>
-							<td><span class="ptp-badge"><?php echo esc_html( $ptp_type_labels[ $ptp_item['type'] ] ?? $ptp_item['type'] ); ?></span></td>
-							<td><a href="<?php echo esc_url( $ptp_item['url'] ); ?>"><strong><?php echo esc_html( $ptp_item['title'] ); ?></strong></a></td>
-							<td class="ptp-col-optional">
+							<td data-label="<?php esc_attr_e( 'Type', 'personal-project-tracker' ); ?>"><span class="ptp-badge"><?php echo esc_html( $ptp_type_labels[ $ptp_item['type'] ] ?? $ptp_item['type'] ); ?></span></td>
+							<td data-label="<?php esc_attr_e( 'Title', 'personal-project-tracker' ); ?>"><a href="<?php echo esc_url( $ptp_item['url'] ); ?>"><strong><?php echo esc_html( $ptp_item['title'] ); ?></strong></a></td>
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Project', 'personal-project-tracker' ); ?>">
 								<?php if ( 'project' !== $ptp_item['type'] && $ptp_item['project_id'] && isset( $ptp_projects[ $ptp_item['project_id'] ] ) ) : ?>
 									<?php echo esc_html( $ptp_projects[ $ptp_item['project_id'] ] ); ?>
 								<?php else : ?>
 									&#8212;
 								<?php endif; ?>
 							</td>
-							<td class="ptp-col-optional">
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Status', 'personal-project-tracker' ); ?>">
 								<?php if ( $ptp_item['status_label'] ) : ?>
 									<span class="ptp-badge ptp-badge-status-<?php echo esc_attr( $ptp_item['status'] ); ?>"><?php echo esc_html( $ptp_item['status_label'] ); ?></span>
 								<?php else : ?>
 									&#8212;
 								<?php endif; ?>
 							</td>
-							<td><?php echo esc_html( mysql2date( get_option( 'date_format' ), $ptp_item['date'] ) ); ?></td>
+							<td data-label="<?php esc_attr_e( 'Date', 'personal-project-tracker' ); ?>"><?php echo esc_html( mysql2date( get_option( 'date_format' ), $ptp_item['date'] ) ); ?></td>
 						</tr>
 					<?php endforeach; ?>
 				</tbody>

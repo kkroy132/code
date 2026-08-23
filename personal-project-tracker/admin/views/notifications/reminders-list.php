@@ -62,12 +62,12 @@ $ptp_related_types = PTP_Reminders_Repository::get_related_types();
 
 	<?php if ( empty( $ptp_result['items'] ) ) : ?>
 		<div class="ptp-empty-state">
-			<span class="dashicons dashicons-clock"></span>
+			<span class="dashicons dashicons-clock" aria-hidden="true"></span>
 			<p><?php esc_html_e( 'No reminders yet.', 'personal-project-tracker' ); ?></p>
 		</div>
 	<?php else : ?>
 		<div class="ptp-table-responsive">
-			<table class="widefat striped ptp-reminders-table">
+			<table class="widefat striped ptp-reminders-table ptp-responsive-table">
 				<thead>
 					<tr>
 						<th><?php esc_html_e( 'Title', 'personal-project-tracker' ); ?></th>
@@ -81,12 +81,12 @@ $ptp_related_types = PTP_Reminders_Repository::get_related_types();
 				<tbody>
 					<?php foreach ( $ptp_result['items'] as $ptp_reminder ) : ?>
 						<tr>
-							<td><a href="<?php echo esc_url( add_query_arg( array( 'page' => 'ptp-notifications', 'action' => 'edit_reminder', 'id' => $ptp_reminder->id ), admin_url( 'admin.php' ) ) ); ?>"><strong><?php echo esc_html( $ptp_reminder->title ); ?></strong></a></td>
-							<td class="ptp-col-optional"><?php echo esc_html( $ptp_reminder->related_type ? ( $ptp_related_types[ $ptp_reminder->related_type ] ?? $ptp_reminder->related_type ) : __( 'Custom', 'personal-project-tracker' ) ); ?></td>
-							<td><?php echo esc_html( mysql2date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $ptp_reminder->remind_at ) ); ?></td>
-							<td class="ptp-col-optional"><?php echo esc_html( PTP_Reminders_Repository::get_recurrences()[ $ptp_reminder->recurrence ] ?? $ptp_reminder->recurrence ); ?></td>
-							<td class="ptp-col-optional"><span class="ptp-badge"><?php echo esc_html( $ptp_statuses[ $ptp_reminder->status ] ?? $ptp_reminder->status ); ?></span></td>
-							<td>
+							<td data-label="<?php esc_attr_e( 'Title', 'personal-project-tracker' ); ?>"><a href="<?php echo esc_url( add_query_arg( array( 'page' => 'ptp-notifications', 'action' => 'edit_reminder', 'id' => $ptp_reminder->id ), admin_url( 'admin.php' ) ) ); ?>"><strong><?php echo esc_html( $ptp_reminder->title ); ?></strong></a></td>
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Related To', 'personal-project-tracker' ); ?>"><?php echo esc_html( $ptp_reminder->related_type ? ( $ptp_related_types[ $ptp_reminder->related_type ] ?? $ptp_reminder->related_type ) : __( 'Custom', 'personal-project-tracker' ) ); ?></td>
+							<td data-label="<?php esc_attr_e( 'Remind At', 'personal-project-tracker' ); ?>"><?php echo esc_html( mysql2date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $ptp_reminder->remind_at ) ); ?></td>
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Repeat', 'personal-project-tracker' ); ?>"><?php echo esc_html( PTP_Reminders_Repository::get_recurrences()[ $ptp_reminder->recurrence ] ?? $ptp_reminder->recurrence ); ?></td>
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Status', 'personal-project-tracker' ); ?>"><span class="ptp-badge"><?php echo esc_html( $ptp_statuses[ $ptp_reminder->status ] ?? $ptp_reminder->status ); ?></span></td>
+							<td class="ptp-td-actions">
 								<div class="ptp-quick-actions">
 									<a class="button button-small" href="<?php echo esc_url( add_query_arg( array( 'page' => 'ptp-notifications', 'action' => 'edit_reminder', 'id' => $ptp_reminder->id ), admin_url( 'admin.php' ) ) ); ?>"><?php esc_html_e( 'Edit', 'personal-project-tracker' ); ?></a>
 									<select class="ptp-js-reminder-snooze" data-id="<?php echo esc_attr( $ptp_reminder->id ); ?>">

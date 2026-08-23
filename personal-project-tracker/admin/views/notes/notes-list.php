@@ -85,7 +85,7 @@ $ptp_has_filters = $ptp_search || $ptp_project_id || $ptp_task_id || $ptp_milest
 	<?php if ( empty( $ptp_result['items'] ) ) : ?>
 
 		<div class="ptp-empty-state">
-			<span class="dashicons dashicons-edit"></span>
+			<span class="dashicons dashicons-edit" aria-hidden="true"></span>
 			<?php if ( $ptp_has_filters ) : ?>
 				<p><?php esc_html_e( 'No notes match your search or filters.', 'personal-project-tracker' ); ?></p>
 			<?php else : ?>
@@ -96,7 +96,7 @@ $ptp_has_filters = $ptp_search || $ptp_project_id || $ptp_task_id || $ptp_milest
 	<?php else : ?>
 
 		<div class="ptp-table-responsive">
-			<table class="widefat striped ptp-notes-table">
+			<table class="widefat striped ptp-notes-table ptp-responsive-table">
 				<thead>
 					<tr>
 						<th><?php esc_html_e( 'Title', 'personal-project-tracker' ); ?></th>
@@ -113,16 +113,16 @@ $ptp_has_filters = $ptp_search || $ptp_project_id || $ptp_task_id || $ptp_milest
 						$ptp_edit_url = add_query_arg( array( 'page' => 'ptp-notes', 'action' => 'edit', 'id' => $ptp_note->id ), admin_url( 'admin.php' ) );
 						?>
 						<tr>
-							<td>
+							<td data-label="<?php esc_attr_e( 'Title', 'personal-project-tracker' ); ?>">
 								<?php if ( $ptp_note->pinned ) : ?>
 									<span class="dashicons dashicons-sticky" title="<?php esc_attr_e( 'Pinned', 'personal-project-tracker' ); ?>"></span>
 								<?php endif; ?>
 								<a href="<?php echo esc_url( $ptp_view_url ); ?>"><strong><?php echo esc_html( $ptp_note->title ? $ptp_note->title : __( '(untitled)', 'personal-project-tracker' ) ); ?></strong></a>
 							</td>
-							<td class="ptp-col-optional"><?php echo esc_html( $ptp_note->project_id && isset( $ptp_projects[ (int) $ptp_note->project_id ] ) ? $ptp_projects[ (int) $ptp_note->project_id ] : '—' ); ?></td>
-							<td class="ptp-col-optional"><?php echo esc_html( $ptp_note->tags ? $ptp_note->tags : '—' ); ?></td>
-							<td class="ptp-col-optional"><?php echo esc_html( mysql2date( get_option( 'date_format' ), $ptp_note->updated_at ) ); ?></td>
-							<td>
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Project', 'personal-project-tracker' ); ?>"><?php echo esc_html( $ptp_note->project_id && isset( $ptp_projects[ (int) $ptp_note->project_id ] ) ? $ptp_projects[ (int) $ptp_note->project_id ] : '—' ); ?></td>
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Tags', 'personal-project-tracker' ); ?>"><?php echo esc_html( $ptp_note->tags ? $ptp_note->tags : '—' ); ?></td>
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Updated', 'personal-project-tracker' ); ?>"><?php echo esc_html( mysql2date( get_option( 'date_format' ), $ptp_note->updated_at ) ); ?></td>
+							<td class="ptp-td-actions">
 								<div class="ptp-quick-actions">
 									<a class="button button-small" href="<?php echo esc_url( $ptp_edit_url ); ?>"><?php esc_html_e( 'Edit', 'personal-project-tracker' ); ?></a>
 									<?php if ( $ptp_note->pinned ) : ?>

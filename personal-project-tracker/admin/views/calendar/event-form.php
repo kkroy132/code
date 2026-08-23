@@ -54,7 +54,7 @@ if ( ! empty( $flash['data'] ) ) {
 <h1><?php echo ! empty( $is_edit ) ? esc_html__( 'Edit Event', 'personal-project-tracker' ) : esc_html__( 'Add New Event', 'personal-project-tracker' ); ?></h1>
 
 <?php if ( ! empty( $flash['errors'] ) ) : ?>
-	<div class="notice notice-error">
+	<div class="notice notice-error" role="alert">
 		<ul class="ptp-error-list">
 			<?php foreach ( $flash['errors'] as $ptp_error_message ) : ?>
 				<li><?php echo esc_html( $ptp_error_message ); ?></li>
@@ -76,7 +76,7 @@ if ( ! empty( $flash['data'] ) ) {
 
 		<div class="ptp-form-grid">
 			<div class="ptp-form-field ptp-form-field-full">
-				<label for="ptp-title"><?php esc_html_e( 'Title', 'personal-project-tracker' ); ?> <span class="ptp-required">*</span></label>
+				<label for="ptp-title"><?php esc_html_e( 'Title', 'personal-project-tracker' ); ?> <span class="ptp-required" aria-hidden="true">*</span></label>
 				<input type="text" id="ptp-title" name="title" maxlength="255" required value="<?php echo esc_attr( $ptp_values['title'] ); ?>" />
 			</div>
 
@@ -93,7 +93,7 @@ if ( ! empty( $flash['data'] ) ) {
 			</div>
 
 			<div class="ptp-form-field">
-				<label for="ptp-start-date"><?php esc_html_e( 'Start Date', 'personal-project-tracker' ); ?> <span class="ptp-required">*</span></label>
+				<label for="ptp-start-date"><?php esc_html_e( 'Start Date', 'personal-project-tracker' ); ?> <span class="ptp-required" aria-hidden="true">*</span></label>
 				<input type="date" id="ptp-start-date" name="start_date" required value="<?php echo esc_attr( $ptp_values['start_date'] ); ?>" />
 			</div>
 

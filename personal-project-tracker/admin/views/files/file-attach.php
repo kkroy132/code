@@ -66,7 +66,7 @@ if ( ! empty( $flash['data'] ) ) {
 <h1><?php esc_html_e( 'Attach File', 'personal-project-tracker' ); ?></h1>
 
 <?php if ( ! empty( $flash['errors'] ) ) : ?>
-	<div class="notice notice-error">
+	<div class="notice notice-error" role="alert">
 		<ul class="ptp-error-list">
 			<?php foreach ( $flash['errors'] as $ptp_error_message ) : ?>
 				<li><?php echo esc_html( $ptp_error_message ); ?></li>

@@ -216,7 +216,7 @@ foreach ( $ptp_task_rows as $ptp_task_row ) {
 	<?php if ( empty( $ptp_result['items'] ) ) : ?>
 
 		<div class="ptp-empty-state">
-			<span class="dashicons dashicons-clock"></span>
+			<span class="dashicons dashicons-clock" aria-hidden="true"></span>
 			<?php if ( $ptp_has_filters ) : ?>
 				<p><?php esc_html_e( 'No time entries match your search or filters.', 'personal-project-tracker' ); ?></p>
 			<?php else : ?>
@@ -227,7 +227,7 @@ foreach ( $ptp_task_rows as $ptp_task_row ) {
 	<?php else : ?>
 
 		<div class="ptp-table-responsive">
-			<table class="widefat striped ptp-time-entries-table">
+			<table class="widefat striped ptp-time-entries-table ptp-responsive-table">
 				<thead>
 					<tr>
 						<th><?php esc_html_e( 'Date', 'personal-project-tracker' ); ?></th>
@@ -248,15 +248,15 @@ foreach ( $ptp_task_rows as $ptp_task_row ) {
 						$ptp_edit_url  = add_query_arg( array( 'page' => 'ptp-time-tracking', 'action' => 'edit', 'id' => $ptp_entry->id ), admin_url( 'admin.php' ) );
 						?>
 						<tr>
-							<td><?php echo esc_html( mysql2date( get_option( 'date_format' ), $ptp_entry->entry_date ) ); ?></td>
-							<td class="ptp-col-optional"><?php echo esc_html( $ptp_entry->project_id && isset( $ptp_projects[ (int) $ptp_entry->project_id ] ) ? $ptp_projects[ (int) $ptp_entry->project_id ] : '—' ); ?></td>
-							<td class="ptp-col-optional"><?php echo esc_html( $ptp_entry->task_id && isset( $ptp_tasks[ (int) $ptp_entry->task_id ] ) ? $ptp_tasks[ (int) $ptp_entry->task_id ]['title'] : '—' ); ?></td>
-							<td class="ptp-col-optional"><?php echo esc_html( $ptp_entry->description ? $ptp_entry->description : '—' ); ?></td>
-							<td class="ptp-col-optional"><?php echo esc_html( $ptp_entry->start_time ? mysql2date( get_option( 'time_format' ), $ptp_entry->start_time ) : '—' ); ?></td>
-							<td class="ptp-col-optional"><?php echo esc_html( $ptp_entry->end_time ? mysql2date( get_option( 'time_format' ), $ptp_entry->end_time ) : '—' ); ?></td>
-							<td><?php echo esc_html( ptp_format_duration( PTP_Time_Repository::get_live_duration( $ptp_entry ) ) ); ?></td>
-							<td><span class="ptp-badge ptp-badge-status-<?php echo esc_attr( $ptp_entry->status ); ?>"><?php echo esc_html( $ptp_statuses[ $ptp_entry->status ] ?? $ptp_entry->status ); ?></span></td>
-							<td>
+							<td data-label="<?php esc_attr_e( 'Date', 'personal-project-tracker' ); ?>"><?php echo esc_html( mysql2date( get_option( 'date_format' ), $ptp_entry->entry_date ) ); ?></td>
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Project', 'personal-project-tracker' ); ?>"><?php echo esc_html( $ptp_entry->project_id && isset( $ptp_projects[ (int) $ptp_entry->project_id ] ) ? $ptp_projects[ (int) $ptp_entry->project_id ] : '—' ); ?></td>
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Task', 'personal-project-tracker' ); ?>"><?php echo esc_html( $ptp_entry->task_id && isset( $ptp_tasks[ (int) $ptp_entry->task_id ] ) ? $ptp_tasks[ (int) $ptp_entry->task_id ]['title'] : '—' ); ?></td>
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Description', 'personal-project-tracker' ); ?>"><?php echo esc_html( $ptp_entry->description ? $ptp_entry->description : '—' ); ?></td>
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Start', 'personal-project-tracker' ); ?>"><?php echo esc_html( $ptp_entry->start_time ? mysql2date( get_option( 'time_format' ), $ptp_entry->start_time ) : '—' ); ?></td>
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'End', 'personal-project-tracker' ); ?>"><?php echo esc_html( $ptp_entry->end_time ? mysql2date( get_option( 'time_format' ), $ptp_entry->end_time ) : '—' ); ?></td>
+							<td data-label="<?php esc_attr_e( 'Duration', 'personal-project-tracker' ); ?>"><?php echo esc_html( ptp_format_duration( PTP_Time_Repository::get_live_duration( $ptp_entry ) ) ); ?></td>
+							<td data-label="<?php esc_attr_e( 'Status', 'personal-project-tracker' ); ?>"><span class="ptp-badge ptp-badge-status-<?php echo esc_attr( $ptp_entry->status ); ?>"><?php echo esc_html( $ptp_statuses[ $ptp_entry->status ] ?? $ptp_entry->status ); ?></span></td>
+							<td class="ptp-td-actions">
 								<div class="ptp-quick-actions">
 									<?php if ( $ptp_is_active ) : ?>
 										<span class="description"><?php esc_html_e( 'Active — use the timer above', 'personal-project-tracker' ); ?></span>

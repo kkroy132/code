@@ -71,7 +71,7 @@ $ptp_has_filters = $ptp_search || $ptp_project_id || $ptp_task_id || $ptp_milest
 	<?php if ( empty( $ptp_result['items'] ) ) : ?>
 
 		<div class="ptp-empty-state">
-			<span class="dashicons dashicons-media-default"></span>
+			<span class="dashicons dashicons-media-default" aria-hidden="true"></span>
 			<?php if ( $ptp_has_filters ) : ?>
 				<p><?php esc_html_e( 'No files match your search or filters.', 'personal-project-tracker' ); ?></p>
 			<?php else : ?>
@@ -82,7 +82,7 @@ $ptp_has_filters = $ptp_search || $ptp_project_id || $ptp_task_id || $ptp_milest
 	<?php else : ?>
 
 		<div class="ptp-table-responsive">
-			<table class="widefat striped ptp-files-table">
+			<table class="widefat striped ptp-files-table ptp-responsive-table">
 				<thead>
 					<tr>
 						<th><?php esc_html_e( 'File', 'personal-project-tracker' ); ?></th>
@@ -97,16 +97,16 @@ $ptp_has_filters = $ptp_search || $ptp_project_id || $ptp_task_id || $ptp_milest
 					<?php foreach ( $ptp_result['items'] as $ptp_file ) : ?>
 						<?php $ptp_file_url = wp_get_attachment_url( $ptp_file->attachment_id ); ?>
 						<tr>
-							<td>
+							<td data-label="<?php esc_attr_e( 'File', 'personal-project-tracker' ); ?>">
 								<a href="<?php echo esc_url( add_query_arg( array( 'page' => 'ptp-files', 'action' => 'view', 'id' => $ptp_file->id ), admin_url( 'admin.php' ) ) ); ?>">
 									<strong><?php echo esc_html( $ptp_file->file_name ? $ptp_file->file_name : __( '(file)', 'personal-project-tracker' ) ); ?></strong>
 								</a>
 							</td>
-							<td class="ptp-col-optional"><?php echo esc_html( $ptp_file->file_type ? $ptp_file->file_type : '—' ); ?></td>
-							<td class="ptp-col-optional"><?php echo esc_html( null !== $ptp_file->file_size ? size_format( (int) $ptp_file->file_size ) : '—' ); ?></td>
-							<td class="ptp-col-optional"><?php echo esc_html( $ptp_file->project_id && isset( $ptp_projects[ (int) $ptp_file->project_id ] ) ? $ptp_projects[ (int) $ptp_file->project_id ] : '—' ); ?></td>
-							<td class="ptp-col-optional"><?php echo esc_html( mysql2date( get_option( 'date_format' ), $ptp_file->created_at ) ); ?></td>
-							<td>
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Type', 'personal-project-tracker' ); ?>"><?php echo esc_html( $ptp_file->file_type ? $ptp_file->file_type : '—' ); ?></td>
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Size', 'personal-project-tracker' ); ?>"><?php echo esc_html( null !== $ptp_file->file_size ? size_format( (int) $ptp_file->file_size ) : '—' ); ?></td>
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Project', 'personal-project-tracker' ); ?>"><?php echo esc_html( $ptp_file->project_id && isset( $ptp_projects[ (int) $ptp_file->project_id ] ) ? $ptp_projects[ (int) $ptp_file->project_id ] : '—' ); ?></td>
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Attached', 'personal-project-tracker' ); ?>"><?php echo esc_html( mysql2date( get_option( 'date_format' ), $ptp_file->created_at ) ); ?></td>
+							<td class="ptp-td-actions">
 								<div class="ptp-quick-actions">
 									<?php if ( $ptp_file_url ) : ?>
 										<a class="button button-small" href="<?php echo esc_url( $ptp_file_url ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Download', 'personal-project-tracker' ); ?></a>

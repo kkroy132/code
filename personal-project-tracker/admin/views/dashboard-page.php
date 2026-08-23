@@ -18,11 +18,13 @@ global $wpdb;
 $tables = PTP_Database::get_table_names();
 ?>
 <h1><?php esc_html_e( 'Project Tracker', 'personal-project-tracker' ); ?></h1>
-<p class="description">
+<p class="description ptp-dashboard-intro">
 	<?php esc_html_e( 'Your private project management workspace.', 'personal-project-tracker' ); ?>
 </p>
 
 <?php if ( current_user_can( 'ptp_manage_projects' ) && class_exists( 'PTP_Projects_Repository' ) ) : ?>
+
+	<div class="ptp-dashboard-section">
 
 	<?php
 	$ptp_dashboard_stats   = PTP_Projects_Repository::get_stats();
@@ -60,7 +62,7 @@ $tables = PTP_Database::get_table_names();
 		<h2><?php esc_html_e( 'Recent Projects', 'personal-project-tracker' ); ?></h2>
 		<?php if ( empty( $ptp_dashboard_recent ) ) : ?>
 			<div class="ptp-empty-state">
-				<span class="dashicons dashicons-portfolio"></span>
+				<span class="dashicons dashicons-portfolio" aria-hidden="true"></span>
 				<p><?php esc_html_e( 'No projects yet. Create your first project to get started.', 'personal-project-tracker' ); ?></p>
 				<p>
 					<a class="button button-primary" href="<?php echo esc_url( add_query_arg( array( 'page' => 'ptp-projects', 'action' => 'new' ), admin_url( 'admin.php' ) ) ); ?>">
@@ -103,9 +105,12 @@ $tables = PTP_Database::get_table_names();
 		<?php endif; ?>
 	</div>
 
+	</div>
 <?php endif; ?>
 
 <?php if ( current_user_can( 'ptp_manage_tasks' ) && class_exists( 'PTP_Tasks_Repository' ) ) : ?>
+
+	<div class="ptp-dashboard-section">
 
 	<?php $ptp_task_stats = PTP_Tasks_Repository::get_stats(); ?>
 
@@ -135,9 +140,12 @@ $tables = PTP_Database::get_table_names();
 		</div>
 	</div>
 
+	</div>
 <?php endif; ?>
 
 <?php if ( current_user_can( 'ptp_manage_projects' ) && class_exists( 'PTP_Milestones_Repository' ) ) : ?>
+
+	<div class="ptp-dashboard-section">
 
 	<?php
 	$ptp_milestone_stats = PTP_Milestones_Repository::get_stats();
@@ -186,6 +194,7 @@ $tables = PTP_Database::get_table_names();
 		</div>
 	<?php endif; ?>
 
+	</div>
 <?php endif; ?>
 
 <div class="ptp-card">

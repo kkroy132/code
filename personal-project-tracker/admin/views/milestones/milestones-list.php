@@ -160,7 +160,7 @@ if ( ! function_exists( 'ptp_milestones_sort_link' ) ) {
 	<?php if ( empty( $ptp_result['items'] ) ) : ?>
 
 		<div class="ptp-empty-state">
-			<span class="dashicons dashicons-flag"></span>
+			<span class="dashicons dashicons-flag" aria-hidden="true"></span>
 			<?php if ( $ptp_has_filters ) : ?>
 				<p><?php esc_html_e( 'No milestones match your search or filters.', 'personal-project-tracker' ); ?></p>
 			<?php else : ?>
@@ -176,7 +176,7 @@ if ( ! function_exists( 'ptp_milestones_sort_link' ) ) {
 	<?php else : ?>
 
 		<div class="ptp-table-responsive">
-			<table class="widefat striped ptp-milestones-table">
+			<table class="widefat striped ptp-milestones-table ptp-responsive-table">
 				<thead>
 					<tr>
 						<th><?php ptp_milestones_sort_link( 'title', __( 'Title', 'personal-project-tracker' ), $ptp_orderby, $ptp_order ); ?></th>
@@ -197,13 +197,13 @@ if ( ! function_exists( 'ptp_milestones_sort_link' ) ) {
 						$ptp_is_done   = 'completed' === $ptp_milestone->status;
 						?>
 						<tr>
-							<td>
+							<td data-label="<?php esc_attr_e( 'Title', 'personal-project-tracker' ); ?>">
 								<a href="<?php echo esc_url( $ptp_view_url ); ?>"><strong><?php echo esc_html( $ptp_milestone->title ); ?></strong></a>
 							</td>
-							<td class="ptp-col-optional"><?php echo esc_html( $ptp_projects[ (int) $ptp_milestone->project_id ] ?? '—' ); ?></td>
-							<td><span class="ptp-badge ptp-badge-status-<?php echo esc_attr( $ptp_milestone->status ); ?>"><?php echo esc_html( $ptp_statuses[ $ptp_milestone->status ] ?? $ptp_milestone->status ); ?></span></td>
-							<td><span class="ptp-badge ptp-badge-priority-<?php echo esc_attr( $ptp_milestone->priority ); ?>"><?php echo esc_html( $ptp_priorities[ $ptp_milestone->priority ] ?? $ptp_milestone->priority ); ?></span></td>
-							<td class="ptp-col-optional">
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Project', 'personal-project-tracker' ); ?>"><?php echo esc_html( $ptp_projects[ (int) $ptp_milestone->project_id ] ?? '—' ); ?></td>
+							<td data-label="<?php esc_attr_e( 'Status', 'personal-project-tracker' ); ?>"><span class="ptp-badge ptp-badge-status-<?php echo esc_attr( $ptp_milestone->status ); ?>"><?php echo esc_html( $ptp_statuses[ $ptp_milestone->status ] ?? $ptp_milestone->status ); ?></span></td>
+							<td data-label="<?php esc_attr_e( 'Priority', 'personal-project-tracker' ); ?>"><span class="ptp-badge ptp-badge-priority-<?php echo esc_attr( $ptp_milestone->priority ); ?>"><?php echo esc_html( $ptp_priorities[ $ptp_milestone->priority ] ?? $ptp_milestone->priority ); ?></span></td>
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Due Date', 'personal-project-tracker' ); ?>">
 								<?php if ( $ptp_milestone->due_date ) : ?>
 									<span class="<?php echo esc_attr( $ptp_is_overdue ? 'ptp-text-danger' : '' ); ?>">
 										<?php echo esc_html( mysql2date( get_option( 'date_format' ), $ptp_milestone->due_date ) ); ?>
@@ -215,13 +215,13 @@ if ( ! function_exists( 'ptp_milestones_sort_link' ) ) {
 									&#8212;
 								<?php endif; ?>
 							</td>
-							<td class="ptp-col-optional">
+							<td class="ptp-col-optional" data-label="<?php esc_attr_e( 'Progress', 'personal-project-tracker' ); ?>">
 								<div class="ptp-progress" aria-hidden="true">
 									<div class="ptp-progress-bar" style="width:<?php echo esc_attr( (int) $ptp_milestone->progress ); ?>%"></div>
 								</div>
 								<span class="ptp-progress-label"><?php echo esc_html( (int) $ptp_milestone->progress ); ?>%</span>
 							</td>
-							<td>
+							<td class="ptp-td-actions">
 								<div class="ptp-quick-actions">
 									<a class="button button-small" href="<?php echo esc_url( $ptp_edit_url ); ?>"><?php esc_html_e( 'Edit', 'personal-project-tracker' ); ?></a>
 									<?php if ( $ptp_is_done ) : ?>

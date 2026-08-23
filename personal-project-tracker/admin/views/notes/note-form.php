@@ -55,7 +55,7 @@ if ( ! empty( $flash['data'] ) ) {
 <h1><?php echo ! empty( $is_edit ) ? esc_html__( 'Edit Note', 'personal-project-tracker' ) : esc_html__( 'Add New Note', 'personal-project-tracker' ); ?></h1>
 
 <?php if ( ! empty( $flash['errors'] ) ) : ?>
-	<div class="notice notice-error">
+	<div class="notice notice-error" role="alert">
 		<ul class="ptp-error-list">
 			<?php foreach ( $flash['errors'] as $ptp_error_message ) : ?>
 				<li><?php echo esc_html( $ptp_error_message ); ?></li>

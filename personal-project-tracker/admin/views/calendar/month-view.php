@@ -76,7 +76,7 @@ $ptp_cursor  = clone $ptp_range_start;
 
 <?php if ( empty( $ptp_items_by_date ) ) : ?>
 	<div class="ptp-empty-state">
-		<span class="dashicons dashicons-calendar-alt"></span>
+		<span class="dashicons dashicons-calendar-alt" aria-hidden="true"></span>
 		<p><?php esc_html_e( 'Nothing on the calendar this month.', 'personal-project-tracker' ); ?></p>
 	</div>
 <?php endif; ?>

@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <h1><?php echo esc_html( $title ); ?></h1>
 
 <div class="ptp-card ptp-placeholder">
-	<span class="dashicons dashicons-hammer"></span>
+	<span class="dashicons dashicons-hammer" aria-hidden="true"></span>
 	<p>
 		<?php
 		printf(

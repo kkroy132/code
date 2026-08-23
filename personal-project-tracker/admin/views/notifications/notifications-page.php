@@ -91,7 +91,7 @@ $ptp_categories = PTP_Notifications_Repository::get_categories();
 	<?php if ( empty( $ptp_result['items'] ) ) : ?>
 
 		<div class="ptp-empty-state">
-			<span class="dashicons dashicons-bell"></span>
+			<span class="dashicons dashicons-bell" aria-hidden="true"></span>
 			<p><?php esc_html_e( 'No notifications yet.', 'personal-project-tracker' ); ?></p>
 		</div>
 

@@ -185,8 +185,8 @@ require PTP_PLUGIN_DIR . 'admin/views/partials/breadcrumbs.php';
 			<ul class="ptp-subtask-list" id="ptp-subtask-list">
 				<?php foreach ( $ptp_subtasks as $ptp_subtask ) : ?>
 					<li class="ptp-subtask-row" data-id="<?php echo esc_attr( $ptp_subtask->id ); ?>" data-status="<?php echo esc_attr( $ptp_subtask->status ); ?>" data-priority="<?php echo esc_attr( $ptp_subtask->priority ); ?>" data-due-date="<?php echo esc_attr( $ptp_subtask->due_date ); ?>">
-						<input type="checkbox" class="ptp-js-subtask-toggle" data-id="<?php echo esc_attr( $ptp_subtask->id ); ?>" <?php checked( $ptp_subtask->completed, 1 ); ?> />
-						<input type="text" class="ptp-subtask-title-input ptp-js-subtask-title" data-id="<?php echo esc_attr( $ptp_subtask->id ); ?>" value="<?php echo esc_attr( $ptp_subtask->title ); ?>" />
+						<input type="checkbox" class="ptp-js-subtask-toggle" data-id="<?php echo esc_attr( $ptp_subtask->id ); ?>" <?php checked( $ptp_subtask->completed, 1 ); ?> aria-label="<?php echo esc_attr( sprintf( /* translators: %s: subtask title. */ __( 'Mark "%s" complete', 'personal-project-tracker' ), $ptp_subtask->title ) ); ?>" />
+						<input type="text" class="ptp-subtask-title-input ptp-js-subtask-title" data-id="<?php echo esc_attr( $ptp_subtask->id ); ?>" value="<?php echo esc_attr( $ptp_subtask->title ); ?>" aria-label="<?php esc_attr_e( 'Subtask title', 'personal-project-tracker' ); ?>" />
 						<span class="ptp-subtask-controls">
 							<button type="button" class="button-link ptp-js-subtask-up" data-id="<?php echo esc_attr( $ptp_subtask->id ); ?>" aria-label="<?php esc_attr_e( 'Move up', 'personal-project-tracker' ); ?>">&uarr;</button>
 							<button type="button" class="button-link ptp-js-subtask-down" data-id="<?php echo esc_attr( $ptp_subtask->id ); ?>" aria-label="<?php esc_attr_e( 'Move down', 'personal-project-tracker' ); ?>">&darr;</button>
@@ -240,10 +240,10 @@ require PTP_PLUGIN_DIR . 'admin/views/partials/breadcrumbs.php';
 			<h2><?php esc_html_e( 'Coming Soon', 'personal-project-tracker' ); ?></h2>
 			<p class="description"><?php esc_html_e( 'These sections light up as their modules are built in later phases.', 'personal-project-tracker' ); ?></p>
 			<ul class="ptp-coming-soon-list">
-				<li><span class="dashicons dashicons-edit"></span> <?php esc_html_e( 'Notes', 'personal-project-tracker' ); ?></li>
-				<li><span class="dashicons dashicons-media-default"></span> <?php esc_html_e( 'Files', 'personal-project-tracker' ); ?></li>
-				<li><span class="dashicons dashicons-admin-links"></span> <?php esc_html_e( 'Links', 'personal-project-tracker' ); ?></li>
-				<li><span class="dashicons dashicons-bell"></span> <?php esc_html_e( 'Reminders', 'personal-project-tracker' ); ?></li>
+				<li><span class="dashicons dashicons-edit" aria-hidden="true"></span> <?php esc_html_e( 'Notes', 'personal-project-tracker' ); ?></li>
+				<li><span class="dashicons dashicons-media-default" aria-hidden="true"></span> <?php esc_html_e( 'Files', 'personal-project-tracker' ); ?></li>
+				<li><span class="dashicons dashicons-admin-links" aria-hidden="true"></span> <?php esc_html_e( 'Links', 'personal-project-tracker' ); ?></li>
+				<li><span class="dashicons dashicons-bell" aria-hidden="true"></span> <?php esc_html_e( 'Reminders', 'personal-project-tracker' ); ?></li>
 			</ul>
 		</div>
 	</div>

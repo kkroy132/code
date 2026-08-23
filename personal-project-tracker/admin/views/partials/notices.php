@@ -23,8 +23,8 @@ $ptp_success_messages = array(
 );
 ?>
 <?php if ( $ptp_success_code && isset( $ptp_success_messages[ $ptp_success_code ] ) ) : ?>
-	<div class="notice notice-success is-dismissible"><p><?php echo esc_html( $ptp_success_messages[ $ptp_success_code ] ); ?></p></div>
+	<div class="notice notice-success is-dismissible" role="status"><p><?php echo esc_html( $ptp_success_messages[ $ptp_success_code ] ); ?></p></div>
 <?php endif; ?>
 <?php if ( $ptp_error_message ) : ?>
-	<div class="notice notice-error is-dismissible"><p><?php echo esc_html( $ptp_error_message ); ?></p></div>
+	<div class="notice notice-error is-dismissible" role="alert"><p><?php echo esc_html( $ptp_error_message ); ?></p></div>
 <?php endif; ?>
