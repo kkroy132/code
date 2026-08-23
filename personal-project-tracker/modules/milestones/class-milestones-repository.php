@@ -862,6 +862,115 @@ class PTP_Milestones_Repository {
 	}
 
 	/**
+	 * Same shape as get_report_counts(), but for many projects at once via
+	 * a single GROUP BY project_id, status query plus a single GROUP BY
+	 * project_id overdue query — two queries total regardless of how many
+	 * project IDs are given, instead of get_report_counts() called once per
+	 * project (the N+1 pattern the Reports project listing used to hit).
+	 *
+	 * @param int[] $project_ids Project IDs to report on.
+	 * @param array $args        Same filters as get_report_counts() minus project_id.
+	 * @return array<int, array{total: int, completed: int, in_progress: int, overdue: int, by_status: array<string,int>}> Keyed by project_id; a project with no matching milestones is still present with all-zero counts.
+	 */
+	public static function get_report_counts_by_projects( array $project_ids, array $args = array() ) {
+		global $wpdb;
+
+		$project_ids = array_values( array_unique( array_map( 'absint', $project_ids ) ) );
+
+		if ( empty( $project_ids ) ) {
+			return array();
+		}
+
+		$table = self::get_table();
+
+		$args = wp_parse_args(
+			$args,
+			array(
+				'priority'  => '',
+				'date_from' => '',
+				'date_to'   => '',
+				'view'      => 'active',
+			)
+		);
+
+		$where  = array( '1=1' );
+		$params = array();
+
+		switch ( $args['view'] ) {
+			case 'archived':
+				$where[] = 'archived_at IS NOT NULL';
+				break;
+			case 'all':
+				break;
+			default:
+				$where[] = 'archived_at IS NULL';
+				break;
+		}
+
+		if ( $args['priority'] && self::is_valid_priority( $args['priority'] ) ) {
+			$where[]  = 'priority = %s';
+			$params[] = $args['priority'];
+		}
+
+		$date_from = self::sanitize_date( $args['date_from'] );
+
+		if ( $date_from ) {
+			$where[]  = 'due_date >= %s';
+			$params[] = $date_from;
+		}
+
+		$date_to = self::sanitize_date( $args['date_to'] );
+
+		if ( $date_to ) {
+			$where[]  = 'due_date <= %s';
+			$params[] = $date_to;
+		}
+
+		$placeholders = implode( ',', array_fill( 0, count( $project_ids ), '%d' ) );
+		$where[]      = "project_id IN ({$placeholders})"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$params       = array_merge( $params, $project_ids );
+
+		$where_sql = implode( ' AND ', $where );
+
+		$status_sql  = "SELECT project_id, status, COUNT(*) as cnt FROM {$table} WHERE {$where_sql} GROUP BY project_id, status"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$status_rows = $wpdb->get_results( $wpdb->prepare( $status_sql, $params ), ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
+		$by_project_status = array();
+
+		foreach ( $status_rows as $row ) {
+			$by_project_status[ (int) $row['project_id'] ][ $row['status'] ] = (int) $row['cnt'];
+		}
+
+		$overdue_where   = $where;
+		$overdue_where[] = "due_date IS NOT NULL AND due_date < %s AND status NOT IN ('completed','cancelled')"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$overdue_params  = array_merge( $params, array( current_time( 'Y-m-d' ) ) );
+		$overdue_sql     = "SELECT project_id, COUNT(*) as cnt FROM {$table} WHERE " . implode( ' AND ', $overdue_where ) . ' GROUP BY project_id'; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$overdue_rows    = $wpdb->get_results( $wpdb->prepare( $overdue_sql, $overdue_params ), ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
+		$overdue_by_project = array();
+
+		foreach ( $overdue_rows as $row ) {
+			$overdue_by_project[ (int) $row['project_id'] ] = (int) $row['cnt'];
+		}
+
+		$result = array();
+
+		foreach ( $project_ids as $project_id ) {
+			$by_status = $by_project_status[ $project_id ] ?? array();
+
+			$result[ $project_id ] = array(
+				'total'       => array_sum( $by_status ),
+				'completed'   => $by_status['completed'] ?? 0,
+				'in_progress' => $by_status['in_progress'] ?? 0,
+				'overdue'     => $overdue_by_project[ $project_id ] ?? 0,
+				'by_status'   => $by_status,
+			);
+		}
+
+		return $result;
+	}
+
+	/**
 	 * Get a lightweight id => title map of all non-archived milestones
 	 * (across every project), for the Calendar's "link to a milestone"
 	 * event picker.

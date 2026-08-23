@@ -399,6 +399,60 @@ class PTP_Expenses_Repository {
 	}
 
 	/**
+	 * SUM(amount) grouped by (project_id, currency), for many projects in
+	 * one query — used by the Reports project listing so it doesn't call
+	 * get_totals_by_currency() once per project.
+	 *
+	 * @param int[] $project_ids Project IDs to total.
+	 * @param array $args        date_from/date_to filters (category/search are not supported here — the Reports project listing never filters by them).
+	 * @return array<int, array<string,float>> project_id => [currency => total]; a project with no expenses is omitted (treat as empty array).
+	 */
+	public static function get_totals_by_currency_by_projects( array $project_ids, array $args = array() ) {
+		global $wpdb;
+
+		$project_ids = array_values( array_unique( array_map( 'absint', $project_ids ) ) );
+
+		if ( empty( $project_ids ) ) {
+			return array();
+		}
+
+		$table = self::get_table();
+
+		$where  = array( '1=1' );
+		$params = array();
+
+		$date_from = self::sanitize_date( $args['date_from'] ?? '' );
+
+		if ( $date_from ) {
+			$where[]  = 'expense_date >= %s';
+			$params[] = $date_from;
+		}
+
+		$date_to = self::sanitize_date( $args['date_to'] ?? '' );
+
+		if ( $date_to ) {
+			$where[]  = 'expense_date <= %s';
+			$params[] = $date_to;
+		}
+
+		$placeholders = implode( ',', array_fill( 0, count( $project_ids ), '%d' ) );
+		$where[]      = "project_id IN ({$placeholders})"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$params       = array_merge( $params, $project_ids );
+
+		$where_sql = implode( ' AND ', $where );
+		$sql       = "SELECT project_id, currency, SUM(amount) as total FROM {$table} WHERE {$where_sql} GROUP BY project_id, currency"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$rows      = $wpdb->get_results( $wpdb->prepare( $sql, $params ), ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
+		$totals = array();
+
+		foreach ( $rows as $row ) {
+			$totals[ (int) $row['project_id'] ][ $row['currency'] ] = (float) $row['total'];
+		}
+
+		return $totals;
+	}
+
+	/**
 	 * Shared WHERE-clause builder for get_list() and get_totals_by_currency(),
 	 * so the two never drift on what "matching" an expense means.
 	 *

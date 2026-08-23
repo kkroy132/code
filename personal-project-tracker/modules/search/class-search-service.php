@@ -257,6 +257,20 @@ class PTP_Search_Service {
 
 		$items = array_slice( $candidates, $offset, $per_page );
 
+		// Sources with no direct project_id column (subtask/reminder/activity/
+		// prompt_template) stash their raw row instead of resolving
+		// indirect_project_id() eagerly — for subtask rows that's a real
+		// query (PTP_Tasks_Repository::get()) per row, so it only runs for
+		// the page of results actually being returned, not every candidate
+		// fetched across every source (up to $per_source_limit each).
+		foreach ( $items as &$item ) {
+			if ( array_key_exists( '_row', $item ) ) {
+				$item['project_id'] = self::indirect_project_id( $item['_source_key'], $item['_row'] );
+				unset( $item['_row'], $item['_source_key'] );
+			}
+		}
+		unset( $item );
+
 		return array(
 			'items'       => $items,
 			'total'       => $total_matched,
@@ -443,12 +457,12 @@ class PTP_Search_Service {
 		$status   = $source['status_column'] ? ( $row->{$source['status_column']} ?? '' ) : '';
 		$priority = $source['priority_column'] ? ( $row->{$source['priority_column']} ?? '' ) : '';
 
-		return array(
+		$normalized = array(
 			'source'         => $source_key,
 			'type'           => $source['type'],
 			'id'             => (int) $row->id,
 			'title'          => self::title_for( $source_key, $row ),
-			'project_id'     => $source['project_id_column'] && isset( $row->{$source['project_id_column']} ) ? (int) $row->{$source['project_id_column']} : self::indirect_project_id( $source_key, $row ),
+			'project_id'     => $source['project_id_column'] && isset( $row->{$source['project_id_column']} ) ? (int) $row->{$source['project_id_column']} : null,
 			'status'         => $status,
 			'status_label'   => $status ? ( self::status_labels( $source_key )[ $status ] ?? $status ) : '',
 			'priority'       => $priority,
@@ -456,6 +470,15 @@ class PTP_Search_Service {
 			'date'           => (string) $row->{$source['date_column']},
 			'url'            => self::build_url( $source_key, $row ),
 		);
+
+		// Deferred to search(), and only for the page of results actually
+		// returned — see the comment at its call site.
+		if ( ! $source['project_id_column'] ) {
+			$normalized['_source_key'] = $source_key;
+			$normalized['_row']        = $row;
+		}
+
+		return $normalized;
 	}
 
 	/**

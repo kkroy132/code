@@ -119,6 +119,17 @@ class PTP_Database {
 	 *   Center snooze, independent of reminders.snoozed_until which snoozes
 	 *   the *reminder*, not an already-delivered notification), and
 	 *   notifications.updated_at.
+	 * - v8: performance indexes only, no new columns — every one of these
+	 *   backs a WHERE clause that repository code already runs without an
+	 *   index behind it: tasks.archived_at and milestones.archived_at
+	 *   (filtered on almost every list/report/dashboard query via the
+	 *   default "active" view); notes/project_links/project_files.task_id
+	 *   and .milestone_id, and project_files.note_id (each module's
+	 *   detail-page "related records" section filters by one of these);
+	 *   a (user_id, status) composite on time_entries (the "one active
+	 *   timer per user" lookup); a (object_type, object_id) composite on
+	 *   activity_logs (every detail page's Activity section); and
+	 *   reminders.related_type (the Reminders list's Related Type filter).
 	 *
 	 * @param string $charset_collate Charset/collation clause.
 	 * @return string[] List of CREATE TABLE statements.
@@ -175,7 +186,8 @@ class PTP_Database {
 			KEY project_id (project_id),
 			KEY milestone_id (milestone_id),
 			KEY status (status),
-			KEY due_date (due_date)
+			KEY due_date (due_date),
+			KEY archived_at (archived_at)
 		) {$charset_collate};";
 
 		$sql[] = "CREATE TABLE {$prefix}subtasks (
@@ -210,7 +222,8 @@ class PTP_Database {
 			PRIMARY KEY  (id),
 			KEY project_id (project_id),
 			KEY status (status),
-			KEY due_date (due_date)
+			KEY due_date (due_date),
+			KEY archived_at (archived_at)
 		) {$charset_collate};";
 
 		$sql[] = "CREATE TABLE {$prefix}calendar_events (
@@ -253,7 +266,8 @@ class PTP_Database {
 			KEY project_id (project_id),
 			KEY task_id (task_id),
 			KEY user_id (user_id),
-			KEY entry_date (entry_date)
+			KEY entry_date (entry_date),
+			KEY user_status (user_id, status)
 		) {$charset_collate};";
 
 		$sql[] = "CREATE TABLE {$prefix}notes (
@@ -270,6 +284,8 @@ class PTP_Database {
 			updated_at DATETIME NOT NULL,
 			PRIMARY KEY  (id),
 			KEY project_id (project_id),
+			KEY task_id (task_id),
+			KEY milestone_id (milestone_id),
 			KEY pinned (pinned),
 			KEY archived (archived)
 		) {$charset_collate};";
@@ -286,7 +302,9 @@ class PTP_Database {
 			created_at DATETIME NOT NULL,
 			updated_at DATETIME NOT NULL,
 			PRIMARY KEY  (id),
-			KEY project_id (project_id)
+			KEY project_id (project_id),
+			KEY task_id (task_id),
+			KEY milestone_id (milestone_id)
 		) {$charset_collate};";
 
 		$sql[] = "CREATE TABLE {$prefix}project_files (
@@ -302,6 +320,9 @@ class PTP_Database {
 			created_at DATETIME NOT NULL,
 			PRIMARY KEY  (id),
 			KEY project_id (project_id),
+			KEY task_id (task_id),
+			KEY milestone_id (milestone_id),
+			KEY note_id (note_id),
 			KEY attachment_id (attachment_id)
 		) {$charset_collate};";
 
@@ -369,7 +390,8 @@ class PTP_Database {
 			updated_at DATETIME NOT NULL,
 			PRIMARY KEY  (id),
 			KEY remind_at (remind_at),
-			KEY status (status)
+			KEY status (status),
+			KEY related_type (related_type)
 		) {$charset_collate};";
 
 		$sql[] = "CREATE TABLE {$prefix}prompt_documents (
@@ -412,7 +434,8 @@ class PTP_Database {
 			PRIMARY KEY  (id),
 			KEY object_type (object_type),
 			KEY created_at (created_at),
-			KEY user_id (user_id)
+			KEY user_id (user_id),
+			KEY object_type_id (object_type, object_id)
 		) {$charset_collate};";
 
 		$sql[] = "CREATE TABLE {$prefix}settings (

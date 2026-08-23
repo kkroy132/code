@@ -355,6 +355,33 @@ class PTP_Calendar_Repository {
 	}
 
 	/**
+	 * Get a lightweight id => title map of every custom event, for the
+	 * Reminder form's "link to an event" picker — the same small
+	 * SELECT id, title ... shape every other module's get_options_for_select()
+	 * already uses for its own dropdown, instead of the full SELECT * every
+	 * row that get_events_in_range( '1970-01-01', '2999-12-31' ) was being
+	 * (ab)used for here, which read every column of every custom event ever
+	 * created just to discard all but id/title.
+	 *
+	 * @return array<int, string>
+	 */
+	public static function get_options_for_select() {
+		global $wpdb;
+
+		$table = self::get_table();
+
+		$rows = $wpdb->get_results( "SELECT id, title FROM {$table} WHERE event_type = 'custom' ORDER BY title ASC", ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+
+		$options = array();
+
+		foreach ( $rows as $row ) {
+			$options[ (int) $row['id'] ] = $row['title'];
+		}
+
+		return $options;
+	}
+
+	/**
 	 * Get custom events whose [start, end] span overlaps a date range.
 	 *
 	 * @param string $start      'Y-m-d' range start (inclusive).

@@ -763,16 +763,34 @@ class PTP_Time_Repository {
 	}
 
 	/**
-	 * Sum a set of rows' live durations. Used by every reporting total.
+	 * Total live seconds for a set of matching rows: SUM(duration) — the
+	 * already-accumulated portion of every row, running or not — plus each
+	 * currently-running row's live elapsed segment (NOW() - resumed_at).
+	 * The running-row fetch is safe unbounded-looking SQL in practice: this
+	 * plugin never allows more than one running timer per user (see the
+	 * time_entries.resumed_at schema note), so it can never return more
+	 * than a handful of rows — the LIMIT is a defensive cap, not a real
+	 * constraint. This avoids loading every historical time entry (which,
+	 * unlike a running-timer count, grows unbounded over a project's or
+	 * task's lifetime) into PHP just to sum a column SQL can sum directly.
 	 *
-	 * @param object[] $rows Rows with at least duration/status/resumed_at.
+	 * @param string $where_sql   Already-built WHERE clause (placeholders, not values).
+	 * @param array  $params      Values for $where_sql's placeholders.
 	 * @return int Total seconds.
 	 */
-	private static function sum_rows( $rows ) {
-		$total = 0;
+	private static function sum_matching( $where_sql, array $params ) {
+		global $wpdb;
 
-		foreach ( $rows as $row ) {
-			$total += self::get_live_duration( $row );
+		$table = self::get_table();
+
+		$total_sql = "SELECT COALESCE(SUM(duration),0) FROM {$table} WHERE {$where_sql}"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$total     = (int) $wpdb->get_var( $wpdb->prepare( $total_sql, $params ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
+		$running_sql = "SELECT resumed_at FROM {$table} WHERE {$where_sql} AND status = 'running' AND resumed_at IS NOT NULL LIMIT 200"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$running     = $wpdb->get_results( $wpdb->prepare( $running_sql, $params ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
+		foreach ( $running as $row ) {
+			$total += max( 0, strtotime( ptp_now() ) - strtotime( $row->resumed_at ) );
 		}
 
 		return $total;
@@ -872,17 +890,7 @@ class PTP_Time_Repository {
 	 * @return int Total seconds.
 	 */
 	public static function get_project_total( $project_id ) {
-		global $wpdb;
-
-		$table = self::get_table();
-		$rows  = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT duration, status, resumed_at FROM {$table} WHERE project_id = %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				(int) $project_id
-			)
-		);
-
-		return self::sum_rows( $rows );
+		return self::sum_matching( 'project_id = %d', array( (int) $project_id ) );
 	}
 
 	/**
@@ -893,17 +901,7 @@ class PTP_Time_Repository {
 	 * @return int Total seconds.
 	 */
 	public static function get_task_total( $task_id ) {
-		global $wpdb;
-
-		$table = self::get_table();
-		$rows  = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT duration, status, resumed_at FROM {$table} WHERE task_id = %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				(int) $task_id
-			)
-		);
-
-		return self::sum_rows( $rows );
+		return self::sum_matching( 'task_id = %d', array( (int) $task_id ) );
 	}
 
 	/**
@@ -992,6 +990,60 @@ class PTP_Time_Repository {
 			'by_project'    => $by_project,
 			'by_task'       => $by_task,
 		);
+	}
+
+	/**
+	 * SUM(duration) grouped by project_id, for many projects in one query —
+	 * used by the Reports project listing so it doesn't call
+	 * get_report_totals() once per project just to read total_seconds.
+	 *
+	 * @param int[] $project_ids Project IDs to total.
+	 * @param array $args        date_from/date_to filters (same as get_report_totals()).
+	 * @return array<int,int> project_id => total seconds; a project with no entries is omitted (treat as 0).
+	 */
+	public static function get_totals_by_projects( array $project_ids, array $args = array() ) {
+		global $wpdb;
+
+		$project_ids = array_values( array_unique( array_map( 'absint', $project_ids ) ) );
+
+		if ( empty( $project_ids ) ) {
+			return array();
+		}
+
+		$table = self::get_table();
+
+		$where  = array( '1=1' );
+		$params = array();
+
+		$date_from = self::sanitize_date( $args['date_from'] ?? '' );
+
+		if ( $date_from ) {
+			$where[]  = 'entry_date >= %s';
+			$params[] = $date_from;
+		}
+
+		$date_to = self::sanitize_date( $args['date_to'] ?? '' );
+
+		if ( $date_to ) {
+			$where[]  = 'entry_date <= %s';
+			$params[] = $date_to;
+		}
+
+		$placeholders = implode( ',', array_fill( 0, count( $project_ids ), '%d' ) );
+		$where[]      = "project_id IN ({$placeholders})"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$params       = array_merge( $params, $project_ids );
+
+		$where_sql = implode( ' AND ', $where );
+		$sql       = "SELECT project_id, SUM(duration) as total FROM {$table} WHERE {$where_sql} GROUP BY project_id"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$rows      = $wpdb->get_results( $wpdb->prepare( $sql, $params ), ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
+		$totals = array();
+
+		foreach ( $rows as $row ) {
+			$totals[ (int) $row['project_id'] ] = (int) $row['total'];
+		}
+
+		return $totals;
 	}
 
 	/**

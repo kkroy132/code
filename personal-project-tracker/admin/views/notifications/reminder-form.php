@@ -24,9 +24,9 @@ foreach ( PTP_Calendar_Repository::get_events_with_reminders() as $ptp_event_row
 	$ptp_events[ (int) $ptp_event_row->id ] = $ptp_event_row->title;
 }
 // Also offer every event without a reminder configured, so a manual reminder can still target it.
-foreach ( PTP_Calendar_Repository::get_events_in_range( '1970-01-01', '2999-12-31' ) as $ptp_event_row ) {
-	if ( ! isset( $ptp_events[ (int) $ptp_event_row->id ] ) ) {
-		$ptp_events[ (int) $ptp_event_row->id ] = $ptp_event_row->title;
+foreach ( PTP_Calendar_Repository::get_options_for_select() as $ptp_event_id => $ptp_event_title ) {
+	if ( ! isset( $ptp_events[ $ptp_event_id ] ) ) {
+		$ptp_events[ $ptp_event_id ] = $ptp_event_title;
 	}
 }
 

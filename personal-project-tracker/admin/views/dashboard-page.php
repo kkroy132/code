@@ -218,11 +218,16 @@ $tables = PTP_Database::get_table_names();
 			</tr>
 		</thead>
 		<tbody>
+			<?php
+			// One query for every table's existence instead of a SHOW TABLES
+			// LIKE per table (17 round trips on every Dashboard load, for a
+			// card that rarely changes).
+			$ptp_table_placeholders = implode( ',', array_fill( 0, count( $tables ), '%s' ) );
+			$ptp_existing_tables    = $wpdb->get_col( $wpdb->prepare( "SELECT table_name FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name IN ({$ptp_table_placeholders})", $tables ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- schema introspection, not user data.
+			$ptp_existing_tables    = array_flip( $ptp_existing_tables );
+			?>
 			<?php foreach ( $tables as $table ) : ?>
-				<?php
-				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- schema introspection, not user data.
-				$exists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) === $table;
-				?>
+				<?php $exists = isset( $ptp_existing_tables[ $table ] ); ?>
 				<tr>
 					<td><code><?php echo esc_html( $table ); ?></code></td>
 					<td>

@@ -88,8 +88,35 @@ class PTP_Reports_Service {
 
 		$items = array();
 
-		foreach ( $list['items'] as $project ) {
-			$items[] = self::build_project_row( $project, $args, $include_finance );
+		if ( ! empty( $list['items'] ) ) {
+			// Batch-fetch every project's task/milestone/time (and, when
+			// allowed, finance) figures in one aggregate query per data
+			// source — regardless of how many projects are on this page —
+			// instead of build_project_row() querying each source once per
+			// project (an N+1 pattern that used to run up to 4 x per_page
+			// queries for a single report page).
+			$project_ids   = wp_list_pluck( $list['items'], 'id' );
+			$report_filter = array(
+				'date_from' => $args['date_from'],
+				'date_to'   => $args['date_to'],
+			);
+
+			$task_counts_by_project      = PTP_Tasks_Repository::get_report_counts_by_projects( $project_ids, array_merge( $report_filter, array( 'view' => 'all' ) ) );
+			$milestone_counts_by_project = PTP_Milestones_Repository::get_report_counts_by_projects( $project_ids, array_merge( $report_filter, array( 'view' => 'all' ) ) );
+			$time_totals_by_project      = PTP_Time_Repository::get_totals_by_projects( $project_ids, $report_filter );
+			$finance_by_project          = $include_finance ? PTP_Finance_Service::get_project_summaries( $list['items'], $report_filter ) : array();
+
+			foreach ( $list['items'] as $project ) {
+				$items[] = self::build_project_row(
+					$project,
+					$args,
+					$include_finance,
+					$task_counts_by_project[ $project->id ] ?? null,
+					$milestone_counts_by_project[ $project->id ] ?? null,
+					$time_totals_by_project[ $project->id ] ?? 0,
+					$finance_by_project[ $project->id ] ?? null
+				);
+			}
 		}
 
 		return array(
@@ -102,47 +129,67 @@ class PTP_Reports_Service {
 	}
 
 	/**
-	 * @param object $project         A project row.
-	 * @param array  $args            Shared filters (date_from/date_to apply to tasks/milestones/time/finance).
-	 * @param bool   $include_finance Whether to compute/include revenue/expenses/profit/currency.
+	 * Shapes one Project Report row. When the caller already has this
+	 * project's task/milestone/time/finance figures on hand — the listing
+	 * path in get_project_report() batch-fetches them for every project on
+	 * the page in one query per data source — pass them in and no further
+	 * queries run here. Passing null (the single-project_id path's case,
+	 * where there is only ever one row so batching would save nothing)
+	 * falls back to fetching this project's own figures individually, the
+	 * same as before batching existed.
+	 *
+	 * @param object     $project          A project row.
+	 * @param array      $args             Shared filters (date_from/date_to apply to tasks/milestones/time/finance).
+	 * @param bool       $include_finance  Whether to compute/include revenue/expenses/profit/currency.
+	 * @param array|null $task_counts      Precomputed PTP_Tasks_Repository::get_report_counts() result, or null to fetch it.
+	 * @param array|null $milestone_counts Precomputed PTP_Milestones_Repository::get_report_counts() result, or null to fetch it.
+	 * @param int|null   $tracked_seconds  Precomputed total tracked seconds, or null to fetch it.
+	 * @param array|null $finance          Precomputed PTP_Finance_Service summary (currency/revenue/expenses/profit), or null to fetch it (only when $include_finance).
 	 * @return array
 	 */
-	private static function build_project_row( $project, array $args, $include_finance = false ) {
-		$task_counts = PTP_Tasks_Repository::get_report_counts(
-			array(
-				'project_id' => $project->id,
-				'date_from'  => $args['date_from'],
-				'date_to'    => $args['date_to'],
-				'view'       => 'all',
-			)
-		);
+	private static function build_project_row( $project, array $args, $include_finance = false, $task_counts = null, $milestone_counts = null, $tracked_seconds = null, $finance = null ) {
+		if ( null === $task_counts ) {
+			$task_counts = PTP_Tasks_Repository::get_report_counts(
+				array(
+					'project_id' => $project->id,
+					'date_from'  => $args['date_from'],
+					'date_to'    => $args['date_to'],
+					'view'       => 'all',
+				)
+			);
+		}
 
-		$milestone_counts = PTP_Milestones_Repository::get_report_counts(
-			array(
-				'project_id' => $project->id,
-				'date_from'  => $args['date_from'],
-				'date_to'    => $args['date_to'],
-				'view'       => 'all',
-			)
-		);
+		if ( null === $milestone_counts ) {
+			$milestone_counts = PTP_Milestones_Repository::get_report_counts(
+				array(
+					'project_id' => $project->id,
+					'date_from'  => $args['date_from'],
+					'date_to'    => $args['date_to'],
+					'view'       => 'all',
+				)
+			);
+		}
 
-		$time_totals = PTP_Time_Repository::get_report_totals(
-			array(
-				'project_id' => $project->id,
-				'date_from'  => $args['date_from'],
-				'date_to'    => $args['date_to'],
-			)
-		);
+		if ( null === $tracked_seconds ) {
+			$time_totals     = PTP_Time_Repository::get_report_totals(
+				array(
+					'project_id' => $project->id,
+					'date_from'  => $args['date_from'],
+					'date_to'    => $args['date_to'],
+				)
+			);
+			$tracked_seconds = $time_totals['total_seconds'];
+		}
 
-		$finance = $include_finance
-			? PTP_Finance_Service::get_project_summary(
+		if ( $include_finance && null === $finance ) {
+			$finance = PTP_Finance_Service::get_project_summary(
 				$project->id,
 				array(
 					'date_from' => $args['date_from'],
 					'date_to'   => $args['date_to'],
 				)
-			)
-			: null;
+			);
+		}
 
 		return array(
 			'project_id'           => (int) $project->id,
@@ -154,7 +201,7 @@ class PTP_Reports_Service {
 			'tasks_overdue'        => $task_counts['overdue'],
 			'milestones_total'     => $milestone_counts['total'],
 			'milestones_completed' => $milestone_counts['completed'],
-			'tracked_seconds'      => $time_totals['total_seconds'],
+			'tracked_seconds'      => $tracked_seconds,
 			'currency'             => $include_finance ? ( $finance['currency'] ?? null ) : null,
 			'revenue'              => $include_finance ? ( $finance['revenue'] ?? 0.0 ) : null,
 			'expenses'             => $include_finance ? ( $finance['expenses'] ?? 0.0 ) : null,

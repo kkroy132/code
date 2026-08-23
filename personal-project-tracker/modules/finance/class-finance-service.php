@@ -173,6 +173,50 @@ class PTP_Finance_Service {
 	}
 
 	/**
+	 * Reduced version of get_project_summary() — currency/revenue/expenses/
+	 * profit only, in each project's own currency, for many projects in a
+	 * single pair of aggregate queries. Used by the Reports project listing
+	 * (PTP_Reports_Service::get_project_report()), which previously called
+	 * get_project_summary() once per project (each of those a project
+	 * re-fetch plus two more aggregate queries). Budget/profit margin/alert
+	 * flags/other-currency breakdowns are intentionally omitted — the
+	 * project listing never displays them (get_project_summary() remains
+	 * the one place that computes them, for the single-project case).
+	 *
+	 * @param object[] $projects Project rows (already fetched by the caller — never re-fetched here).
+	 * @param array    $args     Optional date_from/date_to filters.
+	 * @return array<int, array{currency: string, revenue: float, expenses: float, profit: float}> Keyed by project_id.
+	 */
+	public static function get_project_summaries( array $projects, array $args = array() ) {
+		$project_ids = wp_list_pluck( $projects, 'id' );
+
+		if ( empty( $project_ids ) ) {
+			return array();
+		}
+
+		$revenue_by_project  = PTP_Revenue_Repository::get_totals_by_currency_by_projects( $project_ids, $args );
+		$expenses_by_project = PTP_Expenses_Repository::get_totals_by_currency_by_projects( $project_ids, $args );
+
+		$summaries = array();
+
+		foreach ( $projects as $project ) {
+			$project_id       = (int) $project->id;
+			$primary_currency = $project->currency;
+			$revenue          = $revenue_by_project[ $project_id ][ $primary_currency ] ?? 0.0;
+			$expenses         = $expenses_by_project[ $project_id ][ $primary_currency ] ?? 0.0;
+
+			$summaries[ $project_id ] = array(
+				'currency' => $primary_currency,
+				'revenue'  => round( $revenue, 2 ),
+				'expenses' => round( $expenses, 2 ),
+				'profit'   => self::calculate_profit( $revenue, $expenses ),
+			);
+		}
+
+		return $summaries;
+	}
+
+	/**
 	 * Cross-project totals for the Finance Reports page, grouped by
 	 * currency (never combined). Budget/budget usage are intentionally
 	 * omitted here — a budget belongs to a single project, so it is only
