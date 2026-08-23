@@ -31,6 +31,7 @@ endif;
 $ptp_statuses   = PTP_Tasks_Repository::get_statuses();
 $ptp_priorities = PTP_Tasks_Repository::get_priorities();
 $ptp_project    = PTP_Projects_Repository::get( $task->project_id );
+$ptp_milestone  = $task->milestone_id ? PTP_Milestones_Repository::get( $task->milestone_id ) : null;
 $ptp_list_url   = add_query_arg( array( 'page' => 'ptp-tasks' ), admin_url( 'admin.php' ) );
 $ptp_edit_url   = add_query_arg( array( 'page' => 'ptp-tasks', 'action' => 'edit', 'id' => $task->id ), admin_url( 'admin.php' ) );
 $ptp_is_overdue = $task->due_date && $task->due_date < current_time( 'Y-m-d' ) && ! in_array( $task->status, array( 'completed', 'cancelled' ), true );
@@ -38,6 +39,17 @@ $ptp_is_done    = 'completed' === $task->status;
 $ptp_subtasks   = PTP_Subtasks_Repository::get_for_task( $task->id );
 $ptp_completion = PTP_Subtasks_Repository::get_completion( $task->id );
 $ptp_activity   = PTP_Activity_Log::get_for_object( 'task', $task->id, 15 );
+
+$ptp_breadcrumbs = array(
+	array( 'label' => __( 'Project Tracker', 'personal-project-tracker' ), 'url' => add_query_arg( array( 'page' => 'ptp-dashboard' ), admin_url( 'admin.php' ) ) ),
+	array( 'label' => __( 'Projects', 'personal-project-tracker' ), 'url' => add_query_arg( array( 'page' => 'ptp-projects' ), admin_url( 'admin.php' ) ) ),
+);
+if ( $ptp_project ) {
+	$ptp_breadcrumbs[] = array( 'label' => $ptp_project->title, 'url' => add_query_arg( array( 'page' => 'ptp-projects', 'action' => 'view', 'id' => $ptp_project->id ), admin_url( 'admin.php' ) ) );
+}
+$ptp_breadcrumbs[] = array( 'label' => __( 'Tasks', 'personal-project-tracker' ), 'url' => $ptp_list_url );
+$ptp_breadcrumbs[] = array( 'label' => $task->title );
+require PTP_PLUGIN_DIR . 'admin/views/partials/breadcrumbs.php';
 ?>
 <div class="ptp-page-header">
 	<h1><?php echo esc_html( $task->title ); ?></h1>
@@ -96,7 +108,13 @@ $ptp_activity   = PTP_Activity_Log::get_for_object( 'task', $task->id, 15 );
 					<tr>
 						<th scope="row"><?php esc_html_e( 'Milestone', 'personal-project-tracker' ); ?></th>
 						<td>
-							<?php esc_html_e( 'Not assigned (Milestones module coming in a later phase)', 'personal-project-tracker' ); ?>
+							<?php if ( $ptp_milestone ) : ?>
+								<a href="<?php echo esc_url( add_query_arg( array( 'page' => 'ptp-milestones', 'action' => 'view', 'id' => $ptp_milestone->id ), admin_url( 'admin.php' ) ) ); ?>">
+									<?php echo esc_html( $ptp_milestone->title ); ?>
+								</a>
+							<?php else : ?>
+								&#8212;
+							<?php endif; ?>
 						</td>
 					</tr>
 					<tr>

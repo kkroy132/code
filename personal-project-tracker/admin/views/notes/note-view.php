@@ -30,6 +30,13 @@ $ptp_milestone = $note->milestone_id ? PTP_Milestones_Repository::get( $note->mi
 $ptp_list_url  = add_query_arg( array( 'page' => 'ptp-notes' ), admin_url( 'admin.php' ) );
 $ptp_edit_url  = add_query_arg( array( 'page' => 'ptp-notes', 'action' => 'edit', 'id' => $note->id ), admin_url( 'admin.php' ) );
 $ptp_activity  = PTP_Activity_Log::get_for_object( 'note', $note->id, 15 );
+
+$ptp_breadcrumbs = array(
+	array( 'label' => __( 'Project Tracker', 'personal-project-tracker' ), 'url' => add_query_arg( array( 'page' => 'ptp-dashboard' ), admin_url( 'admin.php' ) ) ),
+	array( 'label' => __( 'Notes', 'personal-project-tracker' ), 'url' => $ptp_list_url ),
+	array( 'label' => $note->title ? $note->title : __( '(untitled)', 'personal-project-tracker' ) ),
+);
+require PTP_PLUGIN_DIR . 'admin/views/partials/breadcrumbs.php';
 ?>
 <div class="ptp-page-header">
 	<h1>

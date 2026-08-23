@@ -28,6 +28,13 @@ $ptp_project  = $expense->project_id ? PTP_Projects_Repository::get( $expense->p
 $ptp_list_url = add_query_arg( array( 'page' => 'ptp-finance' ), admin_url( 'admin.php' ) );
 $ptp_edit_url = add_query_arg( array( 'page' => 'ptp-finance', 'action' => 'edit_expense', 'id' => $expense->id ), admin_url( 'admin.php' ) );
 $ptp_activity = PTP_Activity_Log::get_for_object( 'expense', $expense->id, 15 );
+
+$ptp_breadcrumbs = array(
+	array( 'label' => __( 'Project Tracker', 'personal-project-tracker' ), 'url' => add_query_arg( array( 'page' => 'ptp-dashboard' ), admin_url( 'admin.php' ) ) ),
+	array( 'label' => __( 'Finance', 'personal-project-tracker' ), 'url' => $ptp_list_url ),
+	array( 'label' => ptp_format_currency( $expense->amount, $expense->currency ) ),
+);
+require PTP_PLUGIN_DIR . 'admin/views/partials/breadcrumbs.php';
 ?>
 <div class="ptp-page-header">
 	<h1><?php echo esc_html( ptp_format_currency( $expense->amount, $expense->currency ) ); ?></h1>

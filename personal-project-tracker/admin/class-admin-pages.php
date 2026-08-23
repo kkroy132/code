@@ -581,7 +581,7 @@ class PTP_Admin_Pages {
 	}
 
 	public function render_search() {
-		$this->render_placeholder( __( 'Search', 'personal-project-tracker' ), 'ptp_manage_data' );
+		$this->render_view( 'search/search-page', 'ptp_manage_data', array() );
 	}
 
 	public function render_settings() {

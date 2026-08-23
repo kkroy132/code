@@ -34,6 +34,13 @@ $ptp_edit_url   = add_query_arg( array( 'page' => 'ptp-projects', 'action' => 'e
 $ptp_list_url   = add_query_arg( array( 'page' => 'ptp-projects' ), admin_url( 'admin.php' ) );
 $ptp_is_overdue = $project->deadline && $project->deadline < current_time( 'Y-m-d' ) && ! in_array( $project->status, array( 'completed', 'cancelled', 'archived' ), true );
 $ptp_activity   = PTP_Activity_Log::get_for_object( 'project', $project->id, 10 );
+
+$ptp_breadcrumbs = array(
+	array( 'label' => __( 'Project Tracker', 'personal-project-tracker' ), 'url' => add_query_arg( array( 'page' => 'ptp-dashboard' ), admin_url( 'admin.php' ) ) ),
+	array( 'label' => __( 'Projects', 'personal-project-tracker' ), 'url' => $ptp_list_url ),
+	array( 'label' => $project->title ),
+);
+require PTP_PLUGIN_DIR . 'admin/views/partials/breadcrumbs.php';
 ?>
 <div class="ptp-page-header">
 	<h1>

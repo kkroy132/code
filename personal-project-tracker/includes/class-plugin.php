@@ -82,6 +82,7 @@ class PTP_Plugin {
 			'PTP_Notifications_Module',
 			'PTP_Settings_Module',
 			'PTP_Backup_Module',
+			'PTP_Search_Module',
 		);
 
 		foreach ( $modules as $module_class ) {

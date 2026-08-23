@@ -42,6 +42,13 @@ $ptp_reminder_labels = array(
 	60   => __( '1 hour before', 'personal-project-tracker' ),
 	1440 => __( '1 day before', 'personal-project-tracker' ),
 );
+
+$ptp_breadcrumbs = array(
+	array( 'label' => __( 'Project Tracker', 'personal-project-tracker' ), 'url' => add_query_arg( array( 'page' => 'ptp-dashboard' ), admin_url( 'admin.php' ) ) ),
+	array( 'label' => __( 'Calendar', 'personal-project-tracker' ), 'url' => $ptp_list_url ),
+	array( 'label' => $event->title ),
+);
+require PTP_PLUGIN_DIR . 'admin/views/partials/breadcrumbs.php';
 ?>
 <div class="ptp-page-header">
 	<h1>

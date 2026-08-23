@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Core plugin constants.
  */
-define( 'PTP_VERSION', '1.10.0' );
+define( 'PTP_VERSION', '1.11.0' );
 define( 'PTP_DB_VERSION', 7 );
 define( 'PTP_TEXT_DOMAIN', 'personal-project-tracker' );
 define( 'PTP_PLUGIN_FILE', __FILE__ );
@@ -164,6 +164,10 @@ require_once PTP_PLUGIN_DIR . 'modules/backup/class-export-service.php';
 require_once PTP_PLUGIN_DIR . 'modules/backup/class-import-service.php';
 require_once PTP_PLUGIN_DIR . 'modules/backup/class-backup-controller.php';
 require_once PTP_PLUGIN_DIR . 'modules/backup/class-backup-module.php';
+
+require_once PTP_PLUGIN_DIR . 'modules/search/class-search-service.php';
+require_once PTP_PLUGIN_DIR . 'modules/search/class-search-rest.php';
+require_once PTP_PLUGIN_DIR . 'modules/search/class-search-module.php';
 
 register_activation_hook( __FILE__, array( 'PTP_Activator', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'PTP_Deactivator', 'deactivate' ) );

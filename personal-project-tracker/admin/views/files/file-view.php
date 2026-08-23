@@ -31,6 +31,13 @@ $ptp_note      = $file->note_id ? PTP_Notes_Repository::get( $file->note_id ) : 
 $ptp_list_url  = add_query_arg( array( 'page' => 'ptp-files' ), admin_url( 'admin.php' ) );
 $ptp_file_url  = wp_get_attachment_url( $file->attachment_id );
 $ptp_is_image  = $file->file_type && 0 === strpos( (string) $file->file_type, 'image/' );
+
+$ptp_breadcrumbs = array(
+	array( 'label' => __( 'Project Tracker', 'personal-project-tracker' ), 'url' => add_query_arg( array( 'page' => 'ptp-dashboard' ), admin_url( 'admin.php' ) ) ),
+	array( 'label' => __( 'Files', 'personal-project-tracker' ), 'url' => $ptp_list_url ),
+	array( 'label' => $file->file_name ? $file->file_name : __( '(file)', 'personal-project-tracker' ) ),
+);
+require PTP_PLUGIN_DIR . 'admin/views/partials/breadcrumbs.php';
 ?>
 <div class="ptp-page-header">
 	<h1><?php echo esc_html( $file->file_name ? $file->file_name : __( '(file)', 'personal-project-tracker' ) ); ?></h1>

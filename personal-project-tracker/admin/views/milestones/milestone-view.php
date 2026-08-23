@@ -41,6 +41,17 @@ $ptp_related_ids = wp_list_pluck( $ptp_related, 'id' );
 $ptp_task_options = PTP_Tasks_Repository::get_options_for_project( $milestone->project_id );
 $ptp_task_statuses = PTP_Tasks_Repository::get_statuses();
 $ptp_activity    = PTP_Activity_Log::get_for_object( 'milestone', $milestone->id, 15 );
+
+$ptp_breadcrumbs = array(
+	array( 'label' => __( 'Project Tracker', 'personal-project-tracker' ), 'url' => add_query_arg( array( 'page' => 'ptp-dashboard' ), admin_url( 'admin.php' ) ) ),
+	array( 'label' => __( 'Projects', 'personal-project-tracker' ), 'url' => add_query_arg( array( 'page' => 'ptp-projects' ), admin_url( 'admin.php' ) ) ),
+);
+if ( $ptp_project ) {
+	$ptp_breadcrumbs[] = array( 'label' => $ptp_project->title, 'url' => add_query_arg( array( 'page' => 'ptp-projects', 'action' => 'view', 'id' => $ptp_project->id ), admin_url( 'admin.php' ) ) );
+}
+$ptp_breadcrumbs[] = array( 'label' => __( 'Milestones', 'personal-project-tracker' ), 'url' => $ptp_list_url );
+$ptp_breadcrumbs[] = array( 'label' => $milestone->title );
+require PTP_PLUGIN_DIR . 'admin/views/partials/breadcrumbs.php';
 ?>
 <div class="ptp-page-header">
 	<h1><?php echo esc_html( $milestone->title ); ?></h1>

@@ -30,6 +30,13 @@ $ptp_edit_url      = add_query_arg( array( 'page' => 'ptp-ai-prompts', 'action' 
 $ptp_context_types = PTP_Prompt_Documents_Repository::get_context_types();
 $ptp_role_label    = PTP_Prompt_Generator::ROLES[ $prompt->role ] ?? $prompt->role;
 $ptp_format_label  = PTP_Prompt_Generator::OUTPUT_FORMATS[ $prompt->output_format ] ?? $prompt->output_format;
+
+$ptp_breadcrumbs = array(
+	array( 'label' => __( 'Project Tracker', 'personal-project-tracker' ), 'url' => add_query_arg( array( 'page' => 'ptp-dashboard' ), admin_url( 'admin.php' ) ) ),
+	array( 'label' => __( 'AI Prompt Studio', 'personal-project-tracker' ), 'url' => $ptp_list_url ),
+	array( 'label' => $prompt->title ),
+);
+require PTP_PLUGIN_DIR . 'admin/views/partials/breadcrumbs.php';
 ?>
 <div class="ptp-page-header">
 	<h1>

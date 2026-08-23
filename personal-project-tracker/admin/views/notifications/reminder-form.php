@@ -45,6 +45,14 @@ $ptp_values = array(
 if ( ! empty( $flash['data'] ) ) {
 	$ptp_values = wp_parse_args( $flash['data'], $ptp_values );
 }
+
+$ptp_breadcrumbs = array(
+	array( 'label' => __( 'Project Tracker', 'personal-project-tracker' ), 'url' => add_query_arg( array( 'page' => 'ptp-dashboard' ), admin_url( 'admin.php' ) ) ),
+	array( 'label' => __( 'Notifications', 'personal-project-tracker' ), 'url' => add_query_arg( array( 'page' => 'ptp-notifications' ), admin_url( 'admin.php' ) ) ),
+	array( 'label' => __( 'Reminders', 'personal-project-tracker' ), 'url' => add_query_arg( array( 'page' => 'ptp-notifications', 'action' => 'reminders' ), admin_url( 'admin.php' ) ) ),
+	array( 'label' => ! empty( $is_edit ) ? __( 'Edit Reminder', 'personal-project-tracker' ) : __( 'New Reminder', 'personal-project-tracker' ) ),
+);
+require PTP_PLUGIN_DIR . 'admin/views/partials/breadcrumbs.php';
 ?>
 <h1><?php echo ! empty( $is_edit ) ? esc_html__( 'Edit Reminder', 'personal-project-tracker' ) : esc_html__( 'New Reminder', 'personal-project-tracker' ); ?></h1>
 
@@ -83,6 +91,13 @@ if ( ! empty( $flash['data'] ) ) {
 						<option value="<?php echo esc_attr( $ptp_rkey ); ?>" <?php selected( $ptp_values['related_type'], $ptp_rkey ); ?>><?php echo esc_html( $ptp_rlabel ); ?></option>
 					<?php endforeach; ?>
 				</select>
+				<?php if ( $reminder && $reminder->related_type && $reminder->related_id ) : ?>
+					<p class="description">
+						<a href="<?php echo esc_url( PTP_Notifications_Service::get_deep_link( $reminder->related_type, $reminder->related_id ) ); ?>">
+							<?php esc_html_e( 'View related record &raquo;', 'personal-project-tracker' ); ?>
+						</a>
+					</p>
+				<?php endif; ?>
 			</div>
 
 			<div class="ptp-form-field ptp-js-related-id-field" data-type="project" <?php echo 'project' === $ptp_values['related_type'] ? '' : 'style="display:none;"'; ?>>
