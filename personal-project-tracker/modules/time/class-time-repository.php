@@ -880,4 +880,133 @@ class PTP_Time_Repository {
 
 		return self::sum_rows( $rows );
 	}
+
+	/**
+	 * Filtered time totals for the Reports module (Time Report): total
+	 * seconds, plus SUM(duration) grouped by day / project / task. Four
+	 * small aggregate queries only — never loads individual time entries
+	 * into PHP, so this stays fast regardless of how many entries exist.
+	 * The Reports Service derives weekly/monthly rollups by summing the
+	 * (small, date-range-bounded) by_day buckets rather than re-querying.
+	 *
+	 * Note: this sums the already-accumulated `duration` column only — a
+	 * currently running timer's live, not-yet-folded-in segment is not
+	 * included until it is paused or stopped. That keeps this an O(1)
+	 * aggregate query rather than a per-row PHP computation.
+	 *
+	 * @param array $args {
+	 *     @type int    $project_id Project filter (0 = all).
+	 *     @type int    $task_id    Task filter (0 = all).
+	 *     @type string $date_from  'Y-m-d' entry_date range start (inclusive).
+	 *     @type string $date_to    'Y-m-d' entry_date range end (inclusive).
+	 * }
+	 * @return array{total_seconds: int, by_day: array<string,int>, by_project: array<int,int>, by_task: array<int,int>}
+	 */
+	public static function get_report_totals( array $args = array() ) {
+		global $wpdb;
+
+		$table = self::get_table();
+
+		$args = wp_parse_args(
+			$args,
+			array(
+				'project_id' => 0,
+				'task_id'    => 0,
+				'date_from'  => '',
+				'date_to'    => '',
+			)
+		);
+
+		list( $where, $params ) = self::build_report_where( $args );
+
+		$where_sql = implode( ' AND ', $where );
+
+		$total_sql = "SELECT COALESCE(SUM(duration),0) FROM {$table} WHERE {$where_sql}"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$total     = (int) ( $params
+			? $wpdb->get_var( $wpdb->prepare( $total_sql, $params ) ) // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			: $wpdb->get_var( $total_sql ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+
+		$daily_sql  = "SELECT entry_date, SUM(duration) as total FROM {$table} WHERE {$where_sql} GROUP BY entry_date ORDER BY entry_date ASC"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$daily_rows = $params
+			? $wpdb->get_results( $wpdb->prepare( $daily_sql, $params ), ARRAY_A ) // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			: $wpdb->get_results( $daily_sql, ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+
+		$by_day = array();
+
+		foreach ( $daily_rows as $row ) {
+			$by_day[ $row['entry_date'] ] = (int) $row['total'];
+		}
+
+		$project_where_sql = $where_sql . ' AND project_id IS NOT NULL';
+		$project_sql       = "SELECT project_id, SUM(duration) as total FROM {$table} WHERE {$project_where_sql} GROUP BY project_id"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$project_rows      = $params
+			? $wpdb->get_results( $wpdb->prepare( $project_sql, $params ), ARRAY_A ) // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			: $wpdb->get_results( $project_sql, ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+
+		$by_project = array();
+
+		foreach ( $project_rows as $row ) {
+			$by_project[ (int) $row['project_id'] ] = (int) $row['total'];
+		}
+
+		$task_where_sql = $where_sql . ' AND task_id IS NOT NULL';
+		$task_sql       = "SELECT task_id, SUM(duration) as total FROM {$table} WHERE {$task_where_sql} GROUP BY task_id"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$task_rows      = $params
+			? $wpdb->get_results( $wpdb->prepare( $task_sql, $params ), ARRAY_A ) // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			: $wpdb->get_results( $task_sql, ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+
+		$by_task = array();
+
+		foreach ( $task_rows as $row ) {
+			$by_task[ (int) $row['task_id'] ] = (int) $row['total'];
+		}
+
+		return array(
+			'total_seconds' => $total,
+			'by_day'        => $by_day,
+			'by_project'    => $by_project,
+			'by_task'       => $by_task,
+		);
+	}
+
+	/**
+	 * Shared WHERE-clause builder for get_report_totals().
+	 *
+	 * @param array $args project_id/task_id/date_from/date_to.
+	 * @return array{0: string[], 1: array} [where fragments, bound params]
+	 */
+	private static function build_report_where( array $args ) {
+		$where  = array( '1=1' );
+		$params = array();
+
+		$project_id = (int) ( $args['project_id'] ?? 0 );
+
+		if ( $project_id > 0 ) {
+			$where[]  = 'project_id = %d';
+			$params[] = $project_id;
+		}
+
+		$task_id = (int) ( $args['task_id'] ?? 0 );
+
+		if ( $task_id > 0 ) {
+			$where[]  = 'task_id = %d';
+			$params[] = $task_id;
+		}
+
+		$date_from = self::sanitize_date( $args['date_from'] ?? '' );
+
+		if ( $date_from ) {
+			$where[]  = 'entry_date >= %s';
+			$params[] = $date_from;
+		}
+
+		$date_to = self::sanitize_date( $args['date_to'] ?? '' );
+
+		if ( $date_to ) {
+			$where[]  = 'entry_date <= %s';
+			$params[] = $date_to;
+		}
+
+		return array( $where, $params );
+	}
 }

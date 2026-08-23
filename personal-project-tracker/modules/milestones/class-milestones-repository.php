@@ -744,6 +744,104 @@ class PTP_Milestones_Repository {
 	}
 
 	/**
+	 * Filtered milestone counts for the Reports module (Milestone Report).
+	 * Two GROUP-BY/COUNT queries only — never loads individual milestone
+	 * rows into PHP.
+	 *
+	 * @param array $args {
+	 *     @type int    $project_id Project filter (0 = all).
+	 *     @type string $priority   Priority filter.
+	 *     @type string $date_from  'Y-m-d' due_date range start (inclusive).
+	 *     @type string $date_to    'Y-m-d' due_date range end (inclusive).
+	 *     @type string $view       'active' (default, archived_at IS NULL), 'archived', or 'all'.
+	 * }
+	 * @return array{total: int, completed: int, in_progress: int, overdue: int, by_status: array<string,int>}
+	 */
+	public static function get_report_counts( array $args = array() ) {
+		global $wpdb;
+
+		$table = self::get_table();
+
+		$args = wp_parse_args(
+			$args,
+			array(
+				'project_id' => 0,
+				'priority'   => '',
+				'date_from'  => '',
+				'date_to'    => '',
+				'view'       => 'active',
+			)
+		);
+
+		$where  = array( '1=1' );
+		$params = array();
+
+		switch ( $args['view'] ) {
+			case 'archived':
+				$where[] = 'archived_at IS NOT NULL';
+				break;
+			case 'all':
+				break;
+			default:
+				$where[] = 'archived_at IS NULL';
+				break;
+		}
+
+		$project_id = (int) $args['project_id'];
+
+		if ( $project_id > 0 ) {
+			$where[]  = 'project_id = %d';
+			$params[] = $project_id;
+		}
+
+		if ( $args['priority'] && self::is_valid_priority( $args['priority'] ) ) {
+			$where[]  = 'priority = %s';
+			$params[] = $args['priority'];
+		}
+
+		$date_from = self::sanitize_date( $args['date_from'] );
+
+		if ( $date_from ) {
+			$where[]  = 'due_date >= %s';
+			$params[] = $date_from;
+		}
+
+		$date_to = self::sanitize_date( $args['date_to'] );
+
+		if ( $date_to ) {
+			$where[]  = 'due_date <= %s';
+			$params[] = $date_to;
+		}
+
+		$where_sql = implode( ' AND ', $where );
+
+		$status_sql  = "SELECT status, COUNT(*) as cnt FROM {$table} WHERE {$where_sql} GROUP BY status"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$status_rows = $params
+			? $wpdb->get_results( $wpdb->prepare( $status_sql, $params ), ARRAY_A ) // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+			: $wpdb->get_results( $status_sql, ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+
+		$by_status = array();
+
+		foreach ( $status_rows as $row ) {
+			$by_status[ $row['status'] ] = (int) $row['cnt'];
+		}
+
+		$overdue_where   = $where;
+		$overdue_where[] = "due_date IS NOT NULL AND due_date < %s AND status NOT IN ('completed','cancelled')"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$overdue_params  = array_merge( $params, array( current_time( 'Y-m-d' ) ) );
+		$overdue_sql     = "SELECT COUNT(*) FROM {$table} WHERE " . implode( ' AND ', $overdue_where ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$overdue         = (int) $wpdb->get_var( $wpdb->prepare( $overdue_sql, $overdue_params ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
+		return array(
+			'total'       => array_sum( $by_status ),
+			'completed'   => $by_status['completed'] ?? 0,
+			'in_progress' => $by_status['in_progress'] ?? 0,
+			'overdue'     => $overdue,
+			'by_status'   => $by_status,
+		);
+	}
+
+	/**
 	 * Get a lightweight id => title map of all non-archived milestones
 	 * (across every project), for the Calendar's "link to a milestone"
 	 * event picker.

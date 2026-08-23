@@ -453,11 +453,11 @@ class PTP_Admin_Pages {
 	}
 
 	public function render_reports() {
-		$this->render_placeholder( __( 'Reports', 'personal-project-tracker' ), 'ptp_manage_data' );
+		$this->render_view( 'reports/reports-page', 'ptp_manage_data', array() );
 	}
 
 	public function render_analytics() {
-		$this->render_placeholder( __( 'Analytics', 'personal-project-tracker' ), 'ptp_manage_data' );
+		$this->render_view( 'analytics/analytics-page', 'ptp_manage_data', array() );
 	}
 
 	public function render_ai_prompts() {

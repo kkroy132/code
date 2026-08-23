@@ -621,4 +621,20 @@ class PTP_Projects_Repository {
 			'by_status' => $by_status,
 		);
 	}
+
+	/**
+	 * Average progress across every non-archived project, for the
+	 * Analytics dashboard's "Project Progress" metric. A single AVG()
+	 * aggregate query — never loads project rows into PHP to average them.
+	 *
+	 * @return float|null Rounded to 1 decimal place, or null when there are no non-archived projects.
+	 */
+	public static function get_average_progress() {
+		global $wpdb;
+
+		$table = self::get_table();
+		$avg   = $wpdb->get_var( "SELECT AVG(progress) FROM {$table} WHERE status != 'archived'" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared
+
+		return null !== $avg ? round( (float) $avg, 1 ) : null;
+	}
 }
