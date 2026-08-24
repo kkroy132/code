@@ -4,7 +4,7 @@ Tags: project management, tasks, time tracking, finance, productivity
 Requires at least: 6.0
 Tested up to: 6.6
 Requires PHP: 8.1
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,7 +16,7 @@ Personal Project Tracker turns your WordPress admin into a private project-manag
 
 Included modules:
 
-* **Projects** — status, priority, budget, currency, progress, and a full detail page pulling together everything else below.
+* **Projects** — status, priority, budget, currency, progress, drag-and-drop manual ordering, and a full detail page pulling together everything else below.
 * **Tasks & Subtasks** — status, priority, due dates, estimated/actual time, tags, and a subtask checklist with completion tracking.
 * **Milestones** — project checkpoints with their own status/priority/progress and overdue tracking.
 * **Calendar** — month/week/day/agenda views of custom events plus task and milestone due dates, with optional reminder lead times.
@@ -50,7 +50,7 @@ On activation the plugin: creates/updates its database tables, grants its five c
 
 == Usage ==
 
-Start from **Project Tracker → Projects** and create a project. From a project's detail page you can add tasks, milestones, notes, files, links, and finance entries directly, or use the dedicated top-level menu for each module. The Dashboard summarizes overdue items, upcoming deadlines, and recent activity across all of your projects. Use **Search** to find anything by keyword across every module at once.
+Start from **Project Tracker → Projects** and create a project. From a project's detail page you can add tasks, milestones, notes, files, links, and finance entries directly, or use the dedicated top-level menu for each module — including a Complete/Reopen action right on the project's own Tasks list, no need to open a task just to check it off. Drag a project by its handle on the Projects list (only available on the plain, unfiltered, first-page view) to set your own manual order; that same order is what the Dashboard's "Recent Projects" preview shows. The Dashboard summarizes overdue items, upcoming deadlines, and recent activity across all of your projects. Use **Search** to find anything by keyword across every module at once.
 
 == Settings ==
 
@@ -124,6 +124,10 @@ The plugin is designed and tested for single-user, personal use. Its capability 
 Not in this version. Reports can be exported as CSV or JSON; PDF generation was intentionally left out to avoid adding an external library dependency.
 
 == Changelog ==
+
+= 1.1.0 =
+* Added a Complete/Reopen quick action to each task shown in a Project's Tasks widget — no need to open the task just to check it off.
+* Added drag-and-drop manual ordering for Projects (a new `sort_order` database column — automatic on upgrade, no data loss), shared between the Projects list and the Dashboard's Recent Projects preview.
 
 = 1.0.0 =
 * First production release: Projects, Tasks, Subtasks, Milestones, Calendar, Time Tracking, Notes, Files, Links, Finance (Expenses/Revenue/Profit), Reports, Analytics, AI Prompt Studio, Notifications, Reminders, Smart Alerts, Settings, Backup/Restore, Export/Import, Global Search, and Activity Log.

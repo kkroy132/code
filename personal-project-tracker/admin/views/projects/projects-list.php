@@ -12,9 +12,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 $ptp_search   = isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 $ptp_status   = isset( $_GET['status'] ) ? sanitize_key( wp_unslash( $_GET['status'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 $ptp_priority = isset( $_GET['priority'] ) ? sanitize_key( wp_unslash( $_GET['priority'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-$ptp_orderby  = isset( $_GET['orderby'] ) ? sanitize_key( wp_unslash( $_GET['orderby'] ) ) : 'updated_at'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-$ptp_order    = isset( $_GET['order'] ) && 'asc' === strtolower( sanitize_key( wp_unslash( $_GET['order'] ) ) ) ? 'ASC' : 'DESC'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+$ptp_orderby  = isset( $_GET['orderby'] ) ? sanitize_key( wp_unslash( $_GET['orderby'] ) ) : 'sort_order'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+$ptp_order    = isset( $_GET['order'] ) ? ( 'desc' === strtolower( sanitize_key( wp_unslash( $_GET['order'] ) ) ) ? 'DESC' : 'ASC' ) : ( 'sort_order' === $ptp_orderby ? 'ASC' : 'DESC' ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 $ptp_paged    = isset( $_GET['paged'] ) ? max( 1, absint( $_GET['paged'] ) ) : 1; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+// Drag-and-drop reorder only makes sense on the plain, first-page,
+// manual-order view — reordering a filtered/searched/differently-sorted
+// or paginated subset wouldn't correctly interleave with the rest.
+$ptp_can_reorder = '' === $ptp_search && '' === $ptp_status && '' === $ptp_priority
+	&& 'sort_order' === $ptp_orderby && 'ASC' === $ptp_order && 1 === $ptp_paged;
 
 $ptp_result   = PTP_Projects_Repository::get_list(
 	array(
@@ -150,10 +156,15 @@ if ( ! function_exists( 'ptp_projects_sort_link' ) ) {
 
 	<?php else : ?>
 
+		<?php if ( $ptp_can_reorder ) : ?>
+			<p class="description"><?php esc_html_e( 'Drag a row by its handle to reorder projects. This order is also used for the Dashboard\'s Recent Projects list.', 'personal-project-tracker' ); ?></p>
+		<?php endif; ?>
+
 		<div class="ptp-table-responsive">
-			<table class="widefat striped ptp-projects-table ptp-responsive-table">
+			<table class="widefat striped ptp-projects-table ptp-responsive-table<?php echo $ptp_can_reorder ? ' ptp-js-projects-sortable' : ''; ?>">
 				<thead>
 					<tr>
+						<th class="ptp-col-optional ptp-col-drag"><span class="screen-reader-text"><?php esc_html_e( 'Reorder', 'personal-project-tracker' ); ?></span></th>
 						<th><?php ptp_projects_sort_link( 'title', __( 'Title', 'personal-project-tracker' ), $ptp_orderby, $ptp_order ); ?></th>
 						<th><?php ptp_projects_sort_link( 'status', __( 'Status', 'personal-project-tracker' ), $ptp_orderby, $ptp_order ); ?></th>
 						<th><?php ptp_projects_sort_link( 'priority', __( 'Priority', 'personal-project-tracker' ), $ptp_orderby, $ptp_order ); ?></th>
@@ -170,7 +181,12 @@ if ( ! function_exists( 'ptp_projects_sort_link' ) ) {
 						$ptp_edit_url = add_query_arg( array( 'page' => 'ptp-projects', 'action' => 'edit', 'id' => $ptp_project->id ), admin_url( 'admin.php' ) );
 						$ptp_is_overdue = $ptp_project->deadline && $ptp_project->deadline < current_time( 'Y-m-d' ) && ! in_array( $ptp_project->status, array( 'completed', 'cancelled', 'archived' ), true );
 						?>
-						<tr>
+						<tr<?php echo $ptp_can_reorder ? ' class="ptp-js-project-row" draggable="true" data-id="' . esc_attr( $ptp_project->id ) . '"' : ''; ?>>
+							<td class="ptp-col-optional ptp-col-drag" data-label="">
+								<?php if ( $ptp_can_reorder ) : ?>
+									<span class="ptp-drag-handle dashicons dashicons-menu" aria-hidden="true"></span>
+								<?php endif; ?>
+							</td>
 							<td data-label="<?php esc_attr_e( 'Title', 'personal-project-tracker' ); ?>">
 								<?php if ( $ptp_project->color ) : ?>
 									<span class="ptp-color-dot" style="background:<?php echo esc_attr( $ptp_project->color ); ?>"></span>

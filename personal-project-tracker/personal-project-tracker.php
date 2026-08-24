@@ -3,7 +3,7 @@
  * Plugin Name:       Personal Project Tracker
  * Plugin URI:         https://example.com/personal-project-tracker
  * Description:       A private, all-in-one project management and personal work tracking system for WordPress: projects, tasks, milestones, calendar, time tracking, finance, reports, analytics, an AI Prompt Studio, notifications and reminders.
- * Version:            1.0.0
+ * Version:            1.1.0
  * Requires at least:  6.0
  * Requires PHP:       8.1
  * Author:             Personal Project Tracker
@@ -23,8 +23,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Core plugin constants.
  */
-define( 'PTP_VERSION', '1.0.0' );
-define( 'PTP_DB_VERSION', 8 );
+define( 'PTP_VERSION', '1.1.0' );
+define( 'PTP_DB_VERSION', 9 );
 define( 'PTP_TEXT_DOMAIN', 'personal-project-tracker' );
 define( 'PTP_PLUGIN_FILE', __FILE__ );
 define( 'PTP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );

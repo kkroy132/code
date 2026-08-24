@@ -102,6 +102,23 @@ class PTP_Projects_REST {
 				'permission_callback' => PTP_Security::rest_permission( 'ptp_manage_projects' ),
 			)
 		);
+
+		register_rest_route(
+			$ns,
+			'/' . self::BASE . '/reorder',
+			array(
+				'methods'             => WP_REST_Server::CREATABLE,
+				'callback'            => array( __CLASS__, 'reorder_items' ),
+				'permission_callback' => PTP_Security::rest_permission( 'ptp_manage_projects' ),
+				'args'                => array(
+					'order' => array(
+						'type'     => 'array',
+						'required' => true,
+						'items'    => array( 'type' => 'integer' ),
+					),
+				),
+			)
+		);
 	}
 
 	/**
@@ -129,12 +146,12 @@ class PTP_Projects_REST {
 			'orderby'  => array(
 				'type'              => 'string',
 				'sanitize_callback' => 'sanitize_key',
-				'default'           => 'updated_at',
+				'default'           => 'sort_order',
 			),
 			'order'    => array(
 				'type'              => 'string',
 				'sanitize_callback' => 'sanitize_key',
-				'default'           => 'desc',
+				'default'           => 'asc',
 			),
 			'page'     => array(
 				'type'              => 'integer',
@@ -317,6 +334,20 @@ class PTP_Projects_REST {
 	}
 
 	/**
+	 * POST /projects/reorder
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @return WP_REST_Response
+	 */
+	public static function reorder_items( WP_REST_Request $request ) {
+		$order = array_map( 'absint', (array) $request->get_param( 'order' ) );
+
+		PTP_Projects_Repository::reorder( $order );
+
+		return new WP_REST_Response( array( 'reordered' => true ), 200 );
+	}
+
+	/**
 	 * Attach an HTTP status to a WP_Error so WP_REST_Server reports it correctly.
 	 *
 	 * @param WP_Error $error Error to annotate.
@@ -355,6 +386,7 @@ class PTP_Projects_REST {
 			'actual_expenses'   => (float) $project->actual_expenses,
 			'progress'          => (int) $project->progress,
 			'color'             => $project->color,
+			'sort_order'        => (int) $project->sort_order,
 			'created_at'        => $project->created_at,
 			'updated_at'        => $project->updated_at,
 			'archived_at'       => $project->archived_at,

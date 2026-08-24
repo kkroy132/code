@@ -34,6 +34,7 @@ class PTP_Projects_Repository {
 		'progress',
 		'created_at',
 		'updated_at',
+		'sort_order',
 	);
 
 	/**
@@ -203,6 +204,7 @@ class PTP_Projects_Repository {
 			'progress'          => '%d',
 			'color'             => '%s',
 			'owner_id'          => '%d',
+			'sort_order'        => '%d',
 			'created_at'        => '%s',
 			'updated_at'        => '%s',
 			'archived_at'       => '%s',
@@ -255,12 +257,17 @@ class PTP_Projects_Repository {
 
 		global $wpdb;
 
-		$now                = ptp_now();
-		$data['owner_id']   = get_current_user_id();
-		$data['created_at'] = $now;
-		$data['updated_at'] = $now;
+		$table = self::get_table();
 
-		$inserted = $wpdb->insert( self::get_table(), $data, self::formats_for( $data ) );
+		$now                 = ptp_now();
+		$data['owner_id']    = get_current_user_id();
+		// New projects go to the end of the manual display order — same
+		// "append" behavior as PTP_Subtasks_Repository::create().
+		$data['sort_order']  = 1 + (int) $wpdb->get_var( "SELECT MAX(sort_order) FROM {$table}" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- no user input, fixed table name.
+		$data['created_at']  = $now;
+		$data['updated_at']  = $now;
+
+		$inserted = $wpdb->insert( $table, $data, self::formats_for( $data ) );
 
 		if ( false === $inserted ) {
 			ptp_log_error( 'Failed to insert project: ' . $wpdb->last_error );
@@ -465,8 +472,8 @@ class PTP_Projects_Repository {
 				'search'   => '',
 				'status'   => '',
 				'priority' => '',
-				'orderby'  => 'updated_at',
-				'order'    => 'DESC',
+				'orderby'  => 'sort_order',
+				'order'    => 'ASC',
 				'paged'    => 1,
 				'per_page' => 20,
 			)
@@ -494,8 +501,14 @@ class PTP_Projects_Repository {
 			$params[] = $args['priority'];
 		}
 
-		$orderby = in_array( $args['orderby'], self::$sortable_columns, true ) ? $args['orderby'] : 'updated_at';
+		$orderby = in_array( $args['orderby'], self::$sortable_columns, true ) ? $args['orderby'] : 'sort_order';
 		$order   = 'ASC' === strtoupper( (string) $args['order'] ) ? 'ASC' : 'DESC';
+		// Every existing project shares sort_order=0 until it's actually
+		// dragged (see the v9 schema note), so a plain "ORDER BY sort_order"
+		// alone would leave ties in whatever order MySQL happens to return
+		// them. Tie-break on id (always ASC — creation order) so that
+		// starting state is stable and sensible instead.
+		$orderby_sql = "{$orderby} {$order}, id ASC";
 
 		$per_page = max( 1, min( 100, (int) $args['per_page'] ) );
 		$paged    = max( 1, (int) $args['paged'] );
@@ -508,7 +521,7 @@ class PTP_Projects_Repository {
 			? (int) $wpdb->get_var( $wpdb->prepare( $count_sql, $params ) ) // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			: (int) $wpdb->get_var( $count_sql ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 
-		$list_sql    = "SELECT * FROM {$table} WHERE {$where_sql} ORDER BY {$orderby} {$order} LIMIT %d OFFSET %d"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$list_sql    = "SELECT * FROM {$table} WHERE {$where_sql} ORDER BY {$orderby_sql} LIMIT %d OFFSET %d"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$list_params = array_merge( $params, array( $per_page, $offset ) );
 		$items       = $wpdb->get_results( $wpdb->prepare( $list_sql, $list_params ) ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 
@@ -522,7 +535,9 @@ class PTP_Projects_Repository {
 	}
 
 	/**
-	 * Get the most recently updated, non-archived projects (for dashboard widgets).
+	 * Get the first N non-archived projects in the user's manual display
+	 * order (see reorder()) — the same order the Projects list shows by
+	 * default, so the Dashboard's "Recent Projects" preview matches it.
 	 *
 	 * @param int $limit Max rows to return.
 	 * @return object[]
@@ -534,10 +549,50 @@ class PTP_Projects_Repository {
 
 		return $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT * FROM {$table} WHERE status != 'archived' ORDER BY updated_at DESC LIMIT %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				"SELECT * FROM {$table} WHERE status != 'archived' ORDER BY sort_order ASC, id ASC LIMIT %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 				(int) $limit
 			)
 		);
+	}
+
+	/**
+	 * Persist a new manual display order for all projects (drag-and-drop on
+	 * the Projects list — see reorder() on PTP_Subtasks_Repository for the
+	 * same pattern, scoped there to one task instead of globally here).
+	 *
+	 * @param int[] $ordered_ids Project IDs in the desired order. Any ID
+	 *                            that doesn't exist is ignored.
+	 * @return true
+	 */
+	public static function reorder( array $ordered_ids ) {
+		global $wpdb;
+
+		$table    = self::get_table();
+		$valid    = array_map( 'intval', wp_list_pluck( $wpdb->get_results( "SELECT id FROM {$table}" ), 'id' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- no user input, fixed table name.
+		$position = 0;
+
+		foreach ( $ordered_ids as $project_id ) {
+			$project_id = (int) $project_id;
+
+			if ( ! in_array( $project_id, $valid, true ) ) {
+				continue;
+			}
+
+			$wpdb->update(
+				$table,
+				array(
+					'sort_order' => $position,
+					'updated_at' => ptp_now(),
+				),
+				array( 'id' => $project_id ),
+				array( '%d', '%s' ),
+				array( '%d' )
+			);
+
+			++$position;
+		}
+
+		return true;
 	}
 
 	/**

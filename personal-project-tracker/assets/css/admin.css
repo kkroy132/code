@@ -1086,6 +1086,27 @@
 	}
 }
 
+/* Projects list drag-and-drop reorder (only rendered when eligible — see
+   $ptp_can_reorder in projects-list.php). The handle column collapses via
+   the existing .ptp-col-optional rule above on narrow screens, where
+   dragging isn't a practical interaction anyway. */
+.ptp-col-drag {
+	width: 28px;
+}
+
+.ptp-drag-handle {
+	cursor: grab;
+	color: var(--ptp-text-muted);
+}
+
+.ptp-js-projects-sortable .ptp-js-project-row {
+	cursor: grab;
+}
+
+.ptp-js-project-row.ptp-is-dragging {
+	opacity: 0.5;
+}
+
 /* =======================================================================
  * Phone-width refinements (~360-430px handsets)
  * ======================================================================= */

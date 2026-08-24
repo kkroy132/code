@@ -130,6 +130,13 @@ class PTP_Database {
 	 *   timer per user" lookup); a (object_type, object_id) composite on
 	 *   activity_logs (every detail page's Activity section); and
 	 *   reminders.related_type (the Reminders list's Related Type filter).
+	 * - v9: projects.sort_order (manual drag-and-drop ordering on the
+	 *   Projects list, reused as-is for the Dashboard's Recent Projects
+	 *   preview — see PTP_Projects_Repository::reorder()). dbDelta() only
+	 *   adds the column — every existing project gets 0, same as every
+	 *   other project, so get_list()'s `ORDER BY sort_order ASC, id ASC`
+	 *   falls back to creation order until a user actually drags something,
+	 *   same pattern v2's subtasks.sort_order already established.
 	 *
 	 * @param string $charset_collate Charset/collation clause.
 	 * @return string[] List of CREATE TABLE statements.
@@ -156,13 +163,15 @@ class PTP_Database {
 			progress TINYINT UNSIGNED NOT NULL DEFAULT 0,
 			color VARCHAR(20) NULL,
 			owner_id BIGINT UNSIGNED NOT NULL DEFAULT 0,
+			sort_order INT UNSIGNED NOT NULL DEFAULT 0,
 			created_at DATETIME NOT NULL,
 			updated_at DATETIME NOT NULL,
 			archived_at DATETIME NULL,
 			PRIMARY KEY  (id),
 			KEY status (status),
 			KEY priority (priority),
-			KEY owner_id (owner_id)
+			KEY owner_id (owner_id),
+			KEY sort_order (sort_order)
 		) {$charset_collate};";
 
 		$sql[] = "CREATE TABLE {$prefix}tasks (
