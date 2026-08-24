@@ -526,21 +526,12 @@
 	border-bottom: none;
 }
 
-/* "Coming soon" module list on the Task detail sidebar. */
-.ptp-coming-soon-list {
-	margin: 0;
-	color: var(--ptp-text-muted);
-}
-
-.ptp-coming-soon-list li {
+/* Badge + quick-action button grouped together as one .ptp-simple-list row's trailing side. */
+.ptp-simple-list-actions {
 	display: flex;
 	align-items: center;
-	gap: 8px;
-	padding: 6px 0;
-}
-
-.ptp-coming-soon-list .dashicons {
-	color: #c3c4c7;
+	gap: 6px;
+	white-space: nowrap;
 }
 
 /* A wider progress bar for the Task detail page's subtask completion. */

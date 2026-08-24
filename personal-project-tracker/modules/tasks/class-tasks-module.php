@@ -37,7 +37,12 @@ class PTP_Tasks_Module {
 	 * @param string $hook_suffix Current admin page hook suffix (unused; we key off $_GET['page']).
 	 */
 	public static function enqueue_assets( $hook_suffix ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
-		if ( ! isset( $_GET['page'] ) || 'ptp-tasks' !== $_GET['page'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$page = isset( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+
+		// Also needed on the Projects screen: the Tasks section rendered
+		// there (render_project_tasks_section()) includes the same
+		// Complete/Reopen quick-action buttons the Tasks list uses.
+		if ( ! in_array( $page, array( 'ptp-tasks', 'ptp-projects' ), true ) ) {
 			return;
 		}
 
@@ -65,8 +70,10 @@ class PTP_Tasks_Module {
 
 	/**
 	 * Render a compact "Tasks" card on the Project detail page, listing
-	 * this project's open tasks. Read-only summary — full management stays
-	 * on the Tasks screen.
+	 * this project's open tasks with a Complete/Reopen quick action per
+	 * row (the same .ptp-js-task-complete/-reopen buttons and REST calls
+	 * the Tasks list uses — see tasks.js). Full management (edit, dates,
+	 * subtasks, etc.) still stays on the Tasks screen.
 	 *
 	 * @param object $project Project being viewed.
 	 */
@@ -111,11 +118,23 @@ class PTP_Tasks_Module {
 			<?php else : ?>
 				<ul class="ptp-simple-list">
 					<?php foreach ( $result['items'] as $ptp_task ) : ?>
+						<?php $ptp_task_done = 'completed' === $ptp_task->status; ?>
 						<li>
 							<a href="<?php echo esc_url( add_query_arg( array( 'page' => 'ptp-tasks', 'action' => 'view', 'id' => $ptp_task->id ), admin_url( 'admin.php' ) ) ); ?>">
 								<?php echo esc_html( $ptp_task->title ); ?>
 							</a>
-							<span class="ptp-badge ptp-badge-status-<?php echo esc_attr( $ptp_task->status ); ?>"><?php echo esc_html( $statuses[ $ptp_task->status ] ?? $ptp_task->status ); ?></span>
+							<span class="ptp-simple-list-actions">
+								<span class="ptp-badge ptp-badge-status-<?php echo esc_attr( $ptp_task->status ); ?>"><?php echo esc_html( $statuses[ $ptp_task->status ] ?? $ptp_task->status ); ?></span>
+								<?php if ( $ptp_task_done ) : ?>
+									<button type="button" class="button button-small ptp-js-task-reopen" data-id="<?php echo esc_attr( $ptp_task->id ); ?>">
+										<?php esc_html_e( 'Reopen', 'personal-project-tracker' ); ?>
+									</button>
+								<?php else : ?>
+									<button type="button" class="button button-small ptp-js-task-complete" data-id="<?php echo esc_attr( $ptp_task->id ); ?>">
+										<?php esc_html_e( 'Complete', 'personal-project-tracker' ); ?>
+									</button>
+								<?php endif; ?>
+							</span>
 						</li>
 					<?php endforeach; ?>
 				</ul>
