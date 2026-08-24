@@ -77,9 +77,11 @@ class PTP_Finance_Service {
 	}
 
 	/**
-	 * Derive alert flags from an already-computed summary row. This is
-	 * only an integration point for a future Notifications module — no
-	 * notification, email, or persisted alert is created here.
+	 * Derive alert flags from an already-computed summary row. Pure
+	 * calculation only — no notification, email, or persisted alert is
+	 * created here. PTP_Smart_Alerts_Service reads these flags (via the
+	 * 'flags' key on get_project_summary()'s return value) to decide
+	 * whether to raise a real, persisted Budget Warning / Over Budget alert.
 	 *
 	 * @param array $summary A summary array with at least 'profit' and 'budget_usage' keys.
 	 * @return array{budget_warning: bool, over_budget: bool, negative_profit: bool}
