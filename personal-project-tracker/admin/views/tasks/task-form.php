@@ -92,7 +92,7 @@ if ( ! empty( $flash['data'] ) ) {
 
 			<div class="ptp-form-field">
 				<label><?php esc_html_e( 'Milestone', 'personal-project-tracker' ); ?></label>
-				<p class="description"><?php esc_html_e( 'Available once the Milestones module is enabled.', 'personal-project-tracker' ); ?></p>
+				<p class="description"><?php esc_html_e( 'Milestone assignment is managed via the REST API or CSV import; there is no picker in this form.', 'personal-project-tracker' ); ?></p>
 			</div>
 
 			<div class="ptp-form-field">

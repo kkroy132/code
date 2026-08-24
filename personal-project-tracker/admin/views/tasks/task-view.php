@@ -3,8 +3,9 @@
  * Task detail page.
  *
  * Shows: Description, Project, Milestone, Status, Priority, Dates,
- * Subtasks (with completion %), placeholders for modules not yet built
- * (Time Tracking, Notes, Files, Links, Reminders), and Activity.
+ * Subtasks (with completion %), and Activity. Other modules (Time
+ * Tracking, Notes, Files, Links, Prompts) attach their own sections via
+ * the ptp_task_detail_sections action.
  *
  * @package Personal_Project_Tracker
  *
@@ -80,8 +81,7 @@ require PTP_PLUGIN_DIR . 'admin/views/partials/breadcrumbs.php';
 	</div>
 </div>
 
-<div class="ptp-detail-grid">
-	<div class="ptp-detail-main">
+<div class="ptp-detail-main">
 
 		<div class="ptp-card">
 			<h2><?php esc_html_e( 'Overview', 'personal-project-tracker' ); ?></h2>
@@ -234,17 +234,3 @@ require PTP_PLUGIN_DIR . 'admin/views/partials/breadcrumbs.php';
 		?>
 
 	</div>
-
-	<div class="ptp-detail-side">
-		<div class="ptp-card">
-			<h2><?php esc_html_e( 'Coming Soon', 'personal-project-tracker' ); ?></h2>
-			<p class="description"><?php esc_html_e( 'These sections light up as their modules are built in later phases.', 'personal-project-tracker' ); ?></p>
-			<ul class="ptp-coming-soon-list">
-				<li><span class="dashicons dashicons-edit" aria-hidden="true"></span> <?php esc_html_e( 'Notes', 'personal-project-tracker' ); ?></li>
-				<li><span class="dashicons dashicons-media-default" aria-hidden="true"></span> <?php esc_html_e( 'Files', 'personal-project-tracker' ); ?></li>
-				<li><span class="dashicons dashicons-admin-links" aria-hidden="true"></span> <?php esc_html_e( 'Links', 'personal-project-tracker' ); ?></li>
-				<li><span class="dashicons dashicons-bell" aria-hidden="true"></span> <?php esc_html_e( 'Reminders', 'personal-project-tracker' ); ?></li>
-			</ul>
-		</div>
-	</div>
-</div>

@@ -114,10 +114,9 @@ class PTP_Calendar_Repository {
 		$color         = isset( $raw['color'] ) ? sanitize_hex_color( wp_unslash( (string) $raw['color'] ) ) : '';
 		$data['color'] = $color ? $color : null;
 
-		// Reminder integration point: how many minutes before start_datetime
-		// to notify the user. Purely data at this stage — no cron job or
-		// notification delivery exists yet; the future Reminders/
-		// Notifications module (a later phase) queries this column.
+		// How many minutes before start_datetime to notify the user.
+		// PTP_Notifications_Service reads this column on its cron sweep to
+		// decide when a due reminder should fire.
 		$reminder_raw = $raw['reminder_minutes'] ?? '';
 
 		if ( '' === $reminder_raw || null === $reminder_raw ) {

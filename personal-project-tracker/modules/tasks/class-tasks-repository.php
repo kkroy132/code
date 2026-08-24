@@ -127,8 +127,9 @@ class PTP_Tasks_Repository {
 
 		$data['project_id'] = $project_id;
 
-		// Milestones are implemented in a later phase; accept and validate
-		// the column now (data integrity) without exposing a picker yet.
+		// The task form has no milestone picker; milestone_id is set via the
+		// REST API or CSV import instead. Validate it here regardless of
+		// source so the column always holds a real milestone or null.
 		$milestone_id = isset( $raw['milestone_id'] ) ? absint( $raw['milestone_id'] ) : 0;
 
 		if ( $milestone_id && ! self::milestone_exists( $milestone_id ) ) {

@@ -1,17 +1,8 @@
 /**
  * Personal Project Tracker — admin bootstrap.
  *
- * Feature modules add their own scripts in later phases. This file only
- * confirms the asset pipeline (enqueue, REST URL, nonce localization) is
- * wired correctly.
+ * Registered as the `ptp-admin` script handle every module's own script
+ * depends on. It carries no logic of its own — `ptpAdmin.restUrl` /
+ * `ptpAdmin.nonce` (wp_localize_script'd by admin/class-admin-menu.php)
+ * are read directly by each module's script.
  */
-( function () {
-	'use strict';
-
-	if ( typeof window.ptpAdmin === 'undefined' ) {
-		return;
-	}
-
-	// eslint-disable-next-line no-console
-	console.log( 'Personal Project Tracker admin assets loaded.' );
-} )();

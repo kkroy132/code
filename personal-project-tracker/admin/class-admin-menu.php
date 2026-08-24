@@ -82,9 +82,7 @@ class PTP_Admin_Menu {
 	/**
 	 * Definition of every submenu page (excluding Dashboard, added separately).
 	 *
-	 * Most of these render a "module coming soon" placeholder until their
-	 * phase is implemented; the callback name is what wires each entry to
-	 * its future feature module without changing the menu structure later.
+	 * Each entry's callback wires it to its feature module's render method.
 	 *
 	 * @return array<int, array{slug: string, title: string, capability: string, callback: string}>
 	 */

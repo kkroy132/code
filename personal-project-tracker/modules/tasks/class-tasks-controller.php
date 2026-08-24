@@ -36,10 +36,16 @@ class PTP_Tasks_Controller {
 
 		$id = isset( $_POST['id'] ) ? absint( $_POST['id'] ) : 0;
 
+		// This form has no milestone picker; preserve whatever milestone the
+		// task already has (e.g. set via REST or import) instead of wiping
+		// it out on every save.
+		$existing = $id ? PTP_Tasks_Repository::get( $id ) : null;
+
 		$raw = array(
 			'title'          => $_POST['title'] ?? '',
 			'description'    => $_POST['description'] ?? '',
 			'project_id'     => $_POST['project_id'] ?? 0,
+			'milestone_id'   => $existing ? $existing->milestone_id : 0,
 			'status'         => $_POST['status'] ?? '',
 			'priority'       => $_POST['priority'] ?? '',
 			'start_date'     => $_POST['start_date'] ?? '',

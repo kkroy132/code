@@ -13,12 +13,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Class PTP_Reports_Export
  *
  * CSV and JSON are simple, self-contained data transforms and are fully
- * implemented. PDF is intentionally NOT built yet — real PDF generation
- * needs an external library, which conflicts with this plugin's established
- * "avoid excessive external dependencies" convention (see the Calendar
- * module, Phase 5), and a full document/backup pipeline is explicitly out
- * of scope for this phase. to_pdf() exists only as the integration point a
- * future phase will implement against.
+ * implemented. PDF is intentionally not supported — real PDF generation
+ * needs an external library, which conflicts with this plugin's
+ * zero-external-dependency design. to_pdf() exists only as the integration
+ * point a future version could implement against without a breaking change.
  */
 class PTP_Reports_Export {
 
@@ -97,13 +95,13 @@ class PTP_Reports_Export {
 	}
 
 	/**
-	 * PDF export integration point — not implemented in this phase.
+	 * PDF export integration point — not supported.
 	 *
 	 * @param array $data Report data (unused; kept in the signature so a
 	 *                    future implementation is a drop-in, not a breaking change).
-	 * @return WP_Error Always, until a future phase implements this.
+	 * @return WP_Error Always.
 	 */
 	public static function to_pdf( array $data ) { // phpcs:ignore Generic.CodeAnalysis.UnusedFunctionParameter.Found
-		return new WP_Error( 'ptp_not_implemented', __( 'PDF export will be available in a future phase.', 'personal-project-tracker' ) );
+		return new WP_Error( 'ptp_not_implemented', __( 'PDF export is not supported. Use CSV or JSON export instead.', 'personal-project-tracker' ) );
 	}
 }

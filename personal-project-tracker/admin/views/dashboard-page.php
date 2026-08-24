@@ -2,9 +2,8 @@
 /**
  * Dashboard view.
  *
- * Feature widgets are added on top of this scaffold as their owning
- * modules are implemented in later phases; the System Status / Database
- * Tables cards from Phase 1 are kept as-is below the feature widgets.
+ * Feature widgets from each module sit above the System Status / Database
+ * Tables cards.
  *
  * @package Personal_Project_Tracker
  */

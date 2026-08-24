@@ -13,9 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Class PTP_Admin_Pages
  *
  * One render_* method per submenu page, each capability-gated and each
- * delegating to a view file for markup. Feature modules replace the
- * placeholder views with real UI as their phase is implemented; the menu
- * wiring and capability checks here do not change.
+ * delegating to a view file for markup.
  */
 class PTP_Admin_Pages {
 
@@ -586,20 +584,6 @@ class PTP_Admin_Pages {
 
 	public function render_settings() {
 		$this->render_view( 'settings/settings-page', 'ptp_manage_settings', array() );
-	}
-
-	/**
-	 * Render a "module coming soon" placeholder page.
-	 *
-	 * @param string $title      Page title.
-	 * @param string $capability Capability required to view it.
-	 */
-	private function render_placeholder( $title, $capability ) {
-		$this->render_view(
-			'placeholder-page',
-			$capability,
-			array( 'title' => $title )
-		);
 	}
 
 	/**

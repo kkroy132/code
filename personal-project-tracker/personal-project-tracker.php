@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Core plugin constants.
  */
-define( 'PTP_VERSION', '1.13.0' );
+define( 'PTP_VERSION', '1.0.0' );
 define( 'PTP_DB_VERSION', 8 );
 define( 'PTP_TEXT_DOMAIN', 'personal-project-tracker' );
 define( 'PTP_PLUGIN_FILE', __FILE__ );

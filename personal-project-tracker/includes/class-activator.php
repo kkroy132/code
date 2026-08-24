@@ -22,10 +22,11 @@ class PTP_Activator {
 	 * - Seeds default settings without overwriting existing ones.
 	 * - Records the currently installed plugin version.
 	 *
-	 * Cron events for reminders/notifications/smart alerts are registered by
-	 * their owning modules in a later phase, once there is a handler for
-	 * them to call — scheduling an event with no listener would be dead
-	 * weight and risks duplicate or orphaned events.
+	 * Cron events for reminders/smart alerts are scheduled by
+	 * PTP_Notifications_Module on admin_init (guarded by wp_next_scheduled()),
+	 * not here — activation only needs to run once, while the admin_init
+	 * guard also re-arms events if a table wipe or migration ever clears
+	 * them out from under an already-active install.
 	 */
 	public static function activate() {
 		PTP_Database::install();
