@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="bn">
+  <head>
+    <meta charset="utf-8" />
+    <title>WordPress Detector</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header>
+      <img src="icons/icon32.png" alt="" />
+      <h1>WordPress Detector</h1>
+    </header>
+
+    <section class="card" id="current-tab-card">
+      <h2>বর্তমান ট্যাব</h2>
+      <p class="site-url" id="current-tab-url">—</p>
+      <button id="check-current-btn">এই সাইট চেক করুন</button>
+      <div class="result" id="current-tab-result" hidden></div>
+    </section>
+
+    <section class="card">
+      <h2>যেকোনো সাইট চেক করুন</h2>
+      <form id="manual-form">
+        <input
+          type="text"
+          id="manual-url"
+          placeholder="example.com অথবা https://example.com"
+          autocomplete="off"
+          required
+        />
+        <button type="submit" id="check-manual-btn">চেক করুন</button>
+      </form>
+      <div class="result" id="manual-result" hidden></div>
+    </section>
+
+    <section class="card">
+      <div class="history-header">
+        <h2>ইতিহাস</h2>
+        <button id="clear-history-btn" class="link-btn">মুছে ফেলুন</button>
+      </div>
+      <ul id="history-list"></ul>
+    </section>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
