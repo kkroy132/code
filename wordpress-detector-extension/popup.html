@@ -34,6 +34,32 @@
     </section>
 
     <section class="card">
+      <h2>একাধিক সাইট চেক করুন</h2>
+      <textarea
+        id="bulk-urls"
+        rows="4"
+        placeholder="প্রতি লাইনে একটি করে ডোমেইন/URL লিখুন&#10;example.com&#10;another-site.com"
+      ></textarea>
+      <div class="bulk-actions">
+        <button id="bulk-check-btn">সব চেক করুন</button>
+        <button id="bulk-export-btn" disabled>CSV ডাউনলোড</button>
+      </div>
+      <p class="bulk-progress" id="bulk-progress" hidden></p>
+      <div class="table-wrap">
+        <table id="bulk-table" hidden>
+          <thead>
+            <tr>
+              <th>সাইট</th>
+              <th>ফলাফল</th>
+              <th>স্কোর</th>
+            </tr>
+          </thead>
+          <tbody id="bulk-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card">
       <div class="history-header">
         <h2>ইতিহাস</h2>
         <button id="clear-history-btn" class="link-btn">মুছে ফেলুন</button>

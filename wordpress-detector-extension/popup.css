@@ -77,12 +77,84 @@ button:disabled {
   gap: 6px;
 }
 
-#manual-url {
+#manual-url,
+#bulk-urls {
   flex: 1;
   padding: 7px 8px;
   border: 1px solid #8c8f94;
   border-radius: 4px;
   font-size: 12px;
+  font-family: inherit;
+}
+
+#bulk-urls {
+  display: block;
+  width: 100%;
+  resize: vertical;
+  margin-bottom: 8px;
+}
+
+.bulk-actions {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.bulk-actions button {
+  flex: 1;
+}
+
+#bulk-export-btn {
+  background: #50575e;
+}
+
+#bulk-export-btn:hover {
+  background: #3c434a;
+}
+
+.bulk-progress {
+  margin: 0 0 8px;
+  color: #646970;
+  font-style: italic;
+}
+
+.table-wrap {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+#bulk-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+#bulk-table th {
+  text-align: left;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  border-bottom: 1px solid #dcdcde;
+  padding: 4px 4px;
+}
+
+#bulk-table td {
+  padding: 4px 4px;
+  border-bottom: 1px solid #f0f0f1;
+}
+
+#bulk-table td.bulk-url {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#bulk-table .verdict-cell {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
 }
 
 .result {
@@ -178,23 +250,28 @@ button:disabled {
   border-bottom: none;
 }
 
-#history-list .badge {
+.badge {
   flex-shrink: 0;
   width: 10px;
   height: 10px;
   border-radius: 50%;
+  display: inline-block;
 }
 
-#history-list .badge.wordpress {
+.badge.wordpress {
   background: #00a32a;
 }
 
-#history-list .badge.uncertain {
+.badge.uncertain {
   background: #dba617;
 }
 
-#history-list .badge.not-wordpress {
+.badge.not-wordpress {
   background: #d63638;
+}
+
+.badge.error {
+  background: #8c8f94;
 }
 
 #history-list .hist-url {
@@ -204,7 +281,78 @@ button:disabled {
   white-space: nowrap;
 }
 
+#history-list .favicon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  border-radius: 2px;
+}
+
 #history-list .empty {
   color: #8c8f94;
   font-style: italic;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #1e1e1e;
+    color: #e3e3e3;
+  }
+
+  .card {
+    background: #2a2a2a;
+    border-color: #3f3f3f;
+  }
+
+  .card h2 {
+    color: #a7aaad;
+  }
+
+  .site-url {
+    color: #cfcfcf;
+  }
+
+  #manual-url,
+  #bulk-urls {
+    background: #1e1e1e;
+    border-color: #555;
+    color: #e3e3e3;
+  }
+
+  #bulk-table th {
+    background: #2a2a2a;
+    border-color: #3f3f3f;
+  }
+
+  #bulk-table td {
+    border-color: #3f3f3f;
+  }
+
+  .result.wordpress {
+    background: #123a1a;
+    border-color: #2f9e4f;
+  }
+
+  .result.uncertain {
+    background: #3a3311;
+    border-color: #b8890f;
+  }
+
+  .result.not-wordpress {
+    background: #3a1516;
+    border-color: #c23b3e;
+  }
+
+  .result .score,
+  .loading {
+    color: #a7aaad;
+  }
+
+  #history-list li {
+    border-color: #3f3f3f;
+  }
+
+  #history-list .empty {
+    color: #8c8f94;
+  }
 }

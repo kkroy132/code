@@ -101,6 +101,22 @@ function classify(score) {
   return "not-wordpress";
 }
 
+// Lightweight check used for the toolbar badge: a single homepage fetch,
+// no wp-json/readme/xmlrpc follow-up requests, so it stays cheap enough to
+// run on every page load.
+export async function quickCheck(rawUrl) {
+  const origin = normalizeUrl(rawUrl);
+  const signals = [];
+
+  const homepage = await safeFetchText(origin + "/");
+  if (homepage.ok) {
+    analyzeHomepage(homepage.text, signals);
+  }
+
+  const score = Math.min(100, signals.reduce((sum, s) => sum + s.weight, 0));
+  return { url: origin, verdict: classify(score), score, signals };
+}
+
 export async function detectWordPress(rawUrl) {
   const origin = normalizeUrl(rawUrl);
   const signals = [];
